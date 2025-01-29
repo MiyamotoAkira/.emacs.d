@@ -343,7 +343,6 @@ This is the setup for when the presentation ends. Basically revert what has been
 #+BEGIN_SRC emacs-lisp
 (use-package org-present
   :after org
-  :bind (("C-c o" . org-present))
   :hook
   (org-present-mode . jgg/org-present-start)
   (org-present-mode-quit . jgg/org-present-end)
