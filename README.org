@@ -85,6 +85,7 @@
     - [[#vterm][vterm]]
     - [[#pomm][Pomm]]
     - [[#replace][Replace]]
+    - [[#combobulate][Combobulate]]
 - [[#languages][Languages]]
   - [[#general][General]]
     - [[#eglot][Eglot]]
@@ -1164,6 +1165,15 @@ Remember that projectile has "C-c p r" for replace in the project
 (global-set-key (kbd "C-c M-r r") 'replace-regexp)
 #+END_SRC
 
+*** Combobulate
+This package uses tree-sitter for structured editing
+#+BEGIN_SRC emacs-lisp
+(use-package combobulate
+  :custom
+  (combobulate-key-prefix "C-c o")
+  :hook ((prog-mode . combobulate-mode))
+  :load-path ("/home/akira/code/external/combobulate/"))
+#+END_SRC
 * Languages
 ** General
 *** Eglot
