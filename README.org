@@ -1423,7 +1423,7 @@ If we wanted to removed we need to call (advice-remove 'lsp-find-definition #'jg
       (funcall original-function)))
 
 (advice-add 'lsp-find-definition :around #'jgg/lsp-find-in-other-buffer)
-(advice-add 'lsp-find-type-definition :around #'jgg/lsp-find-in-other-buffer)
+;;(advice-add 'lsp-find-type-definition :around #'jgg/lsp-find-in-other-buffer)
 #+END_SRC
 
 This add ui elements to lsp mode
