@@ -164,18 +164,6 @@ This refreshes the packages unless we have them already
   :defer nil
   :config (auto-compile-on-load-mode))
 
-(use-package quelpa
-  :defer nil
-  :init
-  (setq quelpa-update-melpa-p nil)
-  :config
-  (quelpa
-   '(quelpa-use-package
-     :fetcher git
-     :url "https://github.com/quelpa/quelpa-use-package.git"))
-  (require 'quelpa-use-package))
-(require 'quelpa)
-(quelpa-use-package-activate-advice)
 #+END_SRC
 
 * OS
@@ -1511,17 +1499,6 @@ Adding support for tailwind
               ("C-c x" . go-run)))
 #+END_SRC
 
-;; (use-package highlight-indentation
-;;   :defer nil
-;;   :hook
-;;   ((prog-mode . highlight-indentation-mode)))
-
-;; (use-package highlight-sexp
-;;   :quelpa (abc-mode :fetcher github :repo "daimrod/highlight-sexp")
-;;   :hook
-;;   ((clojure-mode lisp-mode emacs-lisp-mode) . highlight-sexp-mode))
-
-
 #+BEGIN_SRC emacs-lisp
 (use-package mmm-mode
   :config
@@ -1610,9 +1587,6 @@ TODO this is not loading correctly
 #+BEGIN_SRC emacs-lisp
 (use-package company-jedi
   :hook ((python-base-mode . (lambda () (add-to-list 'company-backends 'company-jedi)))))
-
-;; (use-package pyenv
-;;   :quelpa (pyenv :fetcher github :repo "aiguofer/pyenv.el"))
 
 (use-package pyvenv
   :init
