@@ -1384,7 +1384,7 @@ certain scenarios
          (elixir-ts-mode . lsp)
          ((tsx-ts-mode
            typescript-ts-mode
-           js-ts-mode) . lsp-deferred)
+           js-ts-mode) . lsp)
          (lsp-mode . lsp-enable-which-key-integration))
   :init (setq lsp-eldoc-render-all nil
               lsp-highlight-symbol-at-point nil
