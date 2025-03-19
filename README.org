@@ -1375,8 +1375,6 @@ We make sure that we hook the ui mode
 `lsp-apply-edits-after-file-operations nil` is there because otherwise the LSP for Typescript kills emacs on
 certain scenarios
 #+BEGIN_SRC emacs-lisp
-(setq lsp-keymap-prefix "C-c l")
-
 (use-package lsp-mode
   :defines lsp-highlight-symbol-at-point
   :commands (lsp lsp-deferred)
