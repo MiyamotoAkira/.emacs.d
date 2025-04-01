@@ -49,6 +49,7 @@
     - [[#page-break-lines][page-break-lines]]
     - [[#dashboard][Dashboard]]
 - [[#tools][Tools]]
+    - [[#emacsql][emacsql]]
     - [[#async][async]]
     - [[#trash-files][Trash files]]
     - [[#saveplace][saveplace]]
@@ -727,6 +728,13 @@ This dashboard appears whenever we open emacs.
 #+END_SRC
 
 * Tools
+*** emacsql
+Library to use sqlite from emacs
+#+BEGIN_SRC emacs-lisp
+(use-package emacsql
+  :pin melpa-stable
+  )
+#+END_SRC
 *** async
 Allows for the use of async code within emacs
 #+BEGIN_SRC emacs-lisp
