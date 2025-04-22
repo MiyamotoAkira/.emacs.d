@@ -59,6 +59,11 @@
     - [[#command-log-mode][command-log-mode]]
     - [[#project-handling][Project handling]]
     - [[#dired-sidebar][dired-sidebar]]
+    - [[#treemacs][treemacs]]
+    - [[#treemacs-projectile][treemacs-projectile]]
+    - [[#treemacs-icons-dired][treemacs-icons-dired]]
+    - [[#treemacs-magit][treemacs-magit]]
+    - [[#treemacs-perspective][treemacs-perspective]]
     - [[#html][html]]
     - [[#ace-window][ace-window]]
     - [[#all-the-icons][all-the-icons]]
@@ -834,9 +839,55 @@ can have separate set of buffers for each project. And each project can work ind
 *** dired-sidebar
 Directory tree browsing that uses dired
 #+BEGIN_SRC emacs-lisp
-(use-package dired-sidebar
-  :commands (dired-sidebar-toggle-sidebar)
-  :bind (([f8] . dired-sidebar-toggle-sidebar)))
+;; (use-package dired-sidebar
+;;   :commands (dired-sidebar-toggle-sidebar)
+;;   :bind (([f8] . dired-sidebar-toggle-sidebar)))
+#+END_SRC
+
+*** treemacs
+
+#+BEGIN_SRC emacs-lisp
+(use-package treemacs
+  :ensure t
+  :bind
+  (:map global-map
+        ([f8]       . treemacs-select-window)
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ("C-x t d"   . treemacs-select-directory)
+        ("C-x t B"   . treemacs-bookmark)
+        ("C-x t C-t" . treemacs-find-file)
+        ("C-x t M-t" . treemacs-find-tag)))
+#+END_SRC
+
+*** treemacs-projectile
+
+#+BEGIN_SRC emacs-lisp
+(use-package treemacs-projectile
+  :after (treemacs projectile)
+  :ensure t)
+#+END_SRC
+
+*** treemacs-icons-dired
+#+BEGIN_SRC emacs-lisp
+(use-package treemacs-icons-dired
+  :hook (dired-mode . treemacs-icons-dired-enable-once)
+  :ensure t)
+#+END_SRC
+
+*** treemacs-magit
+#+BEGIN_SRC emacs-lisp
+(use-package treemacs-magit
+  :after (treemacs magit)
+  :ensure t)
+#+END_SRC
+
+*** treemacs-perspective
+#+BEGIN_SRC emacs-lisp
+(use-package treemacs-perspective
+  :after (treemacs perspective)
+  :ensure t
+  :config (treemacs-set-scope-type 'Perspectives))
 #+END_SRC
 
 *** html
