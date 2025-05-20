@@ -49,6 +49,10 @@
     - [[#page-break-lines][page-break-lines]]
     - [[#dashboard][Dashboard]]
 - [[#tools][Tools]]
+  - [[#llm-section][LLM Section]]
+    - [[#gptel][gptel]]
+    - [[#aidermacs][aidermacs]]
+  - [[#general][General]]
     - [[#emacsql][emacsql]]
     - [[#async][async]]
     - [[#trash-files][Trash files]]
@@ -93,7 +97,7 @@
     - [[#replace][Replace]]
     - [[#combobulate][Combobulate]]
 - [[#languages][Languages]]
-  - [[#general][General]]
+  - [[#general-1][General]]
     - [[#eglot][Eglot]]
     - [[#treesit][Treesit]]
     - [[#yasnippet][Yasnippet]]
@@ -733,6 +737,25 @@ This dashboard appears whenever we open emacs.
 #+END_SRC
 
 * Tools
+
+** LLM Section
+*** gptel
+#+BEGIN_SRC emacs-lisp
+(use-package gptel
+  :ensure t)
+#+END_SRC
+
+*** aidermacs
+#+BEGIN_SRC emacs-lisp
+(use-package aidermacs
+  ;; :bind (("C-c a" . aidermacs-transient-menu))
+  :custom
+  ; See the Configuration section below
+  (aidermacs-use-architect-mode t)
+  (aidermacs-default-model "sonnet"))
+  #+END_SRC
+
+** General
 *** emacsql
 Library to use sqlite from emacs
 #+BEGIN_SRC emacs-lisp
