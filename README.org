@@ -60,7 +60,6 @@
     - [[#monky][monky]]
     - [[#ag][ag]]
     - [[#magit][magit]]
-    - [[#command-log-mode][command-log-mode]]
     - [[#project-handling][Project handling]]
     - [[#dired-sidebar][dired-sidebar]]
     - [[#treemacs][treemacs]]
@@ -748,7 +747,7 @@ This dashboard appears whenever we open emacs.
 *** aidermacs
 #+BEGIN_SRC emacs-lisp
 (use-package aidermacs
-  ;; :bind (("C-c a" . aidermacs-transient-menu))
+  :bind (("C-c C-o" . aidermacs-transient-menu))
   :custom
   ; See the Configuration section below
   (aidermacs-use-architect-mode t)
@@ -821,15 +820,6 @@ Porcelain for git
 #+BEGIN_SRC emacs-lisp
 (use-package magit
   :bind (("C-x g" . magit-status)))
-#+END_SRC
-
-*** command-log-mode
-This will show on a tab on the side the keybindings used
-TODO Doesn't seem to work and hasn't been updated in years
-#+BEGIN_SRC emacs-lisp
-(use-package command-log-mode
-  :custom
-  (command-log-mode-key-binding-open-log "C-c C-o"))
 #+END_SRC
 
 *** Project handling
