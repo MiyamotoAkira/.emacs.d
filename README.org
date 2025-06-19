@@ -747,7 +747,7 @@ This dashboard appears whenever we open emacs.
 *** aidermacs
 #+BEGIN_SRC emacs-lisp
 (use-package aidermacs
-  :bind (("C-c C-o" . aidermacs-transient-menu))
+  :bind (("C-c d" . aidermacs-transient-menu))
   :custom
   ; See the Configuration section below
   (aidermacs-use-architect-mode t)
