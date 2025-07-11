@@ -99,6 +99,7 @@
   - [[#general-1][General]]
     - [[#eglot][Eglot]]
     - [[#treesit][Treesit]]
+    - [[#treesit-fold][Treesit-fold]]
     - [[#yasnippet][Yasnippet]]
     - [[#flycheck][Flycheck]]
     - [[#eldoc][eldoc]]
@@ -1335,7 +1336,26 @@ Some additional configuration for Eglot
   (global-treesit-auto-mode))
 #+END_SRC
 
-#+RESULTS:
+*** Treesit-fold
+
+This package allows for the folding of lines on code, with knowledge gained from treesit
+#+BEGIN_SRC emacs-lisp
+(use-package treesit-fold
+  :bind (("C-c f o o" . treesit-fold-open)
+         ("C-c f o a" . treesit-fold-open-all)
+         ("C-c f o r" . treesit-fold-open-recursively)
+         ("C-c f c c" . treesit-fold-close)
+         ("C-c f c a" . treesit-fold-close-all)
+         ("C-c f t" . treesit-fold-toogle))
+  :custom
+  (global-treesit-fold-mode t)
+  (global-treesit-fold-indicators-mode t)
+  (treesit-fold-line-count-show t)
+  (treesit-fold-line-count-format " <%d lines> ")
+  
+  :vc (:url "https://github.com/emacs-tree-sitter/treesit-fold"
+       :branch "main"))
+#+END_SRC
 
 *** Yasnippet
 #+BEGIN_SRC emacs-lisp
