@@ -1341,6 +1341,7 @@ Some additional configuration for Eglot
 This package allows for the folding of lines on code, with knowledge gained from treesit
 #+BEGIN_SRC emacs-lisp
 (use-package treesit-fold
+  :diminish
   :bind (("C-c f o o" . treesit-fold-open)
          ("C-c f o a" . treesit-fold-open-all)
          ("C-c f o r" . treesit-fold-open-recursively)
