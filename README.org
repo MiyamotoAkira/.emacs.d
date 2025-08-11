@@ -1816,8 +1816,11 @@ In config we remove some of the completions from lsp-mode, to use the cider setu
 
 This is the basic treesiter mode for clojure
 #+BEGIN_SRC  emacs-lisp
-(use-package clojure-ts-mode)
+(use-package clojure-ts-mode
+  :diminish)
+#+END_SRC
 
+#+BEGIN_SRC  emacs-lisp
 ;; (use-package midje-mode
 ;;   :defer t
 ;;   :ensure t
