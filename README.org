@@ -1855,14 +1855,14 @@ This is the basic treesiter mode for clojure
 Kaocha is a test runner for clojure
 #+BEGIN_SRC  emacs-lisp
 (use-package kaocha-runner
-  :init
-  (bind-keys :prefix-map ar-emacs-kaocha-prefix-map
-             :prefix "C-c k"
-             ("t" . kaocha-runner-run-test-at-point)
-             ("r" . kaocha-runner-run-tests)
-             ("a" . kaocha-runner-run-all-tests)
-             ("w" . kaocha-runner-show-warnings)
-             ("h" . kaocha-runner-hide-windows)))
+  :after (cider-mode)
+  :bind
+  (:map clojure-mode-map
+        ("C-c k t" . kaocha-runner-run-test-at-point)
+        ("C-c k r" . kaocha-runner-run-tests)
+        ("C-c k a" . kaocha-runner-run-all-tests)
+        ("C-c k w" . kaocha-runner-show-warnings)
+        ("C-c k h" . kaocha-runner-hide-windows)))
 #+END_SRC
 
 *** Mermaid
