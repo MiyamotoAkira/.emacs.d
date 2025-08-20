@@ -1738,13 +1738,14 @@ TODO this is not loading correctly
 (use-package exunit
   :diminish t
   :bind
-  ("C-c e ." . exunit-verify-single)
-  ("C-c e b" . exunit-verify)
-  ("C-c e u a" . exunit-verify-all-in-umbrella)
-  ("C-c e a" . exunit-verify-all)
-  ("C-c e l" . exunit-rerun)
+  (:map elixir-ts-mode-map
+   ("C-c e ." . exunit-verify-single)
+   ("C-c e b" . exunit-verify)
+   ("C-c e u a" . exunit-verify-all-in-umbrella)
+   ("C-c e a" . exunit-verify-all)
+   ("C-c e l" . exunit-rerun))
   :hook
-  ((elixir-ts--mode . exunit-mode)))
+  ((elixir-ts-mode . exunit-mode)))
 #+END_SRC
 
 *** Markdown
