@@ -1866,6 +1866,12 @@ Kaocha is a test runner for clojure
         ("C-c k h" . kaocha-runner-hide-windows)))
 #+END_SRC
 
+Allow the use of clj-new and deps-new from inside emacs
+
+#+BEGIN_SRC emacs-lisp
+(use-package clj-deps-new)
+  #+END_SRC
+
 *** Mermaid
 For mermaid you need to have downloaded the mermaid cli tool using `npm install -g @mermaid-js/mermaid-cli`
 #+BEGIN_SRC emacs-lisp
