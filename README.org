@@ -1651,6 +1651,12 @@ TODO can :hook do that -10?
   (add-hook 'python-base-mode-hook 'pet-mode -10))
 #+END_SRC
 
+uv mode package
+#+BEGIN_SRC emacs-lisp
+(use-package uv-mode
+  :hook (python-mode . uv-mode-auto-activate-hook))
+#+END_SRC
+  
 #+BEGIN_SRC emacs-lisp
 (use-package python
   :hook ((python-ts-mode . eglot-ensure)))
