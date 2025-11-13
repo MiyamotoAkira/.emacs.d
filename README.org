@@ -1499,6 +1499,10 @@ certain scenarios
               lsp-before-save-edits nil)
   :config
   (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+  (setq lsp-typescript-preferences-include-package-json-auto-imports "on")
+  (setq lsp-typescript-suggest-auto-imports t)
+  (setq lsp-typescript-auto-closing-tags t)
+  (setq lsp-typescript-suggest-complete-js-docs t)  
   (add-to-list 'lsp-disabled-clients 'omnisharp))
 #+END_SRC
 
