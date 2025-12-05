@@ -1640,6 +1640,12 @@ Adding support for tailwind
       '((python-mode . python-ts-mode)))
 #+END_SRC
 
+We use eglot for python
+#+BEGIN_SRC emacs-lisp
+(use-package python
+  :hook ((python-ts-mode . eglot-ensure)))
+#+END_SRC
+
 This package allows to get the right environment.
 python-base-mode-hook works for python-mode and python-ts-mode.
 The -10 tells emacs to load it as soon as possible
@@ -1653,13 +1659,13 @@ TODO can :hook do that -10?
 
 uv mode package
 #+BEGIN_SRC emacs-lisp
+(use-package pythonic)
+
 (use-package uv-mode
   :hook (python-mode . uv-mode-auto-activate-hook))
 #+END_SRC
   
 #+BEGIN_SRC emacs-lisp
-(use-package python
-  :hook ((python-ts-mode . eglot-ensure)))
 
 (use-package poetry)
 
