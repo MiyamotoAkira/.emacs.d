@@ -110,6 +110,7 @@
     - [[#company][Company]]
     - [[#lsp][LSP]]
   - [[#specific][Specific]]
+    - [[#zig][Zig]]
     - [[#go][Go]]
     - [[#json][Json]]
     - [[#python][Python]]
@@ -1577,6 +1578,13 @@ Adding support for tailwind
 #+END_SRC
 
 ** Specific
+*** Zig
+#+BEGIN_SRC emacs-lisp
+(use-package reformatter)
+(use-package zig-mode
+  :hook ((zig-mode .eglot-ensure)))
+#+END_SRC
+
 *** Go
 #+BEGIN_SRC emacs-lisp
 (use-package go-mode)
