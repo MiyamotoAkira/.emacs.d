@@ -493,17 +493,22 @@ This file configures the org mode and associated packages
 
 ** Main Org Section
 #+BEGIN_SRC emacs-lisp
-;; (use-package org
-;;   :defer 2
-;;   :config
-;;   (setq org-startup-truncated nil)
-;;   (setq org-directory "~/org")
-;;   (setq org-agenda-files '("~/org/agendas/"))
-;;   (require 'ox-md nil t)
-;;   ;; (org-startup-indented t)
-;;   ;; (org-special-ctrl-a/e t)
-;;   ;; (org-special-ctrl-k t)
-;;   )
+  (use-package org
+    :defer 2
+    :config
+    (setq org-startup-truncated nil)
+    (setq org-directory "~/org")
+    (setq org-agenda-files '("~/org/agendas/"))
+    (setq org-src-preserve-indentation t
+        org-src-tab-acts-natively t
+        org-edit-src-content-indentation 0
+        org-src-fontify-natively t
+        org-confirm-babel-evaluate nil)
+    (require 'ox-md nil t)
+    ;; (org-startup-indented t)
+    ;; (org-special-ctrl-a/e t)
+    ;; (org-special-ctrl-k t)
+    )
 #+END_SRC
 
 ** Org Utilities
@@ -511,205 +516,126 @@ This file configures the org mode and associated packages
 This allows for a file that we want to tangle (convert into code), to have it done on save. It does require to add
 the `#+auto_tangle: t` at the top of the org file
 #+BEGIN_SRC emacs-lisp
-;; (use-package org-auto-tangle
-;;   :defer t
-;;   :hook (org-mode . org-auto-tangle-mode))
+  (use-package org-auto-tangle
+    :defer t
+    :hook (org-mode . org-auto-tangle-mode))
 #+END_SRC
 
 *** org-modern
 This package improves the look of org-mode on Emacs. Be aware that some fonts don't have all the necessary glyphs
 #+BEGIN_SRC emacs-lisp
-;; (use-package org-modern
-;;   :ensure t)
-;; (with-eval-after-load 'org (global-org-modern-mode))
-#+END_SRC
-
-*** visual-fill-column
-Useful for org present
-#+BEGIN_SRC emacs-lisp
-;; (use-package visual-fill-column
-;;   :config
-;;   (setq visual-fill-column-width 110
-;;         visual-fill-column-center-text t))
+  (use-package org-modern
+    :ensure t)
+  (with-eval-after-load 'org (global-org-modern-mode))
 #+END_SRC
 
 *** org babel
 Setting up babel for running code in org mode
 #+BEGIN_SRC emacs-lisp
-;; (use-package ob-go
-;;   :ensure t)
-
-;; (org-babel-do-load-languages
-;;      'org-babel-load-languages
-;;      '((emacs-lisp . t)
-;;        (clojure . t)
-;;        (shell . t)
-;;        (plantuml . t)
-;;        (go . t)))
-
-;; (setq org-src-preserve-indentation nil
-;;       org-src-tab-acts-natively t
-;;       org-edit-src-content-indentation 0
-;;       org-src-fontify-natively t
-;;       org-confirm-babel-evaluate nil)
+  (org-babel-do-load-languages
+       'org-babel-load-languages
+       '((emacs-lisp . t)
+         (clojure . t)
+         (shell . t)
+         (plantuml . t)))
 #+END_SRC
 
 *** toc-org
 Creates automatically a table of contents for you
 #+BEGIN_SRC emacs-lisp
-;; (use-package toc-org
-;;   :defer t
-;;   :hook (org-mode . toc-org-mode))        
+  (use-package toc-org
+    :defer t
+    :hook (org-mode . toc-org-mode))        
 #+END_SRC
 
 *** org-download
 Allows for the download of images into org buffers
 #+BEGIN_SRC emacs-lisp
-;; (use-package org-download
-;;   :after org)
-#+END_SRC
-
-*** org-ref
-#+BEGIN_SRC emacs-lisp
-;; (use-package org-ref
-;;   :after org)
-#+END_SRC
-
-*** org-present
-This is a presentation tool for org mode
-
-Here is additional setup for when the presentation starts.
-
-We remove things like line numbers, and highlighting of lines
-#+BEGIN_SRC emacs-lisp
-;; (defun jgg/org-present-start ()
-;;   (org-present-big)
-;;   (org-display-inline-images)
-;;   (display-line-numbers-mode -1)
-;;   (global-hl-line-mode -1)
-;;   (org-present-read-only)
-;;   ;; we center the document
-;;   (visual-fill-column-mode 1)
-;;   ;; just in case, wrap
-;;   (visual-line-mode 1)
-;;   ;; extra line at the top
-;;   (setq header-line-format " "))
-#+END_SRC
-
-This is the setup for when the presentation ends. Basically revert what has been done in the setup
-#+BEGIN_SRC emacs-lisp
-;; (defun jgg/org-present-end ()
-;;   (org-present-small)
-;;   (org-remove-inline-images)
-;;   (display-line-numbers-mode 1)
-;;   (global-hl-line-mode 1)
-;;   (org-present-read-write)
-;;   ;; we stop centering the document
-;;   (visual-fill-column-mode 0)
-;;   (visual-line-mode 0)
-;;   (setq header-line-format nil))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-;; (defun jgg/org-present-slide (buffer-name heading)
-;;   ;; Show only top-level headlines
-;;   (org-overview)
-;;   ;; Unfold the current entry
-;;   (org-show-entry)
-;;   ;; Show only direct subheadings of the slide but don't expand them
-;;   (org-show-children))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-;; (use-package org-present
-;;   :after org
-;;   :hook
-;;   (org-present-mode . jgg/org-present-start)
-;;   (org-present-mode-quit . jgg/org-present-end)
-;;   (org-after-navigate-function . jgg/org-present-slide))
+  (use-package org-download
+    :after org)
 #+END_SRC
 
 ** Org Roam section
 
 First, we acknowledge we are in version 2 of org roam. So it doesn't show a warning
 #+BEGIN_SRC emacs-lisp
-;; (setq org-roam-v2-ack t)
+  (setq org-roam-v2-ack t)
 #+END_SRC
 
 *** org-roam
 This is the main setup of org roam
 #+BEGIN_SRC emacs-lisp
-;; (use-package org-roam
-;;   :after org
-;;   :init
-;;   (setq org-roam-v2-ack t)
-;;   :custom
-;;   (org-roam-directory (file-truename "~/org/slip-box"))
-;;   (org-roam-dailies-directory "journal/")
-;;   (org-roam-complete-everywhere t)
-;;   (org-roam-db-autosync-mode)
-;;   (org-roam-capture-templates
-;;    '(("d" "default" plain "%?"
-;;       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-;;                          "#+title: ${title}\n#+date: %<%Y-%m-%d>\n")
-;;       :unnarrowed t)
-;;      ("l" "literary notes" plain
-;;       "\n* Source\n\nAuthor: %^{Author}\nTitle: %^{Title}\nYear: %^{Year}\n\n* Idea: %?"
-;;       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-;;                          "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: LiteraryNote\n")
-;;       :unnarrowed t)))
-;;   (org-roam-dailies-capture-templates
-;;    '(("d" "default" plain
-;;       "\n* %<%H:%M>\n  %?\n"
-;;       :if-new (file+head "%<%Y-%m-%d>.org"
-;;                          "#+title: %<%Y-%m-%d>\n\n")
-;;       :unnarrowed t)
-;;      ("m" "meeting" plain
-;;       "\n* %<%H:%M>\n  Reason: %^{Reason}\n  Participants: %^{Participants}\n  Decisions: %?\n  Improvements:\n"
-;;       :if-new (file+head "%<%Y-%m-%d>.org"
-;;                          "#+title: %<%Y-%m-%d>\n\n")
-;;       :unnarrowed t)
-;;      ("l" "literary entry" plain
-;;       "\n* %<%H:%M>\n  Author: %^{Author}\n  Title: %^{Title}\n  Year: %^{Year}\n  Page Reference:%^{Page Reference}\n\n  %?\n"
-;;       :if-new (file+head "%<%Y-%m-%d>.org"
-;;                          "#+title: %<%Y-%m-%d>\n\n")
-;;       :unnarrowed t)))
-;;   :bind (("C-c z l" . org-roam-buffer-toggle)
-;;          ("C-c z f" . org-roam-node-find)
-;;          ("C-c z i" . org-roam-node-insert)
-;;          ("C-c z r" . org-roam-node-random)
-;;          :map org-mode-map
-;;          (("C-M-i" . completion-at-point)
-;;           ("C-c z t" . org-roam-tag-add)
-;;           ("C-c z a" . org-roam-alias-add)
-;;           ;; Declared after this setup
-;;           ("C-c z I" . org-roam-node-insert-immediate))
-;;          :map org-roam-dailies-map
-;;          ("Y" . org-roam-dailies-capture-yesterday)
-;;          ("T" . org-roam-dailies-capture-tomorrow))
-;;   :bind-keymap
-;;   ("C-c z d" . org-roam-dailies-map)
-;;   :config
-;;   (require 'org-roam-dailies)
-;;   (org-roam-setup))
+  (use-package org-roam
+    :after org
+    :init
+    (setq org-roam-v2-ack t)
+    :custom
+    (org-roam-directory (file-truename "~/org/slip-box"))
+    (org-roam-dailies-directory "journal/")
+    (org-roam-complete-everywhere t)
+    (org-roam-db-autosync-mode)
+    (org-roam-capture-templates
+     '(("d" "default" plain "%?"
+        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                           "#+title: ${title}\n#+date: %<%Y-%m-%d>\n")
+        :unnarrowed t)
+       ("l" "literary notes" plain
+        "\n* Source\n\nAuthor: %^{Author}\nTitle: %^{Title}\nYear: %^{Year}\n\n* Idea: %?"
+        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                           "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: LiteraryNote\n")
+        :unnarrowed t)))
+    (org-roam-dailies-capture-templates
+     '(("d" "default" plain
+        "\n* %<%H:%M>\n  %?\n"
+        :if-new (file+head "%<%Y-%m-%d>.org"
+                           "#+title: %<%Y-%m-%d>\n\n")
+        :unnarrowed t)
+       ("m" "meeting" plain
+        "\n* %<%H:%M>\n  Reason: %^{Reason}\n  Participants: %^{Participants}\n  Decisions: %?\n  Improvements:\n"
+        :if-new (file+head "%<%Y-%m-%d>.org"
+                           "#+title: %<%Y-%m-%d>\n\n")
+        :unnarrowed t)
+       ("l" "literary entry" plain
+        "\n* %<%H:%M>\n  Author: %^{Author}\n  Title: %^{Title}\n  Year: %^{Year}\n  Page Reference:%^{Page Reference}\n\n  %?\n"
+        :if-new (file+head "%<%Y-%m-%d>.org"
+                           "#+title: %<%Y-%m-%d>\n\n")
+        :unnarrowed t)))
+    :bind (("C-c z l" . org-roam-buffer-toggle)
+           ("C-c z f" . org-roam-node-find)
+           ("C-c z i" . org-roam-node-insert)
+           ("C-c z r" . org-roam-node-random)
+           :map org-mode-map
+           (("C-M-i" . completion-at-point)
+            ("C-c z t" . org-roam-tag-add)
+            ("C-c z a" . org-roam-alias-add)
+            ;; Declared after this setup
+            ("C-c z I" . org-roam-node-insert-immediate))
+           :map org-roam-dailies-map
+           ("Y" . org-roam-dailies-capture-yesterday)
+           ("T" . org-roam-dailies-capture-tomorrow))
+    :bind-keymap
+    ("C-c z d" . org-roam-dailies-map)
+    :config
+    (require 'org-roam-dailies)
+    (org-roam-setup))
 #+END_SRC
 
 
 Immediate creation of a node without jumping to it. This is to not break the flow when creating a note.
 #+BEGIN_SRC elisp
-;; (defun org-roam-node-insert-immediate (arg &rest args)
-;;   (interactive "P")
-;;   (let ((args (cons arg args))
-;;         (org-roam-capture-templates (list (append (car org-roam-capture-templates)
-;;                                                   '(:immediate-finish t)))))
-;;     (apply #'org-roam-node-insert args)))
+  (defun org-roam-node-insert-immediate (arg &rest args)
+    (interactive "P")
+    (let ((args (cons arg args))
+          (org-roam-capture-templates (list (append (car org-roam-capture-templates)
+                                                    '(:immediate-finish t)))))
+      (apply #'org-roam-node-insert args)))
 #+END_SRC
 
 *** org-roam-ui
 This allows you to see a graph on the browser of the org roam nodes
 
 #+BEGIN_SRC emacs-lisp
-;; (use-package org-roam-ui)
+  (use-package org-roam-ui)
 #+END_SRC
 
 
