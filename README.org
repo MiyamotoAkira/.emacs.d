@@ -141,17 +141,18 @@ is loaded by init.el
 
 This setups the basic packaging system, with the packages repositories and some additional tooling.
 #+BEGIN_SRC emacs-lisp
-(require 'package)
-(require 'bind-key)
+  (require 'package)
+  (require 'use-package)
+  (require 'bind-key)
 
-(setq package-archives
-      (quote
-       (("gnu" . "https://elpa.gnu.org/packages/")
-        ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-        ("melpa-stable" . "https://stable.melpa.org/packages/")
-        ("melpa" . "https://melpa.org/packages/"))))
+  (setq package-archives
+        (quote
+         (("gnu" . "https://elpa.gnu.org/packages/")
+          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+          ("melpa-stable" . "https://stable.melpa.org/packages/")
+          ("melpa" . "https://melpa.org/packages/"))))
 
-(package-initialize)
+  (package-initialize)
 #+END_SRC
 
 This refreshes the packages unless we have them already
@@ -176,261 +177,6 @@ This refreshes the packages unless we have them already
   :defer nil
   :config (auto-compile-on-load-mode))
 
-#+END_SRC
-
-* OS
-Configuration that depends on the Operative system
-
-We use zsh when possible
-#+BEGIN_SRC emacs-lisp
-    (if (memq window-system '(mac ns))
-        (setenv "SHELL" "/bin/zsh"))
-  #+END_SRC
-
-We check if we are in a nix system. daemonp will only happen in nix system (I think)
-This is to get the path variable read from the shell environment.
-#+BEGIN_SRC emacs-lisp
-  (if (or (memq window-system '(mac ns x))
-          (daemonp))
-      (use-package exec-path-from-shell
-        :defer nil
-        :config
-        (setq exec-path-from-shell-variables '("PATH"
-                                               "ZSH"
-                                               "PYENV_ROOT"
-                                               "VIRTUALENVWRAPPER_PYTHON"
-                                               "PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV"
-                                               "WORKON_HOME"
-                                               "PROJECT_HOME"
-                                               "ANDROID_HOME"
-                                               "JAVA_HOME"
-                                               "SDKMAN_DIR"
-                                               "GOPATH"))
-        (exec-path-from-shell-initialize)))
-  #+END_SRC
-
-* Org Configuration
-This file configures the org mode and associated packages
-
-** Main Org Section
-#+BEGIN_SRC emacs-lisp
-(use-package org
-  :defer 2
-  :config
-  (setq org-startup-truncated nil)
-  (setq org-directory "~/org")
-  (setq org-agenda-files '("~/org/agendas/"))
-  (require 'ox-md nil t)
-  ;; (org-startup-indented t)
-  ;; (org-special-ctrl-a/e t)
-  ;; (org-special-ctrl-k t)
-  )
-#+END_SRC
-
-** Org Utilities
-*** auto tangle
-This allows for a file that we want to tangle (convert into code), to have it done on save. It does require to add
-the `#+auto_tangle: t` at the top of the org file
-#+BEGIN_SRC emacs-lisp
-(use-package org-auto-tangle
-  :defer t
-  :hook (org-mode . org-auto-tangle-mode))
-#+END_SRC
-
-*** org-modern
-This package improves the look of org-mode on Emacs. Be aware that some fonts don't have all the necessary glyphs
-#+BEGIN_SRC emacs-lisp
-(use-package org-modern
-  :ensure t)
-(with-eval-after-load 'org (global-org-modern-mode))
-#+END_SRC
-
-*** visual-fill-column
-Useful for org present
-#+BEGIN_SRC emacs-lisp
-(use-package visual-fill-column
-  :config
-  (setq visual-fill-column-width 110
-        visual-fill-column-center-text t))
-#+END_SRC
-
-*** org babel
-Setting up babel for running code in org mode
-#+BEGIN_SRC emacs-lisp
-(use-package ob-go
-  :ensure t)
-
-(org-babel-do-load-languages
-     'org-babel-load-languages
-     '((emacs-lisp . t)
-       (clojure . t)
-       (shell . t)
-       (plantuml . t)
-       (go . t)))
-
-(setq org-src-preserve-indentation nil
-      org-src-tab-acts-natively t
-      org-edit-src-content-indentation 0
-      org-src-fontify-natively t
-      org-confirm-babel-evaluate nil)
-#+END_SRC
-
-*** toc-org
-Creates automatically a table of contents for you
-#+BEGIN_SRC emacs-lisp
-  (use-package toc-org
-    :defer t
-    :hook (org-mode . toc-org-mode))
-#+END_SRC
-
-*** org-download
-Allows for the download of images into org buffers
-#+BEGIN_SRC emacs-lisp
-(use-package org-download
-  :after org)
-#+END_SRC
-
-*** org-ref
-#+BEGIN_SRC emacs-lisp
-(use-package org-ref
-  :after org)
-#+END_SRC
-
-*** org-present
-This is a presentation tool for org mode
-
-Here is additional setup for when the presentation starts.
-
-We remove things like line numbers, and highlighting of lines
-#+BEGIN_SRC emacs-lisp
-(defun jgg/org-present-start ()
-  (org-present-big)
-  (org-display-inline-images)
-  (display-line-numbers-mode -1)
-  (global-hl-line-mode -1)
-  (org-present-read-only)
-  ;; we center the document
-  (visual-fill-column-mode 1)
-  ;; just in case, wrap
-  (visual-line-mode 1)
-  ;; extra line at the top
-  (setq header-line-format " "))
-#+END_SRC
-
-This is the setup for when the presentation ends. Basically revert what has been done in the setup
-#+BEGIN_SRC emacs-lisp
-(defun jgg/org-present-end ()
-  (org-present-small)
-  (org-remove-inline-images)
-  (display-line-numbers-mode 1)
-  (global-hl-line-mode 1)
-  (org-present-read-write)
-  ;; we stop centering the document
-  (visual-fill-column-mode 0)
-  (visual-line-mode 0)
-  (setq header-line-format nil))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(defun jgg/org-present-slide (buffer-name heading)
-  ;; Show only top-level headlines
-  (org-overview)
-  ;; Unfold the current entry
-  (org-show-entry)
-  ;; Show only direct subheadings of the slide but don't expand them
-  (org-show-children))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-present
-  :after org
-  :hook
-  (org-present-mode . jgg/org-present-start)
-  (org-present-mode-quit . jgg/org-present-end)
-  (org-after-navigate-function . jgg/org-present-slide))
-#+END_SRC
-
-** Org Roam section
-
-First, we acknowledge we are in version 2 of org roam. So it doesn't show a warning
-#+BEGIN_SRC emacs-lisp
-(setq org-roam-v2-ack t)
-#+END_SRC
-
-*** org-roam
-This is the main setup of org roam
-#+BEGIN_SRC emacs-lisp
-(use-package org-roam
-  :after org
-  :init
-  (setq org-roam-v2-ack t)
-  :custom
-  (org-roam-directory (file-truename "~/org/slip-box"))
-  (org-roam-dailies-directory "journal/")
-  (org-roam-complete-everywhere t)
-  (org-roam-db-autosync-mode)
-  (org-roam-capture-templates
-   '(("d" "default" plain "%?"
-      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                         "#+title: ${title}\n#+date: %<%Y-%m-%d>\n")
-      :unnarrowed t)
-     ("l" "literary notes" plain
-      "\n* Source\n\nAuthor: %^{Author}\nTitle: %^{Title}\nYear: %^{Year}\n\n* Idea: %?"
-      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                         "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: LiteraryNote\n")
-      :unnarrowed t)))
-  (org-roam-dailies-capture-templates
-   '(("d" "default" plain
-      "\n* %<%H:%M>\n  %?\n"
-      :if-new (file+head "%<%Y-%m-%d>.org"
-                         "#+title: %<%Y-%m-%d>\n\n")
-      :unnarrowed t)
-     ("m" "meeting" plain
-      "\n* %<%H:%M>\n  Reason: %^{Reason}\n  Participants: %^{Participants}\n  Decisions: %?\n  Improvements:\n"
-      :if-new (file+head "%<%Y-%m-%d>.org"
-                         "#+title: %<%Y-%m-%d>\n\n")
-      :unnarrowed t)
-     ("l" "literary entry" plain
-      "\n* %<%H:%M>\n  Author: %^{Author}\n  Title: %^{Title}\n  Year: %^{Year}\n  Page Reference:%^{Page Reference}\n\n  %?\n"
-      :if-new (file+head "%<%Y-%m-%d>.org"
-                         "#+title: %<%Y-%m-%d>\n\n")
-      :unnarrowed t)))
-  :bind (("C-c z l" . org-roam-buffer-toggle)
-         ("C-c z f" . org-roam-node-find)
-         ("C-c z i" . org-roam-node-insert)
-         ("C-c z r" . org-roam-node-random)
-         :map org-mode-map
-         (("C-M-i" . completion-at-point)
-          ("C-c z t" . org-roam-tag-add)
-          ("C-c z a" . org-roam-alias-add)
-          ;; Declared after this setup
-          ("C-c z I" . org-roam-node-insert-immediate))
-         :map org-roam-dailies-map
-         ("Y" . org-roam-dailies-capture-yesterday)
-         ("T" . org-roam-dailies-capture-tomorrow))
-  :bind-keymap
-  ("C-c z d" . org-roam-dailies-map)
-  :config
-  (require 'org-roam-dailies)
-  (org-roam-setup))
-#+END_SRC
-
-
-Immediate creation of a node without jumping to it. This is to not break the flow when creating a note.
-#+BEGIN_SRC elisp
-(defun org-roam-node-insert-immediate (arg &rest args)
-  (interactive "P")
-  (let ((args (cons arg args))
-        (org-roam-capture-templates (list (append (car org-roam-capture-templates)
-                                                  '(:immediate-finish t)))))
-    (apply #'org-roam-node-insert args)))
-#+END_SRC
-
-*** org-roam-ui
-This allows you to see a graph on the browser of the org roam nodes
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-roam-ui)
 #+END_SRC
 
 * Look and Feel
@@ -485,40 +231,6 @@ Let's get it out for now
 
 #+END_SRC
 
-Solaire makes clear which buffers are not related to a file
-#+BEGIN_SRC emacs-lisp
-(use-package solaire-mode
-  :ensure t
-  :hook (after-init . solaire-global-mode))
-#+END_SRC
-
-This package dims non-current buffers
-REVIEW is there a mismatch with solaire?
-#+BEGIN_SRC emacs-lisp
-(use-package dimmer
-  :defer 2
-  :config
-  (dimmer-configure-which-key)
-  (dimmer-mode t))
-#+END_SRC
-
-*** Highlight TODO
-Highlight certain words in documents and colorize them   
-#+begin_src emacs-lisp
-(use-package hl-todo
-  :hook ((org-mode . hl-todo-mode)
-         (prog-mode . hl-todo-mode))
-  :config
-  (setq hl-todo-highlight-punctuation ":"
-        hl-todo-keyword-faces
-        `(("TODO"       warning bold)
-          ("FIXME"      error bold)
-          ("HACK"       font-lock-constant-face bold)
-          ("REVIEW"     font-lock-keyword-face bold)
-          ("NOTE"       success bold)
-          ("DEPRECATED" font-lock-doc-face bold))))
-#+end_src
-
 *** Highlight Lines
 highlight current line
 #+BEGIN_SRC emacs-lisp
@@ -526,7 +238,7 @@ highlight current line
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package beacon)
+;; (use-package beacon)
 #+END_SRC
 
 *** Line numbers
@@ -594,13 +306,6 @@ Now selecting a region behaves as in most applications you overwrite the region
 (delete-selection-mode 1)
 #+END_SRC
 
-*** diminish
-This package allows to remove modes from the modeline. Needs to be added as a keyword on use-package setup for a mode.
-#+BEGIN_SRC emacs-lisp
-(use-package diminish
-  :defer nil)
-#+END_SRC
-
 *** Prettify symbols
 We use the lambda character λ as a ligature.
 #+BEGIN_SRC emacs-lisp
@@ -628,455 +333,8 @@ The end of a sentence is a single space. The double space is an old convention
 (setq sentence-end-double-space nil)
 #+END_SRC
 
-*** spaceline
-This is the info line at the bottom of a buffer. 
-#+BEGIN_SRC emacs-lisp
-(use-package spaceline
-  :defer nil
-  :config
-  (spaceline-emacs-theme))
-#+END_SRC
 
-*** flx
-Fuzzy search
-TODO is it useful now with ivy at all?
-#+BEGIN_SRC emacs-lisp
-(use-package flx
-  :defer 2)
-#+END_SRC
-*** which-key
-This will show options for a prefix chord in the minibuffer
-#+BEGIN_SRC emacs-lisp
-(use-package which-key
-  :defer nil
-  :diminish
-  :config
-  (which-key-mode))
-#+END_SRC
-
-*** which-key posframe
-This allows which-key to use posframe
-#+BEGIN_SRC emacs-lisp
-(use-package which-key-posframe
-  :defer nil
-  :config
-  (which-key-posframe-mode))
-#+END_SRC
-*** smooth-scrolling
-Line by line, instead of half-screen at a time.
-#+BEGIN_SRC emacs-lisp
-(use-package smooth-scrolling
-  :defer 2
-  :config
-  (smooth-scrolling-mode 1)
-  (setq smooth-scroll-margin 5))
-#+END_SRC
-
-*** disable-mouse
-Maybe one day we change this. It disables the mouse in emacs. Useful to force the use of the keyboard
-#+BEGIN_SRC emacs-lisp
-;; (use-package disable-mouse
-;;   :defer 2
-;;   :diminish disable-mouse-global-mode
-;;   :config
-;;   (global-disable-mouse-mode))
-#+END_SRC
-
-*** Splitting of buffers
-Favour vertical split over horizontal split
-#+BEGIN_SRC emacs-lisp
-(setq split-height-threshold nil)
-(setq split-width-threshold 120)
-
-(defun shell-horizontal ()
-  "This function is to display the shell on a horizontal split, whcih is usually more adequate."
-  (interactive)
-  (let ((split-width-threshold nil)
-        (split-height-threshold 0))
-    (progn
-      (shell)
-      (setq current (selected-window))
-      (setq window (get-buffer-window "*shell*"))
-      (select-window window)
-      (setq height (window-height window))
-      (shrink-window (- height 10))
-      (select-window current))))
-#+END_SRC
-
-*** Yes or No
-All questions are y or n, for consistency
-#+BEGIN_SRC emacs-lisp
-(fset 'yes-or-no-p 'y-or-n-p)
-#+END_SRC
-
-*** page-break-lines
-This converts form feed (^L) into horizontal lines 
-#+BEGIN_SRC emacs-lisp
-(use-package page-break-lines
-  :defer nil)
-#+END_SRC
-
-*** Dashboard
-This dashboard appears whenever we open emacs.
-#+BEGIN_SRC emacs-lisp
-(use-package dashboard
-  :ensure t
-  :defer nil
-  :hook
-  ((dashboard-mode . page-break-lines-mode))
-  :config
-  (dashboard-setup-startup-hook)
-  (setq dashboard-banner-logo-title "May the Force be with you")
-  (setq dashboard-startup-banner 'logo)
-  (setq dashboard-center-content t)
-  (setq dashboard-icon-type 'all-the-icons)
-  (setq dashboard-projects-backend 'projectile)
-  (setq dashboard-projects-switch-function 'projectile-persp-switch-project)
-  (setq dashboard-items '((recents . 5)
-                          (bookmarks . 5)
-                          (projects . 5)
-                          (agenda . 5))))
-#+END_SRC
-
-* Tools
-
-** LLM Section
-*** gptel
-#+BEGIN_SRC emacs-lisp
-(use-package gptel
-  :ensure t)
-#+END_SRC
-
-*** aidermacs
-#+BEGIN_SRC emacs-lisp
-(use-package aidermacs
-  :bind (("C-c d" . aidermacs-transient-menu))
-  :custom
-  ; See the Configuration section below
-  (aidermacs-use-architect-mode t)
-  (aidermacs-default-model "sonnet"))
-  #+END_SRC
-
-** General
-*** emacsql
-Library to use sqlite from emacs
-#+BEGIN_SRC emacs-lisp
-(use-package emacsql
-  :pin melpa-stable
-  )
-#+END_SRC
-
-*** pgmacs
-Libraries to have visual editing of postgresql
-
-#+BEGIN_SRC emacs-lisp
-(use-package pg :vc (:url "https://github.com/emarsden/pg-el/"))
-(use-package pgmacs :vc (:url "https://github.com/emarsden/pgmacs/"))
-#+END_SRC
-
-*** async
-Allows for the use of async code within emacs
-#+BEGIN_SRC emacs-lisp
-(use-package async)
-#+END_SRC
-
-*** Trash files
-We want to limit the amount and location of files created by emacs.
-#+BEGIN_SRC emacs-lisp
-(setq no-littering-etc-directory
-      (expand-file-name "config/" user-emacs-directory))
-(setq no-littering-var-directory
-      (expand-file-name "data/" user-emacs-directory))
-
-(use-package no-littering
-  :defer nil
-  :config
-  (setq auto-save-file-name-transforms
-        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
-#+END_SRC
-
-*** saveplace
-Automatically save the last place we were on files when closing 
-#+BEGIN_SRC emacs-lisp
-(use-package saveplace
-  :defer nil
-  :config
-  (save-place-mode))
-#+END_SRC
-
-*** monky
-Like magit but for Mercurial
-#+BEGIN_SRC emacs-lisp
-(use-package monky
-  :bind (("C-x M-g" . monky-status)))
-
-(defun nothing())
-#+END_SRC
-
-*** ag
-Using ag, the silver searcher, from inside emacs
-#+BEGIN_SRC emacs-lisp
-(use-package ag
-  :bind (("C-c a a" . ag)
-         ("C-c a f" . ag-files)
-         ("C-c a d" . ag-dired)
-         ("C-c a r" . ag-regex)
-         ("C-c a p" . ag-project))
-  :config
-  (setq ag-reuse-buffers 't)
-  (setq ag-highlight-search 't))
-#+END_SRC
-
-*** magit
-Porcelain for git
-#+BEGIN_SRC emacs-lisp
-(use-package magit
-  :bind (("C-x g" . magit-status)))
-#+END_SRC
-
-*** Project handling
-Projectile handles project, perspective handles set of buffers. Together make it so you
-can have separate set of buffers for each project. And each project can work independently of each other
-#+BEGIN_SRC emacs-lisp
-(use-package projectile
-  :diminish
-  :bind-keymap (("C-c p" . projectile-command-map))
-  :config
-  (projectile-mode +1)
-  (setq projectile-project-search-path '("~/code/"
-                                         "~/code/personal/"
-                                         "~/code/twoormore"
-                                         "~/code/externals/")))
-
-(use-package perspective
-  :bind (("C-c M-p x" . persp-switch-last)
-         ("C-x b" . persp-switch-to-buffer*)
-         ("C-x k" . persp-kill-buffer*))
-  :init (persp-mode)
-  :custom
-  (persp-mode-prefix-key (kbd "C-c M-p")))
-
-(use-package persp-projectile
-  :bind ("C-c M-p P" . projectile-persp-switch-project))
-#+END_SRC
-
-
-*** dired-sidebar
-Directory tree browsing that uses dired
-#+BEGIN_SRC emacs-lisp
-;; (use-package dired-sidebar
-;;   :commands (dired-sidebar-toggle-sidebar)
-;;   :bind (([f8] . dired-sidebar-toggle-sidebar)))
-#+END_SRC
-
-*** treemacs
-
-#+BEGIN_SRC emacs-lisp
-(use-package treemacs
-  :ensure t
-  :bind
-  (:map global-map
-        ([f8]       . treemacs-select-window)
-        ("C-x t 1"   . treemacs-delete-other-windows)
-        ("C-x t t"   . treemacs)
-        ("C-x t d"   . treemacs-select-directory)
-        ("C-x t B"   . treemacs-bookmark)
-        ("C-x t C-t" . treemacs-find-file)
-        ("C-x t M-t" . treemacs-find-tag)))
-#+END_SRC
-
-*** treemacs-projectile
-
-#+BEGIN_SRC emacs-lisp
-(use-package treemacs-projectile
-  :after (treemacs projectile)
-  :ensure t)
-#+END_SRC
-
-*** treemacs-icons-dired
-#+BEGIN_SRC emacs-lisp
-(use-package treemacs-icons-dired
-  :hook (dired-mode . treemacs-icons-dired-enable-once)
-  :ensure t)
-#+END_SRC
-
-*** treemacs-magit
-#+BEGIN_SRC emacs-lisp
-(use-package treemacs-magit
-  :after (treemacs magit)
-  :ensure t)
-#+END_SRC
-
-*** treemacs-perspective
-#+BEGIN_SRC emacs-lisp
-(use-package treemacs-perspective
-  :after (treemacs perspective)
-  :ensure t
-  :config (treemacs-set-scope-type 'Perspectives))
-#+END_SRC
-
-*** html
-Adding some keybindings for the hmtl mode map
-#+BEGIN_SRC emacs-lisp
-(add-hook 'mhtml-mode-hook (lambda ()
-                             (define-key html-mode-map (kbd "M-o") nil)
-                             (define-key html-mode-map (kbd "C-c C-p") 'facemenu-keymap)
-                             (define-key html-mode-map (kbd "M-o") 'ace-window)))
-#+END_SRC
-
-*** ace-window
-quickly move between windows using M-o number
-#+BEGIN_SRC emacs-lisp
-(use-package ace-window
-  :bind (("M-o" . ace-window)))
-#+END_SRC
-
-*** all-the-icons
-Lots of icons to work with emacs
-#+BEGIN_SRC emacs-lisp
-(use-package all-the-icons
-  :defer 2)
-
-(use-package all-the-icons-dired
-  :after (dired-sidebar all-the-icons)
-  :hook
-  (dired-mode-hook . all-the-icons-dired-mode))
-
-;; (use-package all-the-icons-ivy
-;;   :hook (after-init-hook  . all-the-icons-ivy-setup))
-
-(use-package spaceline-all-the-icons 
-  :after spaceline
-  :config (spaceline-all-the-icons-theme))
-#+END_SRC
-
-*** shut-up
-Reduces the amount of messages being throw my emacs and some packages
-#+BEGIN_SRC emacs-lisp
-(use-package shut-up
-  :defer 2)
-#+END_SRC
-
-*** undo-tree
-#+BEGIN_SRC emacs-lisp
-(use-package undo-tree
-  :defer 2)
-#+END_SRC
-
-*** goto-chg
-#+BEGIN_SRC emacs-lisp
-(use-package goto-chg
-  :defer 2)
-#+END_SRC
-
-*** multiple-cursors
-#+BEGIN_SRC emacs-lisp
-(use-package multiple-cursors
-  :defer 2)
-#+END_SRC
-
-*** Nov
-This package allows to read epub files from inside Emacs
-#+BEGIN_SRC emacs-lisp
-(use-package nov
-  :mode ("\\.epub\\'" . nov-mode)
-  :config
-  (setq nov-text-width 80))
-#+END_SRC
-
-*** Vertico
-Vertico shows the completion in vertical mode, rather than grid format
-It also updates the buffer with the possible completions as you type
-
-Is currently pinned to melpa stable, as there was some issues with the 20241105 version
-#+BEGIN_SRC emacs-lisp
-(use-package vertico
-  :defer nil
-  :pin melpa-stable
-  :config
-  (setq vertico-cycle t)
-  (setq vertico-resize nil)
-  (vertico-mode 1))
-#+END_SRC
-
-*** Vertico PosFrame
-Having vertico use posframe. Instead of the minibuffer it uses posframe to show
-the completions where you are located
-#+BEGIN_SRC emacs-lisp
-(use-package vertico-posframe
-  :defer nil
-  :config
-  (vertico-posframe-mode 1))
-#+END_SRC
-
-*** Save history
-This saves history of the minibuffer. Vertico uses it to put recently selected options at the top
-#+BEGIN_SRC emacs-lisp
-(savehist-mode 1)
-#+END_SRC
-
-*** Marginalia
-This package adds annotations to completion candidates in the minibuffer. The information
-show is dependant on the candidate
-#+BEGIN_SRC emacs-lisp
-(use-package marginalia
-  :defer nil
-  :config
-  (marginalia-mode 1))
-#+END_SRC
-
-*** Orderless
-This package adds an out-of-order algorithm for searching for completion candidates.
-#+BEGIN_SRC emacs-lisp
-(use-package orderless
-  :defer nil
-  :config
-  (setq completion-styles '(orderless basic)))
-#+END_SRC
-
-*** Consult
-It provides enhanced versions of some commands. It has a preview facility
-#+BEGIN_SRC emacs-lisp
-(use-package consult
-  :defer nil
-  :bind (;; A recursive grep
-         ("M-s M-g" . consult-grep)
-         ;; Search for files names recursively
-         ("M-s M-f" . consult-find)
-         ;; Search through the outline (headings) of the file
-         ("M-s M-o" . consult-outline)
-         ;; Search the current buffer
-         ("M-s M-l" . consult-line)
-         ;; Switch to another buffer, or bookmarked file, or recently
-         ;; opened file.
-         ("M-s M-b" . consult-buffer)))
-#+END_SRC
-
-*** Consult ag
-Putting together consult and ag
-#+BEGIN_SRC emacs-lisp
-(use-package consult-ag
-    :defer nil)
-#+END_SRC
-
-*** Embark
-Equivalent to a right-click contextual menu.
-#+BEGIN_SRC emacs-lisp
-(use-package embark
-  :defer nil
-  :bind (("C-." . embark-act)
-         :map minibuffer-local-map
-         ("C-c C-c" . embark-collect)
-         ("C-c C-e" . embark-export)))
-#+END_SRC
-
-*** Embark consult
-Ties together embark and consult
-#+BEGIN_SRC emacs-lisp
-(use-package embark-consult
-  :defer nil)
-#+END_SRC
-
+* Configuration
 *** Insert lines
 This 
 #+BEGIN_SRC emacs-lisp
@@ -1138,36 +396,791 @@ And even if the files are in version control
 (setq vc-make-backup-files t)
 #+END_SRC
 
+*** Replace
+Keybindings for this set of often used calls.
+Remember that projectile has "C-c p r" for replace in the project
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-c M-r s") 'replace-string)
+(global-set-key (kbd "C-c M-r r") 'replace-regexp)
+#+END_SRC
+
+* OS
+Configuration that depends on the Operative system
+
+We use zsh when possible
+#+BEGIN_SRC emacs-lisp
+;; (if (memq window-system '(mac ns))
+    ;; (setenv "SHELL" "/bin/zsh"))        
+  #+END_SRC
+
+We check if we are in a nix system. daemonp will only happen in nix system (I think)
+This is to get the path variable read from the shell environment.
+#+BEGIN_SRC emacs-lisp
+;; (if (or (memq window-system '(mac ns x))
+;;         (daemonp))
+;;     (use-package exec-path-from-shell
+;;       :defer nil
+;;       :config
+;;       (setq exec-path-from-shell-variables '("PATH"
+;;                                              "ZSH"
+;;                                              "PYENV_ROOT"
+;;                                              "VIRTUALENVWRAPPER_PYTHON"
+;;                                              "PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV"
+;;                                              "WORKON_HOME"
+;;                                              "PROJECT_HOME"
+;;                                              "ANDROID_HOME"
+;;                                              "JAVA_HOME"
+;;                                              "SDKMAN_DIR"
+;;                                              "GOPATH"))
+;;       (exec-path-from-shell-initialize)))
+  #+END_SRC
+
+* Org Configuration
+This file configures the org mode and associated packages
+
+** Main Org Section
+#+BEGIN_SRC emacs-lisp
+;; (use-package org
+;;   :defer 2
+;;   :config
+;;   (setq org-startup-truncated nil)
+;;   (setq org-directory "~/org")
+;;   (setq org-agenda-files '("~/org/agendas/"))
+;;   (require 'ox-md nil t)
+;;   ;; (org-startup-indented t)
+;;   ;; (org-special-ctrl-a/e t)
+;;   ;; (org-special-ctrl-k t)
+;;   )
+#+END_SRC
+
+** Org Utilities
+*** auto tangle
+This allows for a file that we want to tangle (convert into code), to have it done on save. It does require to add
+the `#+auto_tangle: t` at the top of the org file
+#+BEGIN_SRC emacs-lisp
+;; (use-package org-auto-tangle
+;;   :defer t
+;;   :hook (org-mode . org-auto-tangle-mode))
+#+END_SRC
+
+*** org-modern
+This package improves the look of org-mode on Emacs. Be aware that some fonts don't have all the necessary glyphs
+#+BEGIN_SRC emacs-lisp
+;; (use-package org-modern
+;;   :ensure t)
+;; (with-eval-after-load 'org (global-org-modern-mode))
+#+END_SRC
+
+*** visual-fill-column
+Useful for org present
+#+BEGIN_SRC emacs-lisp
+;; (use-package visual-fill-column
+;;   :config
+;;   (setq visual-fill-column-width 110
+;;         visual-fill-column-center-text t))
+#+END_SRC
+
+*** org babel
+Setting up babel for running code in org mode
+#+BEGIN_SRC emacs-lisp
+;; (use-package ob-go
+;;   :ensure t)
+
+;; (org-babel-do-load-languages
+;;      'org-babel-load-languages
+;;      '((emacs-lisp . t)
+;;        (clojure . t)
+;;        (shell . t)
+;;        (plantuml . t)
+;;        (go . t)))
+
+;; (setq org-src-preserve-indentation nil
+;;       org-src-tab-acts-natively t
+;;       org-edit-src-content-indentation 0
+;;       org-src-fontify-natively t
+;;       org-confirm-babel-evaluate nil)
+#+END_SRC
+
+*** toc-org
+Creates automatically a table of contents for you
+#+BEGIN_SRC emacs-lisp
+;; (use-package toc-org
+;;   :defer t
+;;   :hook (org-mode . toc-org-mode))        
+#+END_SRC
+
+*** org-download
+Allows for the download of images into org buffers
+#+BEGIN_SRC emacs-lisp
+;; (use-package org-download
+;;   :after org)
+#+END_SRC
+
+*** org-ref
+#+BEGIN_SRC emacs-lisp
+;; (use-package org-ref
+;;   :after org)
+#+END_SRC
+
+*** org-present
+This is a presentation tool for org mode
+
+Here is additional setup for when the presentation starts.
+
+We remove things like line numbers, and highlighting of lines
+#+BEGIN_SRC emacs-lisp
+;; (defun jgg/org-present-start ()
+;;   (org-present-big)
+;;   (org-display-inline-images)
+;;   (display-line-numbers-mode -1)
+;;   (global-hl-line-mode -1)
+;;   (org-present-read-only)
+;;   ;; we center the document
+;;   (visual-fill-column-mode 1)
+;;   ;; just in case, wrap
+;;   (visual-line-mode 1)
+;;   ;; extra line at the top
+;;   (setq header-line-format " "))
+#+END_SRC
+
+This is the setup for when the presentation ends. Basically revert what has been done in the setup
+#+BEGIN_SRC emacs-lisp
+;; (defun jgg/org-present-end ()
+;;   (org-present-small)
+;;   (org-remove-inline-images)
+;;   (display-line-numbers-mode 1)
+;;   (global-hl-line-mode 1)
+;;   (org-present-read-write)
+;;   ;; we stop centering the document
+;;   (visual-fill-column-mode 0)
+;;   (visual-line-mode 0)
+;;   (setq header-line-format nil))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+;; (defun jgg/org-present-slide (buffer-name heading)
+;;   ;; Show only top-level headlines
+;;   (org-overview)
+;;   ;; Unfold the current entry
+;;   (org-show-entry)
+;;   ;; Show only direct subheadings of the slide but don't expand them
+;;   (org-show-children))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+;; (use-package org-present
+;;   :after org
+;;   :hook
+;;   (org-present-mode . jgg/org-present-start)
+;;   (org-present-mode-quit . jgg/org-present-end)
+;;   (org-after-navigate-function . jgg/org-present-slide))
+#+END_SRC
+
+** Org Roam section
+
+First, we acknowledge we are in version 2 of org roam. So it doesn't show a warning
+#+BEGIN_SRC emacs-lisp
+;; (setq org-roam-v2-ack t)
+#+END_SRC
+
+*** org-roam
+This is the main setup of org roam
+#+BEGIN_SRC emacs-lisp
+;; (use-package org-roam
+;;   :after org
+;;   :init
+;;   (setq org-roam-v2-ack t)
+;;   :custom
+;;   (org-roam-directory (file-truename "~/org/slip-box"))
+;;   (org-roam-dailies-directory "journal/")
+;;   (org-roam-complete-everywhere t)
+;;   (org-roam-db-autosync-mode)
+;;   (org-roam-capture-templates
+;;    '(("d" "default" plain "%?"
+;;       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+;;                          "#+title: ${title}\n#+date: %<%Y-%m-%d>\n")
+;;       :unnarrowed t)
+;;      ("l" "literary notes" plain
+;;       "\n* Source\n\nAuthor: %^{Author}\nTitle: %^{Title}\nYear: %^{Year}\n\n* Idea: %?"
+;;       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+;;                          "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: LiteraryNote\n")
+;;       :unnarrowed t)))
+;;   (org-roam-dailies-capture-templates
+;;    '(("d" "default" plain
+;;       "\n* %<%H:%M>\n  %?\n"
+;;       :if-new (file+head "%<%Y-%m-%d>.org"
+;;                          "#+title: %<%Y-%m-%d>\n\n")
+;;       :unnarrowed t)
+;;      ("m" "meeting" plain
+;;       "\n* %<%H:%M>\n  Reason: %^{Reason}\n  Participants: %^{Participants}\n  Decisions: %?\n  Improvements:\n"
+;;       :if-new (file+head "%<%Y-%m-%d>.org"
+;;                          "#+title: %<%Y-%m-%d>\n\n")
+;;       :unnarrowed t)
+;;      ("l" "literary entry" plain
+;;       "\n* %<%H:%M>\n  Author: %^{Author}\n  Title: %^{Title}\n  Year: %^{Year}\n  Page Reference:%^{Page Reference}\n\n  %?\n"
+;;       :if-new (file+head "%<%Y-%m-%d>.org"
+;;                          "#+title: %<%Y-%m-%d>\n\n")
+;;       :unnarrowed t)))
+;;   :bind (("C-c z l" . org-roam-buffer-toggle)
+;;          ("C-c z f" . org-roam-node-find)
+;;          ("C-c z i" . org-roam-node-insert)
+;;          ("C-c z r" . org-roam-node-random)
+;;          :map org-mode-map
+;;          (("C-M-i" . completion-at-point)
+;;           ("C-c z t" . org-roam-tag-add)
+;;           ("C-c z a" . org-roam-alias-add)
+;;           ;; Declared after this setup
+;;           ("C-c z I" . org-roam-node-insert-immediate))
+;;          :map org-roam-dailies-map
+;;          ("Y" . org-roam-dailies-capture-yesterday)
+;;          ("T" . org-roam-dailies-capture-tomorrow))
+;;   :bind-keymap
+;;   ("C-c z d" . org-roam-dailies-map)
+;;   :config
+;;   (require 'org-roam-dailies)
+;;   (org-roam-setup))
+#+END_SRC
+
+
+Immediate creation of a node without jumping to it. This is to not break the flow when creating a note.
+#+BEGIN_SRC elisp
+;; (defun org-roam-node-insert-immediate (arg &rest args)
+;;   (interactive "P")
+;;   (let ((args (cons arg args))
+;;         (org-roam-capture-templates (list (append (car org-roam-capture-templates)
+;;                                                   '(:immediate-finish t)))))
+;;     (apply #'org-roam-node-insert args)))
+#+END_SRC
+
+*** org-roam-ui
+This allows you to see a graph on the browser of the org roam nodes
+
+#+BEGIN_SRC emacs-lisp
+;; (use-package org-roam-ui)
+#+END_SRC
+
+
+Solaire makes clear which buffers are not related to a file
+#+BEGIN_SRC emacs-lisp
+;; (use-package solaire-mode
+;;   :ensure t
+;;   :hook (after-init . solaire-global-mode))
+#+END_SRC
+
+This package dims non-current buffers
+REVIEW is there a mismatch with solaire?
+#+BEGIN_SRC emacs-lisp
+;; (use-package dimmer
+;;   :defer 2
+;;   :config
+;;   (dimmer-configure-which-key)
+;;   (dimmer-mode t))
+#+END_SRC
+
+*** Highlight TODO
+Highlight certain words in documents and colorize them   
+#+begin_src emacs-lisp
+;; (use-package hl-todo
+;;   :hook ((org-mode . hl-todo-mode)
+;;          (prog-mode . hl-todo-mode))
+;;   :config
+;;   (setq hl-todo-highlight-punctuation ":"
+;;         hl-todo-keyword-faces
+;;         `(("TODO"       warning bold)
+;;           ("FIXME"      error bold)
+;;           ("HACK"       font-lock-constant-face bold)
+;;           ("REVIEW"     font-lock-keyword-face bold)
+;;           ("NOTE"       success bold)
+;;           ("DEPRECATED" font-lock-doc-face bold))))
+#+end_src
+
+
+*** diminish
+This package allows to remove modes from the modeline. Needs to be added as a keyword on use-package setup for a mode.
+#+BEGIN_SRC emacs-lisp
+;; (use-package diminish
+;;   :defer nil)
+#+END_SRC
+
+*** spaceline
+This is the info line at the bottom of a buffer. 
+#+BEGIN_SRC emacs-lisp
+;; (use-package spaceline
+;;   :defer nil
+;;   :config
+;;   (spaceline-emacs-theme))
+#+END_SRC
+
+*** flx
+Fuzzy search
+TODO is it useful now with ivy at all?
+#+BEGIN_SRC emacs-lisp
+;; (use-package flx
+;;   :defer 2)
+#+END_SRC
+*** which-key
+This will show options for a prefix chord in the minibuffer
+#+BEGIN_SRC emacs-lisp
+;; (use-package which-key
+;;   :defer nil
+;;   :diminish
+;;   :config
+;;   (which-key-mode))
+#+END_SRC
+
+*** which-key posframe
+This allows which-key to use posframe
+#+BEGIN_SRC emacs-lisp
+;; (use-package which-key-posframe
+;;   :defer nil
+;;   :config
+;;   (which-key-posframe-mode))
+#+END_SRC
+*** smooth-scrolling
+Line by line, instead of half-screen at a time.
+#+BEGIN_SRC emacs-lisp
+;; (use-package smooth-scrolling
+;;   :defer 2
+;;   :config
+;;   (smooth-scrolling-mode 1)
+;;   (setq smooth-scroll-margin 5))
+#+END_SRC
+
+*** disable-mouse
+Maybe one day we change this. It disables the mouse in emacs. Useful to force the use of the keyboard
+#+BEGIN_SRC emacs-lisp
+;; (use-package disable-mouse
+;;   :defer 2
+;;   :diminish disable-mouse-global-mode
+;;   :config
+;;   (global-disable-mouse-mode))
+#+END_SRC
+
+*** Splitting of buffers
+Favour vertical split over horizontal split
+#+BEGIN_SRC emacs-lisp
+(setq split-height-threshold nil)
+(setq split-width-threshold 120)
+
+(defun shell-horizontal ()
+  "This function is to display the shell on a horizontal split, whcih is usually more adequate."
+  (interactive)
+  (let ((split-width-threshold nil)
+        (split-height-threshold 0))
+    (progn
+      (shell)
+      (setq current (selected-window))
+      (setq window (get-buffer-window "*shell*"))
+      (select-window window)
+      (setq height (window-height window))
+      (shrink-window (- height 10))
+      (select-window current))))
+#+END_SRC
+
+*** Yes or No
+All questions are y or n, for consistency
+#+BEGIN_SRC emacs-lisp
+(fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+*** page-break-lines
+This converts form feed (^L) into horizontal lines 
+#+BEGIN_SRC emacs-lisp
+;; (use-package page-break-lines
+;;   :defer nil)
+#+END_SRC
+
+*** Dashboard
+This dashboard appears whenever we open emacs.
+#+BEGIN_SRC emacs-lisp
+;; (use-package dashboard
+;;   :ensure t
+;;   :defer nil
+;;   :hook
+;;   ((dashboard-mode . page-break-lines-mode))
+;;   :config
+;;   (dashboard-setup-startup-hook)
+;;   (setq dashboard-banner-logo-title "May the Force be with you")
+;;   (setq dashboard-startup-banner 'logo)
+;;   (setq dashboard-center-content t)
+;;   (setq dashboard-icon-type 'all-the-icons)
+;;   (setq dashboard-projects-backend 'projectile)
+;;   (setq dashboard-projects-switch-function 'projectile-persp-switch-project)
+;;   (setq dashboard-items '((recents . 5)
+;;                           (bookmarks . 5)
+;;                           (projects . 5)
+;;                           (agenda . 5))))
+#+END_SRC
+
+* Tools
+
+** LLM Section
+*** gptel
+#+BEGIN_SRC emacs-lisp
+;; (use-package gptel
+;;   :ensure t)
+#+END_SRC
+
+*** aidermacs
+#+BEGIN_SRC emacs-lisp
+;; (use-package aidermacs
+;;   :bind (("C-c d" . aidermacs-transient-menu))
+;;   :custom
+;;   ; See the Configuration section below
+;;   (aidermacs-use-architect-mode t)
+;;   (aidermacs-default-model "sonnet"))
+  #+END_SRC
+
+** General
+*** emacsql
+Library to use sqlite from emacs
+#+BEGIN_SRC emacs-lisp
+;; (use-package emacsql
+;;   :pin melpa-stable
+;;   )
+#+END_SRC
+
+*** pgmacs
+Libraries to have visual editing of postgresql
+
+#+BEGIN_SRC emacs-lisp
+;; (use-package pg :vc (:url "https://github.com/emarsden/pg-el/"))
+;; (use-package pgmacs :vc (:url "https://github.com/emarsden/pgmacs/"))
+#+END_SRC
+
+*** async
+Allows for the use of async code within emacs
+#+BEGIN_SRC emacs-lisp
+;; (use-package async)
+#+END_SRC
+
+*** Trash files
+We want to limit the amount and location of files created by emacs.
+#+BEGIN_SRC emacs-lisp
+;; (setq no-littering-etc-directory
+;;       (expand-file-name "config/" user-emacs-directory))
+;; (setq no-littering-var-directory
+;;       (expand-file-name "data/" user-emacs-directory))
+
+;; (use-package no-littering
+;;   :defer nil
+;;   :config
+;;   (setq auto-save-file-name-transforms
+;;         `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
+#+END_SRC
+
+*** saveplace
+Automatically save the last place we were on files when closing 
+#+BEGIN_SRC emacs-lisp
+;; (use-package saveplace
+;;   :defer nil
+;;   :config
+;;   (save-place-mode))
+#+END_SRC
+
+*** monky
+Like magit but for Mercurial
+#+BEGIN_SRC emacs-lisp
+;; (use-package monky
+;;   :bind (("C-x M-g" . monky-status)))
+
+;; (defun nothing())
+#+END_SRC
+
+*** ag
+Using ag, the silver searcher, from inside emacs
+#+BEGIN_SRC emacs-lisp
+;; (use-package ag
+;;   :bind (("C-c a a" . ag)
+;;          ("C-c a f" . ag-files)
+;;          ("C-c a d" . ag-dired)
+;;          ("C-c a r" . ag-regex)
+;;          ("C-c a p" . ag-project))
+;;   :config
+;;   (setq ag-reuse-buffers 't)
+;;   (setq ag-highlight-search 't))
+#+END_SRC
+
+*** magit
+Porcelain for git
+#+BEGIN_SRC emacs-lisp
+(use-package magit
+  :bind (("C-x g" . magit-status)))
+#+END_SRC
+
+*** Project handling
+Projectile handles project, perspective handles set of buffers. Together make it so you
+can have separate set of buffers for each project. And each project can work independently of each other
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :diminish
+  :bind-keymap (("C-c p" . projectile-command-map))
+  :config
+  (projectile-mode +1)
+  (setq projectile-project-search-path '("~/code/"
+                                         "~/code/personal/"
+                                         "~/code/twoormore"
+                                         "~/code/externals/")))
+
+(use-package perspective
+  :bind (("C-c M-p x" . persp-switch-last)
+         ("C-x b" . persp-switch-to-buffer*)
+         ("C-x k" . persp-kill-buffer*))
+  :init (persp-mode)
+  :custom
+  (persp-mode-prefix-key (kbd "C-c M-p")))
+
+(use-package persp-projectile
+  :bind ("C-c M-p P" . projectile-persp-switch-project))
+#+END_SRC
+
+
+*** dired-sidebar
+Directory tree browsing that uses dired
+#+BEGIN_SRC emacs-lisp
+;; (use-package dired-sidebar
+;;   :commands (dired-sidebar-toggle-sidebar)
+;;   :bind (([f8] . dired-sidebar-toggle-sidebar)))
+#+END_SRC
+
+*** treemacs
+
+#+BEGIN_SRC emacs-lisp
+;; (use-package treemacs
+;;   :ensure t
+;;   :bind
+;;   (:map global-map
+;;         ([f8]       . treemacs-select-window)
+;;         ("C-x t 1"   . treemacs-delete-other-windows)
+;;         ("C-x t t"   . treemacs)
+;;         ("C-x t d"   . treemacs-select-directory)
+;;         ("C-x t B"   . treemacs-bookmark)
+;;         ("C-x t C-t" . treemacs-find-file)
+;;         ("C-x t M-t" . treemacs-find-tag)))
+#+END_SRC
+
+*** treemacs-projectile
+
+#+BEGIN_SRC emacs-lisp
+;; (use-package treemacs-projectile
+;;   :after (treemacs projectile)
+;;   :ensure t)
+#+END_SRC
+
+*** treemacs-icons-dired
+#+BEGIN_SRC emacs-lisp
+;; (use-package treemacs-icons-dired
+;;   :hook (dired-mode . treemacs-icons-dired-enable-once)
+;;   :ensure t)
+#+END_SRC
+
+*** treemacs-magit
+#+BEGIN_SRC emacs-lisp
+;; (use-package treemacs-magit
+;;   :after (treemacs magit)
+;;   :ensure t)
+#+END_SRC
+
+*** treemacs-perspective
+#+BEGIN_SRC emacs-lisp
+;; (use-package treemacs-perspective
+;;   :after (treemacs perspective)
+;;   :ensure t
+;;   :config (treemacs-set-scope-type 'Perspectives))
+#+END_SRC
+
+*** html
+Adding some keybindings for the hmtl mode map
+#+BEGIN_SRC emacs-lisp
+;; (add-hook 'mhtml-mode-hook (lambda ()
+;;                              (define-key html-mode-map (kbd "M-o") nil)
+;;                              (define-key html-mode-map (kbd "C-c C-p") 'facemenu-keymap)
+;;                              (define-key html-mode-map (kbd "M-o") 'ace-window)))
+#+END_SRC
+
+*** ace-window
+quickly move between windows using M-o number
+#+BEGIN_SRC emacs-lisp
+;; (use-package ace-window
+;;   :bind (("M-o" . ace-window)))
+#+END_SRC
+
+*** all-the-icons
+Lots of icons to work with emacs
+#+BEGIN_SRC emacs-lisp
+;; (use-package all-the-icons
+;;   :defer 2)
+
+;; (use-package all-the-icons-dired
+;;   :after (dired-sidebar all-the-icons)
+;;   :hook
+;;   (dired-mode-hook . all-the-icons-dired-mode))
+
+;; ;; (use-package all-the-icons-ivy
+;; ;;   :hook (after-init-hook  . all-the-icons-ivy-setup))
+
+;; (use-package spaceline-all-the-icons 
+;;   :after spaceline
+;;   :config (spaceline-all-the-icons-theme))
+#+END_SRC
+
+*** shut-up
+Reduces the amount of messages being throw my emacs and some packages
+#+BEGIN_SRC emacs-lisp
+;; (use-package shut-up
+;;   :defer 2)
+#+END_SRC
+
+*** undo-tree
+#+BEGIN_SRC emacs-lisp
+;; (use-package undo-tree
+;;   :defer 2)
+#+END_SRC
+
+*** goto-chg
+#+BEGIN_SRC emacs-lisp
+;; (use-package goto-chg
+;;   :defer 2)
+#+END_SRC
+
+*** multiple-cursors
+#+BEGIN_SRC emacs-lisp
+;; (use-package multiple-cursors
+;;   :defer 2)
+#+END_SRC
+
+*** Nov
+This package allows to read epub files from inside Emacs
+#+BEGIN_SRC emacs-lisp
+;; (use-package nov
+;;   :mode ("\\.epub\\'" . nov-mode)
+;;   :config
+;;   (setq nov-text-width 80))
+#+END_SRC
+
+*** Vertico
+Vertico shows the completion in vertical mode, rather than grid format
+It also updates the buffer with the possible completions as you type
+
+Is currently pinned to melpa stable, as there was some issues with the 20241105 version
+#+BEGIN_SRC emacs-lisp
+;; (use-package vertico
+;;   :defer nil
+;;   :pin melpa-stable
+;;   :config
+;;   (setq vertico-cycle t)
+;;   (setq vertico-resize nil)
+;;   (vertico-mode 1))
+#+END_SRC
+
+*** Vertico PosFrame
+Having vertico use posframe. Instead of the minibuffer it uses posframe to show
+the completions where you are located
+#+BEGIN_SRC emacs-lisp
+;; (use-package vertico-posframe
+;;   :defer nil
+;;   :config
+;;   (vertico-posframe-mode 1))
+#+END_SRC
+
+*** Save history
+This saves history of the minibuffer. Vertico uses it to put recently selected options at the top
+#+BEGIN_SRC emacs-lisp
+(savehist-mode 1)
+#+END_SRC
+
+*** Marginalia
+This package adds annotations to completion candidates in the minibuffer. The information
+show is dependant on the candidate
+#+BEGIN_SRC emacs-lisp
+;; (use-package marginalia
+;;   :defer nil
+;;   :config
+;;   (marginalia-mode 1))
+#+END_SRC
+
+*** Orderless
+This package adds an out-of-order algorithm for searching for completion candidates.
+#+BEGIN_SRC emacs-lisp
+;; (use-package orderless
+;;   :defer nil
+;;   :config
+;;   (setq completion-styles '(orderless basic)))
+#+END_SRC
+
+*** Consult
+It provides enhanced versions of some commands. It has a preview facility
+#+BEGIN_SRC emacs-lisp
+;; (use-package consult
+;;   :defer nil
+;;   :bind (;; A recursive grep
+;;          ("M-s M-g" . consult-grep)
+;;          ;; Search for files names recursively
+;;          ("M-s M-f" . consult-find)
+;;          ;; Search through the outline (headings) of the file
+;;          ("M-s M-o" . consult-outline)
+;;          ;; Search the current buffer
+;;          ("M-s M-l" . consult-line)
+;;          ;; Switch to another buffer, or bookmarked file, or recently
+;;          ;; opened file.
+;;          ("M-s M-b" . consult-buffer)))
+#+END_SRC
+
+*** Consult ag
+Putting together consult and ag
+#+BEGIN_SRC emacs-lisp
+;; (use-package consult-ag
+;;     :defer nil)
+#+END_SRC
+
+*** Embark
+Equivalent to a right-click contextual menu.
+#+BEGIN_SRC emacs-lisp
+;; (use-package embark
+;;   :defer nil
+;;   :bind (("C-." . embark-act)
+;;          :map minibuffer-local-map
+;;          ("C-c C-c" . embark-collect)
+;;          ("C-c C-e" . embark-export)))
+#+END_SRC
+
+*** Embark consult
+Ties together embark and consult
+#+BEGIN_SRC emacs-lisp
+;; (use-package embark-consult
+;;   :defer nil)
+#+END_SRC
+
 *** pos-tip
 This is a base package to be able to show tooltip at the cursor position.
 #+BEGIN_SRC emacs-lisp
-(use-package pos-tip)
+;; (use-package pos-tip)
 #+END_SRC
 
 *** flyspell
 Spell checker. We want it only in text and org modes
 #+BEGIN_SRC emacs-lisp
-  (use-package flyspell
-    :diminish flyspell-mode
-    :hook
-      (prog-mode . flyspell-prog-mode)
-      ((text-mode org-mode) . (lambda () (flyspell-mode 1)))
-      ((change-log-mode log-edit-mode org-agenda-mode) . (lambda () (flyspell-mode -1)))
+;; (use-package flyspell
+;;   :diminish flyspell-mode
+;;   :hook
+;;     (prog-mode . flyspell-prog-mode)
+;;     ((text-mode org-mode) . (lambda () (flyspell-mode 1)))
+;;     ((change-log-mode log-edit-mode org-agenda-mode) . (lambda () (flyspell-mode -1)))
 
-    :config
-      (setq ;;ispell-program-name "/usr/local/bin/aspell"
-       ispell-local-dictionary "en_GB"
-       ispell-dictionary "english" ; better for aspell
-       ispell-extra-args '("--sug-mode=ultra" "--lang=en_GB")
-       ispell-list-command "--list"
-       ispell-local-dictionary-alist '(("en_GB" "[[:alpha:]]" "[^[:alpha:]]" "['‘’]"
-                                        t ; Many other characters
-                                        ("-d" "en_GB") nil utf-8))))
+;;   :config
+;;     (setq ;;ispell-program-name "/usr/local/bin/aspell"
+;;      ispell-local-dictionary "en_GB"
+;;      ispell-dictionary "english" ; better for aspell
+;;      ispell-extra-args '("--sug-mode=ultra" "--lang=en_GB")
+;;      ispell-list-command "--list"
+;;      ispell-local-dictionary-alist '(("en_GB" "[[:alpha:]]" "[^[:alpha:]]" "['‘’]"
+;;                                       t ; Many other characters
+;;                                       ("-d" "en_GB") nil utf-8))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package column-enforce-mode
-  :defer 2)
+;; (use-package column-enforce-mode
+;;   :defer 2)
 #+END_SRC
 
 *** Structurizr
@@ -1183,121 +1196,114 @@ TODO This need to be converted to use ts
 *** Plantuml
 Mode to use plantuml withing emacs
 #+BEGIN_SRC emacs-lisp
-(use-package plantuml-mode
-  :config
-  (setq plantuml-jar-path "~/bin/plantuml.jar")
-  (setq plantuml-default-exec-mode 'jar)
-  (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode))
-  (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode)))
+;; (use-package plantuml-mode
+;;   :config
+;;   (setq plantuml-jar-path "~/bin/plantuml.jar")
+;;   (setq plantuml-default-exec-mode 'jar)
+;;   (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode))
+;;   (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode)))
 #+END_SRC
 
 Esup allows to do performance of the emacs startup
 [[https://github.com/jschaf/esup][Esup Homepage]]
 #+BEGIN_SRC emacs-lisp
-(use-package esup
-  ;; To use MELPA Stable use ":pin melpa-stable",
-  ;; :pin melpa
-  )
+;; (use-package esup
+;;   ;; To use MELPA Stable use ":pin melpa-stable",
+;;   ;; :pin melpa
+;;   )
 #+END_SRC
 
 *** elfeed
 #+BEGIN_SRC emacs-lisp
-(use-package elfeed
-  :commands elfeed
-  :bind (("C-x w" . elfeed))
-  :config
-  (setq elfeed-db-directory "~/Sync/elfeed/db"
-        elfeed-enclosure-default-dir "~/Sync/elfeed/enclosures/")
-  (make-directory elfeed-db-directory t))
+;; (use-package elfeed
+;;   :commands elfeed
+;;   :bind (("C-x w" . elfeed))
+;;   :config
+;;   (setq elfeed-db-directory "~/Sync/elfeed/db"
+;;         elfeed-enclosure-default-dir "~/Sync/elfeed/enclosures/")
+;;   (make-directory elfeed-db-directory t))
 #+END_SRC
 
 *** vterm
 A shell terminal
 #+BEGIN_SRC emacs-lisp
-(use-package vterm
-  :ensure t
-  :bind (("C-q" . vterm-send-next-key)))
+;; (use-package vterm
+;;   :ensure t
+;;   :bind (("C-q" . vterm-send-next-key)))
 #+END_SRC
 
 *** Pomm
 Pomodoro library to be used within Emacs
 #+BEGIN_SRC emacs-lisp
-(use-package pomm
-  :commands (pomm pomm-third-time)
-  :custom
-  (alert-default-style 'libnotify)
-  (pomm-audio-enabled t))
-#+END_SRC
-
-*** Replace
-Keybindings for this set of often used calls.
-Remember that projectile has "C-c p r" for replace in the project
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-c M-r s") 'replace-string)
-(global-set-key (kbd "C-c M-r r") 'replace-regexp)
+;; (use-package pomm
+;;   :commands (pomm pomm-third-time)
+;;   :custom
+;;   (alert-default-style 'libnotify)
+;;   (pomm-audio-enabled t))
 #+END_SRC
 
 *** Combobulate
 This package uses tree-sitter for structured editing
 #+BEGIN_SRC emacs-lisp
-(use-package combobulate
-  :custom
-  (combobulate-key-prefix "C-c o")
-  :hook ((prog-mode . combobulate-mode))
-  :vc (:url "https://github.com/mickeynp/combobulate"
-       :branch "main"))
+;; (use-package combobulate
+;;   :custom
+;;   (combobulate-key-prefix "C-c o")
+;;   :hook ((prog-mode . combobulate-mode))
+;;   :vc (:url "https://github.com/mickeynp/combobulate"
+;;        :branch "main"))
 #+END_SRC
 * Languages
 ** General
 *** Eglot
 Some additional configuration for Eglot
 #+BEGIN_SRC emacs-lisp
-(add-hook 'eglot-managed-mode-hook
-          (lambda ()
-            (bind-keys :map eglot-mode-map
-                       ("C-c e a" . eglot-code-actions)
-                       ("C-c e r" . eglot-rename))))
+;; (add-hook 'eglot-managed-mode-hook
+;;           (lambda ()
+;;             (bind-keys :map eglot-mode-map
+;;                        ("C-c e a" . eglot-code-actions)
+;;                        ("C-c e r" . eglot-rename))))
 #+END_SRC
 *** Treesit
 #+BEGIN_SRC emacs-lisp
-(dolist (modes
-         '(("\\.tsx\\'" . tsx-ts-mode)
-           ("\\.js\\'"  . typescript-ts-mode)
-           ("\\.mjs\\'" . typescript-ts-mode)
-           ("\\.mts\\'" . typescript-ts-mode)
-           ("\\.cjs\\'" . typescript-ts-mode)
-           ("\\.ts\\'"  . typescript-ts-mode)
-           ("\\.jsx\\'" . tsx-ts-mode)
-           ("\\.json\\'" .  json-ts-mode)
-           ("\\.Dockerfile\\'" . dockerfile-ts-mode)
-           ("\\.go\\'" . go-ts-mode)
-           ("/go\\.mod\\'" . go-mod-ts-mode)
-           ("\\.ex" . elixir-ts-mode)
-           ("\\.exs" . elixir-ts-mode)
-           ("\\.heex" . heex-ts-mode)))
-  (add-to-list 'auto-mode-alist modes))
+;; (dolist (modes
+;;          '(("\\.tsx\\'" . tsx-ts-mode)
+;;            ("\\.js\\'"  . typescript-ts-mode)
+;;            ("\\.mjs\\'" . typescript-ts-mode)
+;;            ("\\.mts\\'" . typescript-ts-mode)
+;;            ("\\.cjs\\'" . typescript-ts-mode)
+;;            ("\\.ts\\'"  . typescript-ts-mode)
+;;            ("\\.jsx\\'" . tsx-ts-mode)
+;;            ("\\.json\\'" .  json-ts-mode)
+;;            ("\\.Dockerfile\\'" . dockerfile-ts-mode)
+;;            ("\\.go\\'" . go-ts-mode)
+;;            ("/go\\.mod\\'" . go-mod-ts-mode)
+;;            ("\\.ex" . elixir-ts-mode)
+;;            ("\\.exs" . elixir-ts-mode)
+;;            ("\\.heex" . heex-ts-mode)))
+;;   (add-to-list 'auto-mode-alist modes))
 
-(setq treesit-language-source-alist
-      '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-        (css "https://github.com/tree-sitter/tree-sitter-css")
-        (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp")
-        (elixir "https://github.com/elixir-lang/tree-sitter-elixir")
-        (heex "https://github.com/phoenixframework/tree-sitter-heex.git")
-        (eex "https://github.com/connorlay/tree-sitter-eex")
-        (go "https://github.com/tree-sitter/tree-sitter-go" "v0.19.1")
-        (gomod "https://github.com/camdencheek/tree-sitter-go-mod")
-        (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
-        (html "https://github.com/tree-sitter/tree-sitter-html")
-        (json "https://github.com/tree-sitter/tree-sitter-json")
-        (make "https://github.com/alemuller/tree-sitter-make")
-        (markdown "https://github.com/ikatyang/tree-sitter-markdown")
-        (python "https://github.com/tree-sitter/tree-sitter-python" "v0.20.4")
-        (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.20.1" "src")
-        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")
-        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
-        (toml "https://github.com/tree-sitter/tree-sitter-toml" "v0.5.1")
-        (yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")))
+;; (setq treesit-language-source-alist
+;;       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+;;         (css "https://github.com/tree-sitter/tree-sitter-css")
+;;         (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp")
+;;         (elixir "https://github.com/elixir-lang/tree-sitter-elixir")
+;;         (heex "https://github.com/phoenixframework/tree-sitter-heex.git")
+;;         (eex "https://github.com/connorlay/tree-sitter-eex")
+;;         (go "https://github.com/tree-sitter/tree-sitter-go" "v0.19.1")
+;;         (gomod "https://github.com/camdencheek/tree-sitter-go-mod")
+;;         (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
+;;         (html "https://github.com/tree-sitter/tree-sitter-html")
+;;         (json "https://github.com/tree-sitter/tree-sitter-json")
+;;         (make "https://github.com/alemuller/tree-sitter-make")
+;;         (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+;;         (python "https://github.com/tree-sitter/tree-sitter-python" "v0.20.4")
+;;         (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.20.1" "src")
+;;         (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")
+;;         (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
+;;         (toml "https://github.com/tree-sitter/tree-sitter-toml" "v0.5.1")
+;;         (yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")))
 
+;; Should we try this again?
 ;; (dolist (grammar
 ;;       '((bash ("https://github.com/tree-sitter/tree-sitter-bash"))
 ;;         (css ("https://github.com/tree-sitter/tree-sitter-css"))
@@ -1319,155 +1325,155 @@ Some additional configuration for Eglot
 ;;   (unless (treesit-language-available-p (car grammar))
 ;;     (treesit-install-language-grammar (car grammar))))
 
- (dolist (mapping
-            '((python-mode . python-ts-mode)
-              (csharp-mode . csharp-ts-mode)
-              (css-mode . css-ts-mode)
-              (elixir-mode . elixir-ts-mode)
-              (typescript-mode . typescript-ts-mode)
-              (js-mode . typescript-ts-mode)
-              (js2-mode . typescript-ts-mode)
-              (go-mode . go-ts-mode)
-              (c-mode . c-ts-mode)
-              (c++-mode . c++-ts-mode)
-              (c-or-c++-mode . c-or-c++-ts-mode)
-              (bash-mode . bash-ts-mode)
-              (css-mode . css-ts-mode)
-              (json-mode . json-ts-mode)
-              (js-json-mode . json-ts-mode)
-              (sh-mode . bash-ts-mode)
-              (sh-base-mode . bash-ts-mode)))
-   (add-to-list 'major-mode-remap-alist mapping))
+ ;; (dolist (mapping
+ ;;            '((python-mode . python-ts-mode)
+ ;;              (csharp-mode . csharp-ts-mode)
+ ;;              (css-mode . css-ts-mode)
+ ;;              (elixir-mode . elixir-ts-mode)
+ ;;              (typescript-mode . typescript-ts-mode)
+ ;;              (js-mode . typescript-ts-mode)
+ ;;              (js2-mode . typescript-ts-mode)
+ ;;              (go-mode . go-ts-mode)
+ ;;              (c-mode . c-ts-mode)
+ ;;              (c++-mode . c++-ts-mode)
+ ;;              (c-or-c++-mode . c-or-c++-ts-mode)
+ ;;              (bash-mode . bash-ts-mode)
+ ;;              (css-mode . css-ts-mode)
+ ;;              (json-mode . json-ts-mode)
+ ;;              (js-json-mode . json-ts-mode)
+ ;;              (sh-mode . bash-ts-mode)
+ ;;              (sh-base-mode . bash-ts-mode)))
+ ;;   (add-to-list 'major-mode-remap-alist mapping))
 
-(use-package treesit-auto
-  :custom
-  (treesit-auto-install 'prompt)
-  :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode))
+;; (use-package treesit-auto
+;;   :custom
+;;   (treesit-auto-install 'prompt)
+;;   :config
+;;   (treesit-auto-add-to-auto-mode-alist 'all)
+;;   (global-treesit-auto-mode))
 #+END_SRC
 
 *** Treesit-fold
 
 This package allows for the folding of lines on code, with knowledge gained from treesit
 #+BEGIN_SRC emacs-lisp
-(use-package treesit-fold
-  :diminish
-  :bind (("C-c f o o" . treesit-fold-open)
-         ("C-c f o a" . treesit-fold-open-all)
-         ("C-c f o r" . treesit-fold-open-recursively)
-         ("C-c f c c" . treesit-fold-close)
-         ("C-c f c a" . treesit-fold-close-all)
-         ("C-c f t" . treesit-fold-toogle))
-  :custom
-  (global-treesit-fold-mode t)
-  (global-treesit-fold-indicators-mode t)
-  (treesit-fold-line-count-show t)
-  (treesit-fold-line-count-format " <%d lines> ")
+;; (use-package treesit-fold
+;;   :diminish
+;;   :bind (("C-c f o o" . treesit-fold-open)
+;;          ("C-c f o a" . treesit-fold-open-all)
+;;          ("C-c f o r" . treesit-fold-open-recursively)
+;;          ("C-c f c c" . treesit-fold-close)
+;;          ("C-c f c a" . treesit-fold-close-all)
+;;          ("C-c f t" . treesit-fold-toogle))
+;;   :custom
+;;   (global-treesit-fold-mode t)
+;;   (global-treesit-fold-indicators-mode t)
+;;   (treesit-fold-line-count-show t)
+;;   (treesit-fold-line-count-format " <%d lines> ")
   
-  :vc (:url "https://github.com/emacs-tree-sitter/treesit-fold"
-       :branch "main"))
+;;   :vc (:url "https://github.com/emacs-tree-sitter/treesit-fold"
+;;        :branch "main"))
 #+END_SRC
 
 *** Yasnippet
 #+BEGIN_SRC emacs-lisp
-(use-package yasnippet
-  :pin melpa-stable
-  :diminish yas-minor-mode
-  ;; :defines tools-map
-  ;; :bind (:map yas-minor-mode-map
-  ;;             ("n" . yas-new-snippet)
-  ;;             ("s" . yas-insert-snippet)
-  ;;             ("v" . yas-visit-snippet-file))
-  :config
-  ;; (evil-leader/set-key-for-mode 'emacs-lisp-mode "b" 'byte-compile-file)
-  ;; (define-prefix-command 'yas-minor-mode-map)
-  ;; (define-key tools-map (kbd "y") 'yas-minor-mode-map)
-  (yas-global-mode 1))
+;; (use-package yasnippet
+;;   :pin melpa-stable
+;;   :diminish yas-minor-mode
+;;   ;; :defines tools-map
+;;   ;; :bind (:map yas-minor-mode-map
+;;   ;;             ("n" . yas-new-snippet)
+;;   ;;             ("s" . yas-insert-snippet)
+;;   ;;             ("v" . yas-visit-snippet-file))
+;;   :config
+;;   ;; (evil-leader/set-key-for-mode 'emacs-lisp-mode "b" 'byte-compile-file)
+;;   ;; (define-prefix-command 'yas-minor-mode-map)
+;;   ;; (define-key tools-map (kbd "y") 'yas-minor-mode-map)
+;;   (yas-global-mode 1))
 
-(use-package yasnippet-snippets)
+;; (use-package yasnippet-snippets)
 
-(use-package auto-yasnippet
-  :diminish yas-minor-mode)
+;; (use-package auto-yasnippet
+;;   :diminish yas-minor-mode)
 #+END_SRC
 
 *** Flycheck
 #+BEGIN_SRC emacs-lisp
-  (use-package flycheck-pos-tip)
+;; (use-package flycheck-pos-tip)
 
-  (use-package flycheck
-  :after (flycheck-pos-tip-mode)
-  :config
-  (show-paren-mode 1)
-  (flycheck-pos-tip-mode)
-  (setq-default flycheck-disabled-checkers
-                (append flycheck-disabled-checkers
-                        '(javascript-jshint)))
-  (flycheck-add-mode 'javascript-eslint 'web-mode)
-  :hook
-  ((after-init . global-flycheck-mode)))
+;; (use-package flycheck
+;; :after (flycheck-pos-tip-mode)
+;; :config
+;; (show-paren-mode 1)
+;; (flycheck-pos-tip-mode)
+;; (setq-default flycheck-disabled-checkers
+;;               (append flycheck-disabled-checkers
+;;                       '(javascript-jshint)))
+;; (flycheck-add-mode 'javascript-eslint 'web-mode)
+;; :hook
+;; ((after-init . global-flycheck-mode)))
 #+END_SRC
 
 *** eldoc
 #+BEGIN_SRC emacs-lisp
-    (use-package eldoc
-      :diminish
-      :hook
-      (prog-mode . turn-on-eldoc-mode)
-      (cider-repl-mode . turn-on-eldoc-mode)
-      (emacs-lisp-mode . turn-on-eldoc-mode)
-      (lisp-interaction-mode . turn-on-eldoc-mode)
-      (ielm-mode . turn-on-eldoc-mode))
+;; (use-package eldoc
+;;   :diminish
+;;   :hook
+;;   (prog-mode . turn-on-eldoc-mode)
+;;   (cider-repl-mode . turn-on-eldoc-mode)
+;;   (emacs-lisp-mode . turn-on-eldoc-mode)
+;;   (lisp-interaction-mode . turn-on-eldoc-mode)
+;;   (ielm-mode . turn-on-eldoc-mode))
 #+END_SRC
 
 *** tagedit
 #+BEGIN_SRC emacs-lisp
-(use-package tagedit)
+;; (use-package tagedit)
 #+END_SRC
 
 *** EditorConfig
 #+BEGIN_SRC emacs-lisp
-(use-package editorconfig
-  :diminish
-  :config
-  (editorconfig-mode 1))
+;; (use-package editorconfig
+;;   :diminish
+;;   :config
+;;   (editorconfig-mode 1))
 #+END_SRC
 
 *** aggressive-indent
 It autoindents as soon as you move from a line
 #+BEGIN_SRC emacs-lisp
-(use-package aggressive-indent
-  :hook
-  ((emacs-lisp-mode . aggressive-indent-mode)))
+;; (use-package aggressive-indent
+;;   :hook
+;;   ((emacs-lisp-mode . aggressive-indent-mode)))
 #+END_SRC
 
 *** Company
 Basic setup for company
 #+BEGIN_SRC emacs-lisp
-(use-package company
-  :defer nil
-  :diminish
-  :bind (("C-S-i" . company-complete)
-         ;; :map company-mode-map
-	 ;; ("<tab>". tab-indent-or-complete)
-	 ;; ("TAB". tab-indent-or-complete)
-         :map company-active-map
-         ("C-n". company-select-next)
-	 ("C-p". company-select-previous)
-	 ("M-<". company-select-first)
-	 ("M->". company-select-last))
-  :hook
-  ((after-init . global-company-mode)))
+;; (use-package company
+;;   :defer nil
+;;   :diminish
+;;   :bind (("C-S-i" . company-complete)
+;;          ;; :map company-mode-map
+;; 	 ;; ("<tab>". tab-indent-or-complete)
+;; 	 ;; ("TAB". tab-indent-or-complete)
+;;          :map company-active-map
+;;          ("C-n". company-select-next)
+;; 	 ("C-p". company-select-previous)
+;; 	 ("M-<". company-select-first)
+;; 	 ("M->". company-select-last))
+;;   :hook
+;;   ((after-init . global-company-mode)))
 
-(use-package company-quickhelp
-  :config
-  (company-quickhelp-mode 1))
+;; (use-package company-quickhelp
+;;   :config
+;;   (company-quickhelp-mode 1))
 #+END_SRC
 
 This is a company front-end with icons
 #+BEGIN_SRC emacs-lisp
-(use-package company-box
-  :hook (company-mode . company-box-mode))
+;; (use-package company-box
+;;   :hook (company-mode . company-box-mode))
 #+END_SRC
 
 *** LSP
@@ -1479,179 +1485,178 @@ We make sure that we hook the ui mode
 `lsp-apply-edits-after-file-operations nil` is there because otherwise the LSP for Typescript kills emacs on
 certain scenarios
 #+BEGIN_SRC emacs-lisp
-(use-package lsp-mode
-  :defines lsp-highlight-symbol-at-point
-  :commands (lsp lsp-deferred)
-  :hook ((clojure-mode . lsp)
-         (clojurescript-mode . lsp)
-         (clojurec-mode . lsp)
-         (elixir-ts-mode . lsp)
-         ((tsx-ts-mode
-           typescript-ts-mode
-           js-ts-mode) . lsp)
-         (lsp-mode . lsp-enable-which-key-integration))
-  :init (setq lsp-eldoc-render-all nil
-              lsp-highlight-symbol-at-point nil
-              lsp-keymap-prefix "C-c l"
+;; (use-package lsp-mode
+;;   :defines lsp-highlight-symbol-at-point
+;;   :commands (lsp lsp-deferred)
+;;   :hook ((clojure-mode . lsp)
+;;          (clojurescript-mode . lsp)
+;;          (clojurec-mode . lsp)
+;;          (elixir-ts-mode . lsp)
+;;          ((tsx-ts-mode
+;;            typescript-ts-mode
+;;            js-ts-mode) . lsp)
+;;          (lsp-mode . lsp-enable-which-key-integration))
+;;   :init (setq lsp-eldoc-render-all nil
+;;               lsp-highlight-symbol-at-point nil
+;;               lsp-keymap-prefix "C-c l"
 
-              lsp-lens-enable t
-              lsp-signature-auto-activate nil
-              lsp-apply-edits-after-file-operations nil
-              lsp-before-save-edits nil)
-  :config
-  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-  (setq lsp-typescript-preferences-include-package-json-auto-imports "on")
-  (setq lsp-typescript-suggest-auto-imports t)
-  (setq lsp-typescript-auto-closing-tags t)
-  (setq lsp-typescript-suggest-complete-js-docs t)  
-  (add-to-list 'lsp-disabled-clients 'omnisharp))
+;;               lsp-lens-enable t
+;;               lsp-signature-auto-activate nil
+;;               lsp-apply-edits-after-file-operations nil
+;;               lsp-before-save-edits nil)
+;;   :config
+;;   (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+;;   (setq lsp-typescript-preferences-include-package-json-auto-imports "on")
+;;   (setq lsp-typescript-suggest-auto-imports t)
+;;   (setq lsp-typescript-auto-closing-tags t)
+;;   (setq lsp-typescript-suggest-complete-js-docs t)  
+;;   (add-to-list 'lsp-disabled-clients 'omnisharp))
 #+END_SRC
 
 The below is a wrapper that allows me to add the display-action to lsp-find-definition.
 This is because sometimes I want to open the definition in a separate buffer.
 If we wanted to removed we need to call (advice-remove 'lsp-find-definition #'jgg/lsp-find-definition-other)
 #+BEGIN_SRC emacs-lisp
-(defun jgg/lsp-find-in-other-buffer (original-function &optional args)
-  (interactive "P")
-  (if current-prefix-arg
-      (funcall original-function :display-action 'window)
-      (funcall original-function)))
+;; (defun jgg/lsp-find-in-other-buffer (original-function &optional args)
+;;   (interactive "P")
+;;   (if current-prefix-arg
+;;       (funcall original-function :display-action 'window)
+;;       (funcall original-function)))
 
-(advice-add 'lsp-find-definition :around #'jgg/lsp-find-in-other-buffer)
-;;(advice-add 'lsp-find-type-definition :around #'jgg/lsp-find-in-other-buffer)
+;; (advice-add 'lsp-find-definition :around #'jgg/lsp-find-in-other-buffer)
+;; ;;(advice-add 'lsp-find-type-definition :around #'jgg/lsp-find-in-other-buffer)
 #+END_SRC
 
 This add ui elements to lsp mode
 #+BEGIN_SRC emacs-lisp
-(use-package lsp-ui
-  :commands lsp-ui-mode
-  :bind (:map lsp-ui-mode-map
-              ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-              ([remap xref-find-references] . lsp-ui-peek-find-references))
-  :init (setq lsp-ui-doc-delay 0.5
-              lsp-ui-doc-position 'at-point
-	      lsp-ui-doc-max-width 100)
-  :custom
-  (lsp-ui-sideline-update-mode 'point)
-  (lsp-ui-peek-always-show t)
-  (lsp-ui-sideline-show-hover nil)
-  (lsp-ui-sideline-enable t)
-  (lsp-ui-doc-enable t)
-  (lsp-ui-peek-enable t)
-  (lsp-ui-peek-show-directory t))
+;; (use-package lsp-ui
+;;   :commands lsp-ui-mode
+;;   :bind (:map lsp-ui-mode-map
+;;               ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+;;               ([remap xref-find-references] . lsp-ui-peek-find-references))
+;;   :init (setq lsp-ui-doc-delay 0.5
+;;               lsp-ui-doc-position 'at-point
+;; 	      lsp-ui-doc-max-width 100)
+;;   :custom
+;;   (lsp-ui-sideline-update-mode 'point)
+;;   (lsp-ui-peek-always-show t)
+;;   (lsp-ui-sideline-show-hover nil)
+;;   (lsp-ui-sideline-enable t)
+;;   (lsp-ui-doc-enable t)
+;;   (lsp-ui-peek-enable t)
+;;   (lsp-ui-peek-show-directory t))
 
 #+END_SRC
 
 This links lsp with treemacs
 #+BEGIN_SRC emacs-lisp
-(use-package lsp-treemacs
-  :commands lsp-treemacs-errors-list)
+;; (use-package lsp-treemacs
+;;   :commands lsp-treemacs-errors-list)
 
 #+END_SRC
 
 We are adding a debugger mode to lsp
 #+BEGIN_SRC emacs-lisp
-
-(use-package dap-mode
-  :after lsp-mode
-  :bind (:map lsp-mode-map
-              ("<f5>" . dap-debug))
-  :config
-  (dap-mode t)
-  (dap-ui-mode t))
+;; (use-package dap-mode
+;;   :after lsp-mode
+;;   :bind (:map lsp-mode-map
+;;               ("<f5>" . dap-debug))
+;;   :config
+;;   (dap-mode t)
+;;   (dap-ui-mode t))
 #+END_SRC
 
 Adding support for tailwind
 #+BEGIN_SRC emacs-lisp
-(use-package lsp-tailwindcss
-  :init (setq lsp-tailwindcss-add-on-mode t)
-  :config
-  (dolist (tw-major-mode
-           '(css-mode
-             css-ts-mode
-             typescript-mode
-             typescript-ts-mode
-             tsx-ts-mode
-             js2-mode
-             js-ts-mode))
-    (add-to-list 'lsp-tailwindcss-major-modes tw-major-mode)))
+;; (use-package lsp-tailwindcss
+;;   :init (setq lsp-tailwindcss-add-on-mode t)
+;;   :config
+;;   (dolist (tw-major-mode
+;;            '(css-mode
+;;              css-ts-mode
+;;              typescript-mode
+;;              typescript-ts-mode
+;;              tsx-ts-mode
+;;              js2-mode
+;;              js-ts-mode))
+;;     (add-to-list 'lsp-tailwindcss-major-modes tw-major-mode)))
 #+END_SRC
 
 ** Specific
 *** Zig
 #+BEGIN_SRC emacs-lisp
-(use-package reformatter)
-(use-package zig-mode
-  :hook ((zig-mode .eglot-ensure)))
+;; (use-package reformatter)
+;; (use-package zig-mode
+;;   :hook ((zig-mode .eglot-ensure)))
 #+END_SRC
 
 *** Go
 #+BEGIN_SRC emacs-lisp
-(use-package go-mode)
+;; (use-package go-mode)
 
-(add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
-(add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))
-(add-hook 'go-mode-hook (lambda ()
-                          (setq tab-width 4)
-                          (setq indent-tabs-mode 1)))
+;; (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
+;; (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))
+;; (add-hook 'go-mode-hook (lambda ()
+;;                           (setq tab-width 4)
+;;                           (setq indent-tabs-mode 1)))
 
-(add-hook 'go-ts-mode-hook (lambda ()
-                             (setq tab-width 4)
-                             (setq indent-tabs-mode 1)
-                             (setq go-ts-mode-indent-offset 4)))
+;; (add-hook 'go-ts-mode-hook (lambda ()
+;;                              (setq tab-width 4)
+;;                              (setq indent-tabs-mode 1)
+;;                              (setq go-ts-mode-indent-offset 4)))
 
-(use-package gotest
-  :diminish
-  :after go-ts-mode
-  :bind (:map go-ts-mode-map
-              ("C-c t f" . go-test-current-file)
-	      ("C-c t t" . go-test-current-test)
-	      ("C-c t p" . go-test-current-project)
-	      ("C-c t b" . go-test-current-benchmark)
-              ("C-c t c" . go-test-current-coverage)
-              ("C-c x" . go-run)))
+;; (use-package gotest
+;;   :diminish
+;;   :after go-ts-mode
+;;   :bind (:map go-ts-mode-map
+;;               ("C-c t f" . go-test-current-file)
+;; 	      ("C-c t t" . go-test-current-test)
+;; 	      ("C-c t p" . go-test-current-project)
+;; 	      ("C-c t b" . go-test-current-benchmark)
+;;               ("C-c t c" . go-test-current-coverage)
+;;               ("C-c x" . go-run)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package mmm-mode
-  :config
-  (setq mmm-global-mode 'maybe)
-  ;; (mmm-add-mode-ext-class 'html-mode "\\.php\\'" 'html-php)
-  )
+;; (use-package mmm-mode
+;;   :config
+;;   (setq mmm-global-mode 'maybe)
+;;   ;; (mmm-add-mode-ext-class 'html-mode "\\.php\\'" 'html-php)
+;;   )
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package buttercup)
+;; (use-package buttercup)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(defun my-web-mode-hook ()
-  "Hooks for Web mode."
-  (setq web-mode-markup-indent-offset 4)
-  (setq web-mode-code-indent-offset 4))
+;; (defun my-web-mode-hook ()
+;;   "Hooks for Web mode."
+;;   (setq web-mode-markup-indent-offset 4)
+;;   (setq web-mode-code-indent-offset 4))
 
-(use-package web-mode
-  :mode ("\\.phtml\\'" "\\.tpl\\.php\\'" "\\.[agj]sp\\'" "\\.as[cp]x\\'" "\\.erb\\'" "\\.mustache\\'" "\\.djhtml\\'")
-  :hook
-  ((web-mode . my-web-mode-hook)))
+;; (use-package web-mode
+;;   :mode ("\\.phtml\\'" "\\.tpl\\.php\\'" "\\.[agj]sp\\'" "\\.as[cp]x\\'" "\\.erb\\'" "\\.mustache\\'" "\\.djhtml\\'")
+;;   :hook
+;;   ((web-mode . my-web-mode-hook)))
 #+END_SRC
 
 *** Json
 #+BEGIN_SRC emacs-lisp
-(use-package json-mode)
+;; (use-package json-mode)
 #+END_SRC
 
 *** Python
 
 #+BEGIN_SRC emacs-lisp
-(setq major-mode-remap-alist
-      '((python-mode . python-ts-mode)))
+;; (setq major-mode-remap-alist
+;;       '((python-mode . python-ts-mode)))
 #+END_SRC
 
 We use eglot for python
 #+BEGIN_SRC emacs-lisp
-(use-package python
-  :hook ((python-ts-mode . eglot-ensure)))
+;; (use-package python
+;;   :hook ((python-ts-mode . eglot-ensure)))
 #+END_SRC
 
 This package allows to get the right environment.
@@ -1659,201 +1664,201 @@ python-base-mode-hook works for python-mode and python-ts-mode.
 The -10 tells emacs to load it as soon as possible
 TODO can :hook do that -10?
 #+BEGIN_SRC emacs-lisp
-(use-package pet
-  :defer nil
-  :config
-  (add-hook 'python-base-mode-hook 'pet-mode -10))
+;; (use-package pet
+;;   :defer nil
+;;   :config
+;;   (add-hook 'python-base-mode-hook 'pet-mode -10))
 #+END_SRC
 
 uv mode package
 #+BEGIN_SRC emacs-lisp
-(use-package pythonic)
+;; (use-package pythonic)
 
-(use-package uv-mode
-  :hook (python-mode . uv-mode-auto-activate-hook))
+;; (use-package uv-mode
+;;   :hook (python-mode . uv-mode-auto-activate-hook))
 #+END_SRC
   
 #+BEGIN_SRC emacs-lisp
 
-(use-package poetry)
+;; (use-package poetry)
 
-(use-package python-docstring)
+;; (use-package python-docstring)
 #+END_SRC
 
 The apheleia package formats python (black), js (prettier)  and go (gofmt) by default.
 
 We have added some configuration for prettier, so it uses the file name to infer the parser to use (to distinguish between js/ts/css)
 #+BEGIN_SRC emacs-lisp
-(use-package apheleia
-  :diminish
-  :defines
-  apheleia-formatters
-  apheleia-mode-alist
-  :init (apheleia-global-mode +1)
-  :config
-  (setf (alist-get 'prettier-json apheleia-formatters)
-        '("prettier" "--stdin-filepath" filepath)))
+;; (use-package apheleia
+;;   :diminish
+;;   :defines
+;;   apheleia-formatters
+;;   apheleia-mode-alist
+;;   :init (apheleia-global-mode +1)
+;;   :config
+;;   (setf (alist-get 'prettier-json apheleia-formatters)
+;;         '("prettier" "--stdin-filepath" filepath)))
 #+END_SRC
 
 
 This package allows the use of isort when saving a python file
 #+BEGIN_SRC emacs-lisp
-(use-package python-isort
-  :hook ((python-base-mode . python-isort-on-save-mode)))
+;; (use-package python-isort
+;;   :hook ((python-base-mode . python-isort-on-save-mode)))
 #+END_SRC
 
 This package allows the running of pytest within emacs
 TODO this is not loading correctly
 #+BEGIN_SRC emacs-lisp
-(use-package python-pytest
-  :bind (("C-c t" . python-pytest-dispatch)))
+;; (use-package python-pytest
+;;   :bind (("C-c t" . python-pytest-dispatch)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package company-jedi
-  :hook ((python-base-mode . (lambda () (add-to-list 'company-backends 'company-jedi)))))
+;; (use-package company-jedi
+;;   :hook ((python-base-mode . (lambda () (add-to-list 'company-backends 'company-jedi)))))
 
-(use-package pyvenv
-  :init
-  (setenv "WORKON_HOME" "~/.pyenv/versions"))
+;; (use-package pyvenv
+;;   :init
+;;   (setenv "WORKON_HOME" "~/.pyenv/versions"))
 #+END_SRC
 
 *** Docker
 #+BEGIN_SRC emacs-lisp
-(use-package dockerfile-mode
-  :mode "\\.Dockerfile\\'")
+;; (use-package dockerfile-mode
+;;   :mode "\\.Dockerfile\\'")
 #+END_SRC
 
 *** Yaml
 #+BEGIN_SRC emacs-lisp
-(use-package yaml-mode)
+;; (use-package yaml-mode)
 #+END_SRC
 
 *** Terraform
 #+BEGIN_SRC emacs-lisp
-(use-package terraform-mode
-  :hook
-  ((terraform-mode . terraform-format-on-save-mode)))
+;; (use-package terraform-mode
+;;   :hook
+;;   ((terraform-mode . terraform-format-on-save-mode)))
 
-(use-package company-terraform
-  :config
-  (company-terraform-init))
+;; (use-package company-terraform
+;;   :config
+;;   (company-terraform-init))
 #+END_SRC
 
 *** Elixir
 #+BEGIN_SRC emacs-lisp
-(use-package elixir-ts-mode
-    :ensure t
-    :hook
-    (elixir-ts-mode
-     .
-     (lambda ()
-       (push '(">=" . ?\u2265) prettify-symbols-alist)
-       (push '("<=" . ?\u2264) prettify-symbols-alist)
-       (push '("!=" . ?\u2260) prettify-symbols-alist)
-       (push '("==" . ?\u2A75) prettify-symbols-alist)
-       (push '("=~" . ?\u2245) prettify-symbols-alist)
-       (push '("<-" . ?\u2190) prettify-symbols-alist)
-       (push '("->" . ?\u2192) prettify-symbols-alist)
-       (push '("<-" . ?\u2190) prettify-symbols-alist)
-       (push '("|>" . ?\u25B7) prettify-symbols-alist))))
+;; (use-package elixir-ts-mode
+;;     :ensure t
+;;     :hook
+;;     (elixir-ts-mode
+;;      .
+;;      (lambda ()
+;;        (push '(">=" . ?\u2265) prettify-symbols-alist)
+;;        (push '("<=" . ?\u2264) prettify-symbols-alist)
+;;        (push '("!=" . ?\u2260) prettify-symbols-alist)
+;;        (push '("==" . ?\u2A75) prettify-symbols-alist)
+;;        (push '("=~" . ?\u2245) prettify-symbols-alist)
+;;        (push '("<-" . ?\u2190) prettify-symbols-alist)
+;;        (push '("->" . ?\u2192) prettify-symbols-alist)
+;;        (push '("<-" . ?\u2190) prettify-symbols-alist)
+;;        (push '("|>" . ?\u25B7) prettify-symbols-alist))))
 
-(use-package heex-ts-mode
-  :bind (:map heex-ts-mode-map
-         ("C-c C-p" . facemenu-keymap)
-         ("M-o" . ace-window))
-  :config
-  (unbind-key "M-o" heex-ts-mode-map))
+;; (use-package heex-ts-mode
+;;   :bind (:map heex-ts-mode-map
+;;          ("C-c C-p" . facemenu-keymap)
+;;          ("M-o" . ace-window))
+;;   :config
+;;   (unbind-key "M-o" heex-ts-mode-map))
 
-(use-package mix
-  :config
-  (add-hook 'elixir-ts-mode-hook 'mix-minor-mode))
+;; (use-package mix
+;;   :config
+;;   (add-hook 'elixir-ts-mode-hook 'mix-minor-mode))
 
-(use-package exunit
-  :diminish t
-  :bind
-  (:map elixir-ts-mode-map
-   ("C-c e ." . exunit-verify-single)
-   ("C-c e b" . exunit-verify)
-   ("C-c e u a" . exunit-verify-all-in-umbrella)
-   ("C-c e a" . exunit-verify-all)
-   ("C-c e l" . exunit-rerun))
-  :hook
-  ((elixir-ts-mode . exunit-mode)))
+;; (use-package exunit
+;;   :diminish t
+;;   :bind
+;;   (:map elixir-ts-mode-map
+;;    ("C-c e ." . exunit-verify-single)
+;;    ("C-c e b" . exunit-verify)
+;;    ("C-c e u a" . exunit-verify-all-in-umbrella)
+;;    ("C-c e a" . exunit-verify-all)
+;;    ("C-c e l" . exunit-rerun))
+;;   :hook
+;;   ((elixir-ts-mode . exunit-mode)))
 #+END_SRC
 
 *** Markdown
 #+BEGIN_SRC emacs-lisp
-(use-package markdown-mode
-  :diminish
-  :mode ("\\.text\\'" "\\.markdown\\'" "\\.md\\'")
-  :config
-  (custom-set-variables
-   '(markdown-command "/usr/bin/pandoc")))
+;; (use-package markdown-mode
+;;   :diminish
+;;   :mode ("\\.text\\'" "\\.markdown\\'" "\\.md\\'")
+;;   :config
+;;   (custom-set-variables
+;;    '(markdown-command "/usr/bin/pandoc")))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package adoc-mode
-  :diminish)
+;; (use-package adoc-mode
+;;   :diminish)
 #+END_SRC
 
 *** Clojure
 Kondo working with flycheck
 #+BEGIN_SRC emacs-lisp
-(use-package flycheck-clj-kondo)
+;; (use-package flycheck-clj-kondo)
 #+END_SRC
 
 Cider is a project tooling for clojure.
 
 In config we remove some of the completions from lsp-mode, to use the cider setup
 #+BEGIN_SRC  emacs-lisp
-(use-package cider
-  :pin melpa-stable
-  :hook
-  ((cider-repl-mode . paredit-mode)
-   (cider-mode . paredit-mode)
-   (cider-mode . eldoc-mode)
-   (cider-mode . company-mode)
-   (cider-repl-mode . company-mode))
-  :bind (("C-c M-a" . cider-insert-last-sexp-in-repl))
-  :config
-  (unbind-key "C-c M-p" cider-mode-map)
-  (setq lsp-enable-completion-at-point nil)
-  (setq lsp-enable-completion nil)
-  (setq lsp-enable-indentation nil))
+;; (use-package cider
+;;   :pin melpa-stable
+;;   :hook
+;;   ((cider-repl-mode . paredit-mode)
+;;    (cider-mode . paredit-mode)
+;;    (cider-mode . eldoc-mode)
+;;    (cider-mode . company-mode)
+;;    (cider-repl-mode . company-mode))
+;;   :bind (("C-c M-a" . cider-insert-last-sexp-in-repl))
+;;   :config
+;;   (unbind-key "C-c M-p" cider-mode-map)
+;;   (setq lsp-enable-completion-at-point nil)
+;;   (setq lsp-enable-completion nil)
+;;   (setq lsp-enable-indentation nil))
 
 #+END_SRC
 
 #+BEGIN_SRC  emacs-lisp
-(use-package clojure-mode
-  :diminish
-  :pin melpa-stable
-  :config
-  (require 'flycheck-clj-kondo)
-  :hook
-  ((clojure-mode . subword-mode)
-   (clojure-mode . aggressive-indent-mode)
-   (clojure-mode . (lambda ()
-                     (setq inferior-lisp-program "lein repl")
-                     (font-lock-add-keywords
-                      nil
-                      '(("(\\(facts?\\)"
-                         (1 font-lock-keyword-face))
-                        ("(\\(background?\\)"
-                         (1 font-lock-keyword-face))))
-                     (define-clojure-indent (fact 1))
-                     (define-clojure-indent (facts 1))))
-   (clojure-mode . cider-mode)
-   (clojure-mode . my-pretty-lambda-clojure)
-   (clojure-mode . column-enforce-mode)
-   (clojure-mode . flycheck-mode)))
+;; (use-package clojure-mode
+;;   :diminish
+;;   :pin melpa-stable
+;;   :config
+;;   (require 'flycheck-clj-kondo)
+;;   :hook
+;;   ((clojure-mode . subword-mode)
+;;    (clojure-mode . aggressive-indent-mode)
+;;    (clojure-mode . (lambda ()
+;;                      (setq inferior-lisp-program "lein repl")
+;;                      (font-lock-add-keywords
+;;                       nil
+;;                       '(("(\\(facts?\\)"
+;;                          (1 font-lock-keyword-face))
+;;                         ("(\\(background?\\)"
+;;                          (1 font-lock-keyword-face))))
+;;                      (define-clojure-indent (fact 1))
+;;                      (define-clojure-indent (facts 1))))
+;;    (clojure-mode . cider-mode)
+;;    (clojure-mode . my-pretty-lambda-clojure)
+;;    (clojure-mode . column-enforce-mode)
+;;    (clojure-mode . flycheck-mode)))
 
 #+END_SRC
 
 This is the basic treesiter mode for clojure
 #+BEGIN_SRC  emacs-lisp
-(use-package clojure-ts-mode
-  :diminish)
+;; (use-package clojure-ts-mode
+;;   :diminish)
 #+END_SRC
 
 #+BEGIN_SRC  emacs-lisp
@@ -1868,36 +1873,36 @@ This is the basic treesiter mode for clojure
 ;;   :defer t
 ;;   :ensure t)
 
-(defun clj-clojure-setup ()
-  "Functionality to be added for Clojure."
-  (clj-refactor-mode 1)
-  (yas-minor-mode 1)
-  (cljr-add-keybindings-with-prefix "C-c C-m"))
+;; (defun clj-clojure-setup ()
+;;   "Functionality to be added for Clojure."
+;;   (clj-refactor-mode 1)
+;;   (yas-minor-mode 1)
+;;   (cljr-add-keybindings-with-prefix "C-c C-m"))
 
-(use-package clj-refactor
-  :diminish
-  :pin melpa-stable
-  :hook
-  (clojure-mode . clj-clojure-setup)
-  :init
-  (setq cljr-add-ns-to-blank-clj-files nil))
+;; (use-package clj-refactor
+;;   :diminish
+;;   :pin melpa-stable
+;;   :hook
+;;   (clojure-mode . clj-clojure-setup)
+;;   :init
+;;   (setq cljr-add-ns-to-blank-clj-files nil))
 
-(use-package clojure-mode-extra-font-locking
-  :pin melpa-stable)
+;; (use-package clojure-mode-extra-font-locking
+;;   :pin melpa-stable)
 
 #+END_SRC
 
 Kaocha is a test runner for clojure
 #+BEGIN_SRC  emacs-lisp
-(use-package kaocha-runner
-  :after (cider-mode)
-  :bind
-  (:map clojure-mode-map
-        ("C-c k t" . kaocha-runner-run-test-at-point)
-        ("C-c k r" . kaocha-runner-run-tests)
-        ("C-c k a" . kaocha-runner-run-all-tests)
-        ("C-c k w" . kaocha-runner-show-warnings)
-        ("C-c k h" . kaocha-runner-hide-windows)))
+;; (use-package kaocha-runner
+;;   :after (cider-mode)
+;;   :bind
+;;   (:map clojure-mode-map
+;;         ("C-c k t" . kaocha-runner-run-test-at-point)
+;;         ("C-c k r" . kaocha-runner-run-tests)
+;;         ("C-c k a" . kaocha-runner-run-all-tests)
+;;         ("C-c k w" . kaocha-runner-show-warnings)
+;;         ("C-c k h" . kaocha-runner-hide-windows)))
 #+END_SRC
 
 Allow the use of clj-new and deps-new from inside emacs
@@ -1909,27 +1914,27 @@ Allow the use of clj-new and deps-new from inside emacs
 *** Mermaid
 For mermaid you need to have downloaded the mermaid cli tool using `npm install -g @mermaid-js/mermaid-cli`
 #+BEGIN_SRC emacs-lisp
-(use-package mermaid-mode
-  :mode ("\\.mmd\\'")
-  ;; Uncomment when testing improvements
-  ;; :load-path "/home/akira/code/external/mermaid-mode"
-  :config
-  (setq mermaid-mmdc-location "/home/akira/node_modules/.bin/mmdc"))
+;; (use-package mermaid-mode
+;;   :mode ("\\.mmd\\'")
+;;   ;; Uncomment when testing improvements
+;;   ;; :load-path "/home/akira/code/external/mermaid-mode"
+;;   :config
+;;   (setq mermaid-mmdc-location "/home/akira/node_modules/.bin/mmdc"))
 #+END_SRC
 
 *** Common Lisp
 #+BEGIN_SRC emacs-lisp
-(use-package slime
-  :config
-  (setq inferior-lisp-program "/usr/bin/sbcl")
-  (setq slime-contribs '(slime-fancy))
-  (slime-setup '(slime-fancy slime-company))
-  (setq slime-lisp-implementations
-        '((sbcl ("/usr/bin/sbcl") :coding-system utf-8-unix)))
-  :config
-  (unbind-key "C-c M-p" slime-mode-indirect-map)
-  :bind (:map slime-mode-indirect-map
-              ("C-c P" . slime-repl-set-package)))
+;; (use-package slime
+;;   :config
+;;   (setq inferior-lisp-program "/usr/bin/sbcl")
+;;   (setq slime-contribs '(slime-fancy))
+;;   (slime-setup '(slime-fancy slime-company))
+;;   (setq slime-lisp-implementations
+;;         '((sbcl ("/usr/bin/sbcl") :coding-system utf-8-unix)))
+;;   :config
+;;   (unbind-key "C-c M-p" slime-mode-indirect-map)
+;;   :bind (:map slime-mode-indirect-map
+;;               ("C-c P" . slime-repl-set-package)))
 
 (use-package slime-company
   :config
@@ -1939,105 +1944,105 @@ For mermaid you need to have downloaded the mermaid cli tool using `npm install 
 *** Parens!!!!
 This one has to happen after all modes that use parens are loaded
 #+BEGIN_SRC emacs-lisp
-(use-package paredit
-  :diminish
-  :init
-  (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
-  :hook
-  ((emacs-lisp-mode . enable-paredit-mode)
-   (eval-expression-minibuffer-setup . enable-paredit-mode)
-   (ielm-mode . enable-paredit-mode)
-   (lisp-mode . enable-paredit-mode)
-   (lisp-interaction-mode . enable-paredit-mode)
-   (scheme-mode . enable-paredit-mode)
-   (clojure-mode . enable-paredit-mode)
-   (lfe-mode . enable-paredit-mode)))
+;; (use-package paredit
+;;   :diminish
+;;   :init
+;;   (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+;;   :hook
+;;   ((emacs-lisp-mode . enable-paredit-mode)
+;;    (eval-expression-minibuffer-setup . enable-paredit-mode)
+;;    (ielm-mode . enable-paredit-mode)
+;;    (lisp-mode . enable-paredit-mode)
+;;    (lisp-interaction-mode . enable-paredit-mode)
+;;    (scheme-mode . enable-paredit-mode)
+;;    (clojure-mode . enable-paredit-mode)
+;;    (lfe-mode . enable-paredit-mode)))
 
-(use-package rainbow-delimiters
-  :diminish
-  :hook
-  ((prog-mode . rainbow-delimiters-mode)))
+;; (use-package rainbow-delimiters
+;;   :diminish
+;;   :hook
+;;   ((prog-mode . rainbow-delimiters-mode)))
 #+END_SRC
 
 *** Latex
 #+BEGIN_SRC emacs-lisp
-(use-package tex
-  :ensure auctex
-  :config
-  (setq TeX-auto-save t)
-  (setq TeX-parse-self t)
-  :hook
-  ((latex-mode . turn-on-reftex)
-   (LaTeX-mode . turn-on-reftex)))
+;; (use-package tex
+;;   :ensure auctex
+;;   :config
+;;   (setq TeX-auto-save t)
+;;   (setq TeX-parse-self t)
+;;   :hook
+;;   ((latex-mode . turn-on-reftex)
+;;    (LaTeX-mode . turn-on-reftex)))
 
-(use-package company-auctex)
+;; (use-package company-auctex)
 
-(use-package latex-preview-pane
-  :config
-  (latex-preview-pane-enable))
+;; (use-package latex-preview-pane
+;;   :config
+;;   (latex-preview-pane-enable))
 #+END_SRC
 
 *** Scheme
 #+BEGIN_SRC emacs-lisp
-(use-package geiser-mit)
+;; (use-package geiser-mit)
 
-(use-package geiser-chez)
+;; (use-package geiser-chez)
 #+END_SRC
 
 *** Lua
 #+BEGIN_SRC emacs-lisp
-(use-package lua-mode)
+;; (use-package lua-mode)
 
-(use-package company-lua)
+;; (use-package company-lua)
 
-(use-package luarocks)
+;; (use-package luarocks)
 #+END_SRC
 
 *** Powershell
 #+BEGIN_SRC emacs-lisp
-(use-package powershell)
+;; (use-package powershell)
 #+END_SRC
 
 *** Graphviz
 #+BEGIN_SRC emacs-lisp
-(use-package graphviz-dot-mode)
+;; (use-package graphviz-dot-mode)
 #+END_SRC
 
 *** OCAML
 You will need to download opam and Merlin
 #+BEGIN_SRC emacs-lisp
 
-(use-package tuareg
-  :mode (("\\.ocamlinit\\'" . tuareg-mode)))
+;; (use-package tuareg
+;;   :mode (("\\.ocamlinit\\'" . tuareg-mode)))
 
-(use-package merlin
-  :hook ((tuareg-mode . merlin-mode)
-         (caml-mode . merlin-mode))
-  :config
-  (setq merlin-command 'opam)
-  (setq merlin-error-after-save nil))
+;; (use-package merlin
+;;   :hook ((tuareg-mode . merlin-mode)
+;;          (caml-mode . merlin-mode))
+;;   :config
+;;   (setq merlin-command 'opam)
+;;   (setq merlin-error-after-save nil))
 
-(use-package flycheck-ocaml
-  :ensure t
-  :config
-  (flycheck-ocaml-setup))
+;; (use-package flycheck-ocaml
+;;   :ensure t
+;;   :config
+;;   (flycheck-ocaml-setup))
 
-(use-package dune)
+;; (use-package dune)
 
-(use-package merlin-company)
+;; (use-package merlin-company)
 
-(use-package merlin-eldoc
-  :hook ((tuareg-mode caml-mode) . merlin-eldoc-setup))
+;; (use-package merlin-eldoc
+;;   :hook ((tuareg-mode caml-mode) . merlin-eldoc-setup))
 
-(use-package ocp-indent
-  :hook ((tuareg-mode . (lambda () (setq ocp-setup-indent t)))
-         (caml-mode . (lambda () (setq ocp-indent-caml-mode-setup t)))))
+;; (use-package ocp-indent
+;;   :hook ((tuareg-mode . (lambda () (setq ocp-setup-indent t)))
+;;          (caml-mode . (lambda () (setq ocp-indent-caml-mode-setup t)))))
 
-(use-package opam-switch-mode
-  :hook
-  ((tuareg.mode . opam-switch-mode)))
+;; (use-package opam-switch-mode
+;;   :hook
+;;   ((tuareg.mode . opam-switch-mode)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package glsl-mode)
+;; (use-package glsl-mode)
 #+END_SRC
