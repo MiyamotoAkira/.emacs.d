@@ -379,6 +379,13 @@ Favour vertical split over horizontal split
       (select-window current))))
 #+END_SRC
 
+*** ace-window
+quickly move between windows using M-o number
+#+BEGIN_SRC emacs-lisp
+  (use-package ace-window
+    :bind (("M-o" . ace-window)))
+#+END_SRC
+
 
 * Configuration
 *** Insert lines
@@ -1011,13 +1018,6 @@ Adding some keybindings for the hmtl mode map
 ;;                              (define-key html-mode-map (kbd "M-o") nil)
 ;;                              (define-key html-mode-map (kbd "C-c C-p") 'facemenu-keymap)
 ;;                              (define-key html-mode-map (kbd "M-o") 'ace-window)))
-#+END_SRC
-
-*** ace-window
-quickly move between windows using M-o number
-#+BEGIN_SRC emacs-lisp
-;; (use-package ace-window
-;;   :bind (("M-o" . ace-window)))
 #+END_SRC
 
 *** shut-up
