@@ -333,6 +333,52 @@ The end of a sentence is a single space. The double space is an old convention
 (setq sentence-end-double-space nil)
 #+END_SRC
 
+*** spaceline
+This is the info line at the bottom of a buffer.
+#+BEGIN_SRC emacs-lisp
+  (use-package spaceline
+    :defer nil
+    :config
+    (spaceline-emacs-theme))
+#+END_SRC
+
+*** all-the-icons
+Lots of icons to work with emacs
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons
+    :defer 2)
+
+
+  ;; (use-package all-the-icons-dired
+  ;;   :after (dired-sidebar all-the-icons)
+  ;;   :hook
+  ;;   (dired-mode-hook . all-the-icons-dired-mode))
+  (use-package spaceline-all-the-icons
+    :after spaceline
+    :config (spaceline-all-the-icons-theme))
+#+END_SRC
+
+*** Splitting of buffers
+Favour vertical split over horizontal split
+#+BEGIN_SRC emacs-lisp
+(setq split-height-threshold nil)
+(setq split-width-threshold 120)
+
+(defun shell-horizontal ()
+  "This function is to display the shell on a horizontal split, whcih is usually more adequate."
+  (interactive)
+  (let ((split-width-threshold nil)
+        (split-height-threshold 0))
+    (progn
+      (shell)
+      (setq current (selected-window))
+      (setq window (get-buffer-window "*shell*"))
+      (select-window window)
+      (setq height (window-height window))
+      (shrink-window (- height 10))
+      (select-window current))))
+#+END_SRC
+
 
 * Configuration
 *** Insert lines
@@ -702,15 +748,6 @@ This package allows to remove modes from the modeline. Needs to be added as a ke
 ;;   :defer nil)
 #+END_SRC
 
-*** spaceline
-This is the info line at the bottom of a buffer. 
-#+BEGIN_SRC emacs-lisp
-;; (use-package spaceline
-;;   :defer nil
-;;   :config
-;;   (spaceline-emacs-theme))
-#+END_SRC
-
 *** flx
 Fuzzy search
 TODO is it useful now with ivy at all?
@@ -754,27 +791,6 @@ Maybe one day we change this. It disables the mouse in emacs. Useful to force th
 ;;   :diminish disable-mouse-global-mode
 ;;   :config
 ;;   (global-disable-mouse-mode))
-#+END_SRC
-
-*** Splitting of buffers
-Favour vertical split over horizontal split
-#+BEGIN_SRC emacs-lisp
-(setq split-height-threshold nil)
-(setq split-width-threshold 120)
-
-(defun shell-horizontal ()
-  "This function is to display the shell on a horizontal split, whcih is usually more adequate."
-  (interactive)
-  (let ((split-width-threshold nil)
-        (split-height-threshold 0))
-    (progn
-      (shell)
-      (setq current (selected-window))
-      (setq window (get-buffer-window "*shell*"))
-      (select-window window)
-      (setq height (window-height window))
-      (shrink-window (- height 10))
-      (select-window current))))
 #+END_SRC
 
 *** Yes or No
@@ -832,75 +848,6 @@ This dashboard appears whenever we open emacs.
   #+END_SRC
 
 ** General
-*** emacsql
-Library to use sqlite from emacs
-#+BEGIN_SRC emacs-lisp
-;; (use-package emacsql
-;;   :pin melpa-stable
-;;   )
-#+END_SRC
-
-*** pgmacs
-Libraries to have visual editing of postgresql
-
-#+BEGIN_SRC emacs-lisp
-;; (use-package pg :vc (:url "https://github.com/emarsden/pg-el/"))
-;; (use-package pgmacs :vc (:url "https://github.com/emarsden/pgmacs/"))
-#+END_SRC
-
-*** async
-Allows for the use of async code within emacs
-#+BEGIN_SRC emacs-lisp
-;; (use-package async)
-#+END_SRC
-
-*** Trash files
-We want to limit the amount and location of files created by emacs.
-#+BEGIN_SRC emacs-lisp
-;; (setq no-littering-etc-directory
-;;       (expand-file-name "config/" user-emacs-directory))
-;; (setq no-littering-var-directory
-;;       (expand-file-name "data/" user-emacs-directory))
-
-;; (use-package no-littering
-;;   :defer nil
-;;   :config
-;;   (setq auto-save-file-name-transforms
-;;         `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
-#+END_SRC
-
-*** saveplace
-Automatically save the last place we were on files when closing 
-#+BEGIN_SRC emacs-lisp
-;; (use-package saveplace
-;;   :defer nil
-;;   :config
-;;   (save-place-mode))
-#+END_SRC
-
-*** monky
-Like magit but for Mercurial
-#+BEGIN_SRC emacs-lisp
-;; (use-package monky
-;;   :bind (("C-x M-g" . monky-status)))
-
-;; (defun nothing())
-#+END_SRC
-
-*** ag
-Using ag, the silver searcher, from inside emacs
-#+BEGIN_SRC emacs-lisp
-;; (use-package ag
-;;   :bind (("C-c a a" . ag)
-;;          ("C-c a f" . ag-files)
-;;          ("C-c a d" . ag-dired)
-;;          ("C-c a r" . ag-regex)
-;;          ("C-c a p" . ag-project))
-;;   :config
-;;   (setq ag-reuse-buffers 't)
-;;   (setq ag-highlight-search 't))
-#+END_SRC
-
 *** magit
 Porcelain for git
 #+BEGIN_SRC emacs-lisp
@@ -934,6 +881,74 @@ can have separate set of buffers for each project. And each project can work ind
   :bind ("C-c M-p P" . projectile-persp-switch-project))
 #+END_SRC
 
+*** Trash files
+We want to limit the amount and location of files created by emacs.
+#+BEGIN_SRC emacs-lisp
+  (setq no-littering-etc-directory
+        (expand-file-name "config/" user-emacs-directory))
+  (setq no-littering-var-directory
+        (expand-file-name "data/" user-emacs-directory))
+
+  (use-package no-littering
+    :defer nil
+    :config
+    (setq auto-save-file-name-transforms
+       `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
+#+END_SRC
+
+*** emacsql
+Library to use sqlite from emacs
+#+BEGIN_SRC emacs-lisp
+;; (use-package emacsql
+;;   :pin melpa-stable
+;;   )
+#+END_SRC
+
+*** pgmacs
+Libraries to have visual editing of postgresql
+
+#+BEGIN_SRC emacs-lisp
+;; (use-package pg :vc (:url "https://github.com/emarsden/pg-el/"))
+;; (use-package pgmacs :vc (:url "https://github.com/emarsden/pgmacs/"))
+#+END_SRC
+
+*** async
+Allows for the use of async code within emacs
+#+BEGIN_SRC emacs-lisp
+;; (use-package async)
+#+END_SRC
+
+*** saveplace
+Automatically save the last place we were on files when closing 
+#+BEGIN_SRC emacs-lisp
+;; (use-package saveplace
+;;   :defer nil
+;;   :config
+;;   (save-place-mode))
+#+END_SRC
+
+*** monky
+Like magit but for Mercurial
+#+BEGIN_SRC emacs-lisp
+;; (use-package monky
+;;   :bind (("C-x M-g" . monky-status)))
+
+;; (defun nothing())
+#+END_SRC
+
+*** ag
+Using ag, the silver searcher, from inside emacs
+#+BEGIN_SRC emacs-lisp
+;; (use-package ag
+;;   :bind (("C-c a a" . ag)
+;;          ("C-c a f" . ag-files)
+;;          ("C-c a d" . ag-dired)
+;;          ("C-c a r" . ag-regex)
+;;          ("C-c a p" . ag-project))
+;;   :config
+;;   (setq ag-reuse-buffers 't)
+;;   (setq ag-highlight-search 't))
+#+END_SRC
 
 *** dired-sidebar
 Directory tree browsing that uses dired
@@ -1003,25 +1018,6 @@ quickly move between windows using M-o number
 #+BEGIN_SRC emacs-lisp
 ;; (use-package ace-window
 ;;   :bind (("M-o" . ace-window)))
-#+END_SRC
-
-*** all-the-icons
-Lots of icons to work with emacs
-#+BEGIN_SRC emacs-lisp
-;; (use-package all-the-icons
-;;   :defer 2)
-
-;; (use-package all-the-icons-dired
-;;   :after (dired-sidebar all-the-icons)
-;;   :hook
-;;   (dired-mode-hook . all-the-icons-dired-mode))
-
-;; ;; (use-package all-the-icons-ivy
-;; ;;   :hook (after-init-hook  . all-the-icons-ivy-setup))
-
-;; (use-package spaceline-all-the-icons 
-;;   :after spaceline
-;;   :config (spaceline-all-the-icons-theme))
 #+END_SRC
 
 *** shut-up
