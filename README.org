@@ -1101,10 +1101,7 @@ Mode to use plantuml withing emacs
 Esup allows to do performance of the emacs startup
 [[https://github.com/jschaf/esup][Esup Homepage]]
 #+BEGIN_SRC emacs-lisp
-;; (use-package esup
-;;   ;; To use MELPA Stable use ":pin melpa-stable",
-;;   ;; :pin melpa
-;;   )
+(use-package esup)
 #+END_SRC
 
 *** elfeed
