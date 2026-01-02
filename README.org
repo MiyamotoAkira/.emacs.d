@@ -19,12 +19,14 @@
     - [[#winner-mode][winner mode]]
     - [[#ansi-colors-setup][ansi colors setup]]
     - [[#selection-behaviour][Selection behaviour]]
+    - [[#yes-or-no][Yes or No]]
     - [[#prettify-symbols][Prettify symbols]]
     - [[#end-of-line-spaces][End of line spaces]]
     - [[#spaceline][spaceline]]
     - [[#all-the-icons][all-the-icons]]
     - [[#splitting-of-buffers][Splitting of buffers]]
     - [[#ace-window][ace-window]]
+    - [[#smooth-scrolling][smooth-scrolling]]
 - [[#configuration][Configuration]]
     - [[#insert-lines][Insert lines]]
     - [[#backup-directoryfiles][Backup directory/files]]
@@ -46,9 +48,7 @@
     - [[#flx][flx]]
     - [[#which-key][which-key]]
     - [[#which-key-posframe][which-key posframe]]
-    - [[#smooth-scrolling][smooth-scrolling]]
     - [[#disable-mouse][disable-mouse]]
-    - [[#yes-or-no][Yes or No]]
     - [[#page-break-lines][page-break-lines]]
     - [[#dashboard][Dashboard]]
 - [[#tools][Tools]]
@@ -304,6 +304,12 @@ Now selecting a region behaves as in most applications you overwrite the region
 (delete-selection-mode 1)
 #+END_SRC
 
+*** Yes or No
+All questions are y or n, for consistency
+#+BEGIN_SRC emacs-lisp
+(fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
 *** Prettify symbols
 We use the lambda character λ as a ligature.
 #+BEGIN_SRC emacs-lisp
@@ -384,10 +390,20 @@ quickly move between windows using M-o number
     :bind (("M-o" . ace-window)))
 #+END_SRC
 
+*** smooth-scrolling
+Line by line, instead of half-screen at a time.
+#+BEGIN_SRC emacs-lisp
+(use-package smooth-scrolling
+  :defer 2
+  :config
+  (smooth-scrolling-mode 1)
+  (setq smooth-scroll-margin 5))
+#+END_SRC
+
 
 * Configuration
 *** Insert lines
-This 
+This inserts lines below or above the current line. Supposed to be similar to the o/O behaviour of VIM
 #+BEGIN_SRC emacs-lisp
 (defun insert-line-below (universal)
   "Insert an empty line below the current line.
@@ -704,15 +720,6 @@ This allows which-key to use posframe
 ;;   :config
 ;;   (which-key-posframe-mode))
 #+END_SRC
-*** smooth-scrolling
-Line by line, instead of half-screen at a time.
-#+BEGIN_SRC emacs-lisp
-;; (use-package smooth-scrolling
-;;   :defer 2
-;;   :config
-;;   (smooth-scrolling-mode 1)
-;;   (setq smooth-scroll-margin 5))
-#+END_SRC
 
 *** disable-mouse
 Maybe one day we change this. It disables the mouse in emacs. Useful to force the use of the keyboard
@@ -722,12 +729,6 @@ Maybe one day we change this. It disables the mouse in emacs. Useful to force th
 ;;   :diminish disable-mouse-global-mode
 ;;   :config
 ;;   (global-disable-mouse-mode))
-#+END_SRC
-
-*** Yes or No
-All questions are y or n, for consistency
-#+BEGIN_SRC emacs-lisp
-(fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
 *** page-break-lines
