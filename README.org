@@ -65,7 +65,6 @@
     - [[#pgmacs][pgmacs]]
     - [[#monky][monky]]
     - [[#ag][ag]]
-    - [[#dired-sidebar][dired-sidebar]]
     - [[#treemacs][treemacs]]
     - [[#treemacs-projectile][treemacs-projectile]]
     - [[#treemacs-icons-dired][treemacs-icons-dired]]
@@ -858,14 +857,6 @@ Using ag, the silver searcher, from inside emacs
   :config
   (setq ag-reuse-buffers 't)
   (setq ag-highlight-search 't))
-#+END_SRC
-
-*** dired-sidebar
-Directory tree browsing that uses dired
-#+BEGIN_SRC emacs-lisp
-;; (use-package dired-sidebar
-;;   :commands (dired-sidebar-toggle-sidebar)
-;;   :bind (([f8] . dired-sidebar-toggle-sidebar)))
 #+END_SRC
 
 *** treemacs
