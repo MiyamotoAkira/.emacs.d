@@ -61,7 +61,6 @@
     - [[#trash-files][Trash files]]
     - [[#emacsql][emacsql]]
     - [[#pgmacs][pgmacs]]
-    - [[#async][async]]
     - [[#saveplace][saveplace]]
     - [[#monky][monky]]
     - [[#ag][ag]]
@@ -838,12 +837,6 @@ Libraries to have visual editing of postgresql
 #+BEGIN_SRC emacs-lisp
 ;; (use-package pg :vc (:url "https://github.com/emarsden/pg-el/"))
 ;; (use-package pgmacs :vc (:url "https://github.com/emarsden/pgmacs/"))
-#+END_SRC
-
-*** async
-Allows for the use of async code within emacs
-#+BEGIN_SRC emacs-lisp
-;; (use-package async)
 #+END_SRC
 
 *** saveplace
