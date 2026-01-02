@@ -869,49 +869,53 @@ Directory tree browsing that uses dired
 #+END_SRC
 
 *** treemacs
-
+Nice navigation of files
 #+BEGIN_SRC emacs-lisp
-;; (use-package treemacs
-;;   :ensure t
-;;   :bind
-;;   (:map global-map
-;;         ([f8]       . treemacs-select-window)
-;;         ("C-x t 1"   . treemacs-delete-other-windows)
-;;         ("C-x t t"   . treemacs)
-;;         ("C-x t d"   . treemacs-select-directory)
-;;         ("C-x t B"   . treemacs-bookmark)
-;;         ("C-x t C-t" . treemacs-find-file)
-;;         ("C-x t M-t" . treemacs-find-tag)))
+(use-package treemacs
+  :ensure t
+  :bind
+  (:map global-map
+        ([f8]       . treemacs-select-window)
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ("C-x t d"   . treemacs-select-directory)
+        ("C-x t B"   . treemacs-bookmark)
+        ("C-x t C-t" . treemacs-find-file)
+        ("C-x t M-t" . treemacs-find-tag)))
 #+END_SRC
 
 *** treemacs-projectile
-
+Allows to add projects to the treemacs workspace
 #+BEGIN_SRC emacs-lisp
-;; (use-package treemacs-projectile
-;;   :after (treemacs projectile)
-;;   :ensure t)
+(use-package treemacs-projectile
+  :after (treemacs projectile)
+  :ensure t)
 #+END_SRC
 
 *** treemacs-icons-dired
+Allows the use of treemacs icons on dired buffers
 #+BEGIN_SRC emacs-lisp
-;; (use-package treemacs-icons-dired
-;;   :hook (dired-mode . treemacs-icons-dired-enable-once)
-;;   :ensure t)
+(use-package treemacs-icons-dired
+  :hook (dired-mode . treemacs-icons-dired-enable-once)
+  :ensure t)
 #+END_SRC
 
 *** treemacs-magit
+This allows for communication between treemacs and magit, so whenever the status of files changes,
+this can be reflected on treemacs
 #+BEGIN_SRC emacs-lisp
-;; (use-package treemacs-magit
-;;   :after (treemacs magit)
-;;   :ensure t)
+(use-package treemacs-magit
+  :after (treemacs magit)
+  :ensure t)
 #+END_SRC
 
 *** treemacs-perspective
+Allows treemacs buffers to be unique to the perspective
 #+BEGIN_SRC emacs-lisp
-;; (use-package treemacs-perspective
-;;   :after (treemacs perspective)
-;;   :ensure t
-;;   :config (treemacs-set-scope-type 'Perspectives))
+(use-package treemacs-perspective
+  :after (treemacs perspective)
+  :ensure t
+  :config (treemacs-set-scope-type 'Perspectives))
 #+END_SRC
 
 *** html
