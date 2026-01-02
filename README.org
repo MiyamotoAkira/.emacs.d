@@ -29,6 +29,8 @@
     - [[#smooth-scrolling][smooth-scrolling]]
     - [[#page-break-lines][page-break-lines]]
     - [[#dashboard][Dashboard]]
+    - [[#which-key][which-key]]
+    - [[#which-key-posframe][which-key posframe]]
 - [[#configuration][Configuration]]
     - [[#insert-lines][Insert lines]]
     - [[#backup-directoryfiles][Backup directory/files]]
@@ -48,8 +50,6 @@
     - [[#highlight-todo][Highlight TODO]]
     - [[#diminish][diminish]]
     - [[#flx][flx]]
-    - [[#which-key][which-key]]
-    - [[#which-key-posframe][which-key posframe]]
 - [[#tools][Tools]]
   - [[#llm-section][LLM Section]]
     - [[#gptel][gptel]]
@@ -429,6 +429,25 @@ This dashboard appears whenever we open emacs.
 #+END_SRC
 
 
+*** which-key
+This will show options for a prefix chord in the minibuffer
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+  :defer nil
+  :diminish
+  :config
+  (which-key-mode))
+#+END_SRC
+
+*** which-key posframe
+This allows which-key to use posframe
+#+BEGIN_SRC emacs-lisp
+(use-package which-key-posframe
+  :defer nil
+  :config
+  (which-key-posframe-mode))
+#+END_SRC
+
 * Configuration
 *** Insert lines
 This inserts lines below or above the current line. Supposed to be similar to the o/O behaviour of VIM
@@ -729,24 +748,6 @@ TODO is it useful now with ivy at all?
 #+BEGIN_SRC emacs-lisp
 ;; (use-package flx
 ;;   :defer 2)
-#+END_SRC
-*** which-key
-This will show options for a prefix chord in the minibuffer
-#+BEGIN_SRC emacs-lisp
-;; (use-package which-key
-;;   :defer nil
-;;   :diminish
-;;   :config
-;;   (which-key-mode))
-#+END_SRC
-
-*** which-key posframe
-This allows which-key to use posframe
-#+BEGIN_SRC emacs-lisp
-;; (use-package which-key-posframe
-;;   :defer nil
-;;   :config
-;;   (which-key-posframe-mode))
 #+END_SRC
 
 * Tools
