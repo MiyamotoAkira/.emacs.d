@@ -75,7 +75,6 @@
     - [[#undo-tree][undo-tree]]
     - [[#goto-chg][goto-chg]]
     - [[#multiple-cursors][multiple-cursors]]
-    - [[#nov][Nov]]
     - [[#vertico][Vertico]]
     - [[#vertico-posframe][Vertico PosFrame]]
     - [[#save-history][Save history]]
@@ -944,15 +943,6 @@ Reduces the amount of messages being throw my emacs and some packages
          ("C-<" . mc/mark-previous-like-this)
          ("C-c C-<" . mc/mark-all-like-this))
   :defer 2)
-#+END_SRC
-
-*** Nov
-This package allows to read epub files from inside Emacs
-#+BEGIN_SRC emacs-lisp
-;; (use-package nov
-;;   :mode ("\\.epub\\'" . nov-mode)
-;;   :config
-;;   (setq nov-text-width 80))
 #+END_SRC
 
 *** Vertico
