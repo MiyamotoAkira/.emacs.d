@@ -1005,44 +1005,44 @@ This package adds an out-of-order algorithm for searching for completion candida
 *** Consult
 It provides enhanced versions of some commands. It has a preview facility
 #+BEGIN_SRC emacs-lisp
-;; (use-package consult
-;;   :defer nil
-;;   :bind (;; A recursive grep
-;;          ("M-s M-g" . consult-grep)
-;;          ;; Search for files names recursively
-;;          ("M-s M-f" . consult-find)
-;;          ;; Search through the outline (headings) of the file
-;;          ("M-s M-o" . consult-outline)
-;;          ;; Search the current buffer
-;;          ("M-s M-l" . consult-line)
-;;          ;; Switch to another buffer, or bookmarked file, or recently
-;;          ;; opened file.
-;;          ("M-s M-b" . consult-buffer)))
+(use-package consult
+  :defer nil
+  :bind (;; A recursive grep
+         ("M-s M-g" . consult-grep)
+         ;; Search for files names recursively
+         ("M-s M-f" . consult-find)
+         ;; Search through the outline (headings) of the file
+         ("M-s M-o" . consult-outline)
+         ;; Search the current buffer
+         ("M-s M-l" . consult-line)
+         ;; Switch to another buffer, or bookmarked file, or recently
+         ;; opened file.
+         ("M-s M-b" . consult-buffer)))
 #+END_SRC
 
 *** Consult ag
 Putting together consult and ag
 #+BEGIN_SRC emacs-lisp
-;; (use-package consult-ag
-;;     :defer nil)
+(use-package consult-ag
+    :defer nil)
 #+END_SRC
 
 *** Embark
 Equivalent to a right-click contextual menu.
 #+BEGIN_SRC emacs-lisp
-;; (use-package embark
-;;   :defer nil
-;;   :bind (("C-." . embark-act)
-;;          :map minibuffer-local-map
-;;          ("C-c C-c" . embark-collect)
-;;          ("C-c C-e" . embark-export)))
+(use-package embark
+  :defer nil
+  :bind (("C-." . embark-act)
+         :map minibuffer-local-map
+         ("C-c C-c" . embark-collect)
+         ("C-c C-e" . embark-export)))
 #+END_SRC
 
 *** Embark consult
 Ties together embark and consult
 #+BEGIN_SRC emacs-lisp
-;; (use-package embark-consult
-;;   :defer nil)
+(use-package embark-consult
+  :defer nil)
 #+END_SRC
 
 *** pos-tip
