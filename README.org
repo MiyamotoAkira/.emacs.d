@@ -27,6 +27,8 @@
     - [[#splitting-of-buffers][Splitting of buffers]]
     - [[#ace-window][ace-window]]
     - [[#smooth-scrolling][smooth-scrolling]]
+    - [[#page-break-lines][page-break-lines]]
+    - [[#dashboard][Dashboard]]
 - [[#configuration][Configuration]]
     - [[#insert-lines][Insert lines]]
     - [[#backup-directoryfiles][Backup directory/files]]
@@ -48,9 +50,6 @@
     - [[#flx][flx]]
     - [[#which-key][which-key]]
     - [[#which-key-posframe][which-key posframe]]
-    - [[#disable-mouse][disable-mouse]]
-    - [[#page-break-lines][page-break-lines]]
-    - [[#dashboard][Dashboard]]
 - [[#tools][Tools]]
   - [[#llm-section][LLM Section]]
     - [[#gptel][gptel]]
@@ -400,6 +399,35 @@ Line by line, instead of half-screen at a time.
   (setq smooth-scroll-margin 5))
 #+END_SRC
 
+*** page-break-lines
+This converts form feed (^L) into horizontal lines 
+#+BEGIN_SRC emacs-lisp
+(use-package page-break-lines
+  :defer nil)
+#+END_SRC
+
+*** Dashboard
+This dashboard appears whenever we open emacs.
+#+BEGIN_SRC emacs-lisp
+(use-package dashboard
+  :ensure t
+  :defer nil
+  :hook
+  ((dashboard-mode . page-break-lines-mode))
+  :config
+  (dashboard-setup-startup-hook)
+  (setq dashboard-banner-logo-title "May the Force be with you")
+  (setq dashboard-startup-banner 'logo)
+  (setq dashboard-center-content t)
+  (setq dashboard-icon-type 'all-the-icons)
+  (setq dashboard-projects-backend 'projectile)
+  (setq dashboard-projects-switch-function 'projectile-persp-switch-project)
+  (setq dashboard-items '((recents . 5)
+                          (bookmarks . 5)
+                          (projects . 5)
+                          (agenda . 5))))
+#+END_SRC
+
 
 * Configuration
 *** Insert lines
@@ -719,45 +747,6 @@ This allows which-key to use posframe
 ;;   :defer nil
 ;;   :config
 ;;   (which-key-posframe-mode))
-#+END_SRC
-
-*** disable-mouse
-Maybe one day we change this. It disables the mouse in emacs. Useful to force the use of the keyboard
-#+BEGIN_SRC emacs-lisp
-;; (use-package disable-mouse
-;;   :defer 2
-;;   :diminish disable-mouse-global-mode
-;;   :config
-;;   (global-disable-mouse-mode))
-#+END_SRC
-
-*** page-break-lines
-This converts form feed (^L) into horizontal lines 
-#+BEGIN_SRC emacs-lisp
-;; (use-package page-break-lines
-;;   :defer nil)
-#+END_SRC
-
-*** Dashboard
-This dashboard appears whenever we open emacs.
-#+BEGIN_SRC emacs-lisp
-;; (use-package dashboard
-;;   :ensure t
-;;   :defer nil
-;;   :hook
-;;   ((dashboard-mode . page-break-lines-mode))
-;;   :config
-;;   (dashboard-setup-startup-hook)
-;;   (setq dashboard-banner-logo-title "May the Force be with you")
-;;   (setq dashboard-startup-banner 'logo)
-;;   (setq dashboard-center-content t)
-;;   (setq dashboard-icon-type 'all-the-icons)
-;;   (setq dashboard-projects-backend 'projectile)
-;;   (setq dashboard-projects-switch-function 'projectile-persp-switch-project)
-;;   (setq dashboard-items '((recents . 5)
-;;                           (bookmarks . 5)
-;;                           (projects . 5)
-;;                           (agenda . 5))))
 #+END_SRC
 
 * Tools
