@@ -10,6 +10,7 @@
     - [[#font-size-modifications][Font size modifications]]
     - [[#themes][Themes]]
     - [[#highlight-lines][Highlight Lines]]
+    - [[#beacon][Beacon]]
     - [[#line-numbers][Line numbers]]
     - [[#parens][Parens]]
     - [[#tabs][Tabs]]
@@ -234,14 +235,19 @@ highlight current line
 (global-hl-line-mode 1)
 #+END_SRC
 
+*** Beacon
+Illuminatest the line where the cursor is when scrolling
 #+BEGIN_SRC emacs-lisp
-;; (use-package beacon)
+(use-package beacon)
+(beacon-mode 1)
 #+END_SRC
 
 *** Line numbers
- #+BEGIN_SRC emacs-lisp
+Get lines numbers everywhere
+ #+begin_SRC emacs-lisp
 (global-display-line-numbers-mode)
 #+END_SRC
+
 We avoid displaying numbers on eshell
 #+BEGIN_SRC emacs-lisp
 (dolist (mode '(eshell-mode-hook))
