@@ -35,6 +35,7 @@
     - [[#which-key-posframe][which-key posframe]]
     - [[#diminish][diminish]]
     - [[#highlight-todo][Highlight TODO]]
+    - [[#solaire][Solaire]]
 - [[#configuration][Configuration]]
     - [[#insert-lines][Insert lines]]
     - [[#backup-directoryfiles][Backup directory/files]]
@@ -469,7 +470,7 @@ This package allows to remove modes from the modeline. Needs to be added as a ke
 
 *** Highlight TODO
 Highlight certain words in documents and colorize them   
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (use-package hl-todo
   :hook ((org-mode . hl-todo-mode)
          (prog-mode . hl-todo-mode))
@@ -482,7 +483,16 @@ Highlight certain words in documents and colorize them
           ("REVIEW"     font-lock-keyword-face bold)
           ("NOTE"       success bold)
           ("DEPRECATED" font-lock-doc-face bold))))
-#+end_src
+#+END_SRC
+
+*** Solaire
+Solaire makes clear which buffers are not related to a file, through the change of some of the font/colors
+Seems to work well enough out of the box with solarized
+#+BEGIN_SRC emacs-lisp
+(use-package solaire-mode
+  :ensure t
+  :hook (after-init . solaire-global-mode))
+#+END_SRC
 
 * Configuration
 *** Insert lines
@@ -733,24 +743,6 @@ This allows you to see a graph on the browser of the org roam nodes
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-roam-ui)
-#+END_SRC
-
-
-Solaire makes clear which buffers are not related to a file
-#+BEGIN_SRC emacs-lisp
-;; (use-package solaire-mode
-;;   :ensure t
-;;   :hook (after-init . solaire-global-mode))
-#+END_SRC
-
-This package dims non-current buffers
-REVIEW is there a mismatch with solaire?
-#+BEGIN_SRC emacs-lisp
-;; (use-package dimmer
-;;   :defer 2
-;;   :config
-;;   (dimmer-configure-which-key)
-;;   (dimmer-mode t))
 #+END_SRC
 
 *** flx
