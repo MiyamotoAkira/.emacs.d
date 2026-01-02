@@ -1261,20 +1261,21 @@ This package allows for the folding of lines on code, with knowledge gained from
 #+END_SRC
 
 *** Flycheck
+Syntax checker
 #+BEGIN_SRC emacs-lisp
-;; (use-package flycheck-pos-tip)
+(use-package flycheck-pos-tip)
 
-;; (use-package flycheck
-;; :after (flycheck-pos-tip-mode)
-;; :config
-;; (show-paren-mode 1)
-;; (flycheck-pos-tip-mode)
-;; (setq-default flycheck-disabled-checkers
-;;               (append flycheck-disabled-checkers
-;;                       '(javascript-jshint)))
-;; (flycheck-add-mode 'javascript-eslint 'web-mode)
-;; :hook
-;; ((after-init . global-flycheck-mode)))
+(use-package flycheck
+:after (flycheck-pos-tip-mode)
+:config
+(show-paren-mode 1)
+(flycheck-pos-tip-mode)
+(setq-default flycheck-disabled-checkers
+              (append flycheck-disabled-checkers
+                      '(javascript-jshint)))
+(flycheck-add-mode 'javascript-eslint 'web-mode)
+:hook
+((after-init . global-flycheck-mode)))
 #+END_SRC
 
 *** eldoc
