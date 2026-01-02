@@ -34,6 +34,7 @@
     - [[#which-key][which-key]]
     - [[#which-key-posframe][which-key posframe]]
     - [[#diminish][diminish]]
+    - [[#highlight-todo][Highlight TODO]]
 - [[#configuration][Configuration]]
     - [[#insert-lines][Insert lines]]
     - [[#backup-directoryfiles][Backup directory/files]]
@@ -50,7 +51,6 @@
   - [[#org-roam-section][Org Roam section]]
     - [[#org-roam][org-roam]]
     - [[#org-roam-ui][org-roam-ui]]
-    - [[#highlight-todo][Highlight TODO]]
     - [[#flx][flx]]
 - [[#tools][Tools]]
   - [[#llm-section][LLM Section]]
@@ -467,6 +467,23 @@ This package allows to remove modes from the modeline. Needs to be added as a ke
   :defer nil)
 #+END_SRC
 
+*** Highlight TODO
+Highlight certain words in documents and colorize them   
+#+begin_src emacs-lisp
+(use-package hl-todo
+  :hook ((org-mode . hl-todo-mode)
+         (prog-mode . hl-todo-mode))
+  :config
+  (setq hl-todo-highlight-punctuation ":"
+        hl-todo-keyword-faces
+        `(("TODO"       warning bold)
+          ("FIXME"      error bold)
+          ("HACK"       font-lock-constant-face bold)
+          ("REVIEW"     font-lock-keyword-face bold)
+          ("NOTE"       success bold)
+          ("DEPRECATED" font-lock-doc-face bold))))
+#+end_src
+
 * Configuration
 *** Insert lines
 This inserts lines below or above the current line. Supposed to be similar to the o/O behaviour of VIM
@@ -735,24 +752,6 @@ REVIEW is there a mismatch with solaire?
 ;;   (dimmer-configure-which-key)
 ;;   (dimmer-mode t))
 #+END_SRC
-
-*** Highlight TODO
-Highlight certain words in documents and colorize them   
-#+begin_src emacs-lisp
-;; (use-package hl-todo
-;;   :hook ((org-mode . hl-todo-mode)
-;;          (prog-mode . hl-todo-mode))
-;;   :config
-;;   (setq hl-todo-highlight-punctuation ":"
-;;         hl-todo-keyword-faces
-;;         `(("TODO"       warning bold)
-;;           ("FIXME"      error bold)
-;;           ("HACK"       font-lock-constant-face bold)
-;;           ("REVIEW"     font-lock-keyword-face bold)
-;;           ("NOTE"       success bold)
-;;           ("DEPRECATED" font-lock-doc-face bold))))
-#+end_src
-
 
 *** flx
 Fuzzy search
