@@ -32,6 +32,7 @@
     - [[#dashboard][Dashboard]]
     - [[#which-key][which-key]]
     - [[#which-key-posframe][which-key posframe]]
+    - [[#diminish][diminish]]
 - [[#configuration][Configuration]]
     - [[#insert-lines][Insert lines]]
     - [[#backup-directoryfiles][Backup directory/files]]
@@ -49,7 +50,6 @@
     - [[#org-roam][org-roam]]
     - [[#org-roam-ui][org-roam-ui]]
     - [[#highlight-todo][Highlight TODO]]
-    - [[#diminish][diminish]]
     - [[#flx][flx]]
 - [[#tools][Tools]]
   - [[#llm-section][LLM Section]]
@@ -454,6 +454,13 @@ This allows which-key to use posframe
   (which-key-posframe-mode))
 #+END_SRC
 
+*** diminish
+This package allows to remove modes from the modeline. Needs to be added as a keyword on use-package setup for a mode.
+#+BEGIN_SRC emacs-lisp
+(use-package diminish
+  :defer nil)
+#+END_SRC
+
 * Configuration
 *** Insert lines
 This inserts lines below or above the current line. Supposed to be similar to the o/O behaviour of VIM
@@ -740,13 +747,6 @@ Highlight certain words in documents and colorize them
 ;;           ("DEPRECATED" font-lock-doc-face bold))))
 #+end_src
 
-
-*** diminish
-This package allows to remove modes from the modeline. Needs to be added as a keyword on use-package setup for a mode.
-#+BEGIN_SRC emacs-lisp
-;; (use-package diminish
-;;   :defer nil)
-#+END_SRC
 
 *** flx
 Fuzzy search
