@@ -23,9 +23,10 @@
     - [[#yes-or-no][Yes or No]]
     - [[#prettify-symbols][Prettify symbols]]
     - [[#end-of-line-spaces][End of line spaces]]
+    - [[#saveplace][saveplace]]
+    - [[#splitting-of-buffers][Splitting of buffers]]
     - [[#spaceline][spaceline]]
     - [[#all-the-icons][all-the-icons]]
-    - [[#splitting-of-buffers][Splitting of buffers]]
     - [[#ace-window][ace-window]]
     - [[#smooth-scrolling][smooth-scrolling]]
     - [[#page-break-lines][page-break-lines]]
@@ -59,7 +60,6 @@
     - [[#magit][magit]]
     - [[#project-handling][Project handling]]
     - [[#trash-files][Trash files]]
-    - [[#saveplace][saveplace]]
     - [[#emacsql][emacsql]]
     - [[#pgmacs][pgmacs]]
     - [[#monky][monky]]
@@ -341,6 +341,35 @@ The end of a sentence is a single space. The double space is an old convention
 (setq sentence-end-double-space nil)
 #+END_SRC
 
+*** saveplace
+Saves the cursor place in a buffer, so you go to the same place between seesions
+Automatically save the last place we were on files when closing 
+#+BEGIN_SRC emacs-lisp
+(save-place-mode 1)
+#+END_SRC
+
+
+*** Splitting of buffers
+Favour vertical split over horizontal split
+#+BEGIN_SRC emacs-lisp
+(setq split-height-threshold nil)
+(setq split-width-threshold 120)
+
+(defun shell-horizontal ()
+  "This function is to display the shell on a horizontal split, whcih is usually more adequate."
+  (interactive)
+  (let ((split-width-threshold nil)
+        (split-height-threshold 0))
+    (progn
+      (shell)
+      (setq current (selected-window))
+      (setq window (get-buffer-window "*shell*"))
+      (select-window window)
+      (setq height (window-height window))
+      (shrink-window (- height 10))
+      (select-window current))))
+#+END_SRC
+
 *** spaceline
 This is the info line at the bottom of a buffer.
 #+BEGIN_SRC emacs-lisp
@@ -365,28 +394,6 @@ Lots of icons to work with emacs
     :after spaceline
     :config (spaceline-all-the-icons-theme))
 #+END_SRC
-
-*** Splitting of buffers
-Favour vertical split over horizontal split
-#+BEGIN_SRC emacs-lisp
-(setq split-height-threshold nil)
-(setq split-width-threshold 120)
-
-(defun shell-horizontal ()
-  "This function is to display the shell on a horizontal split, whcih is usually more adequate."
-  (interactive)
-  (let ((split-width-threshold nil)
-        (split-height-threshold 0))
-    (progn
-      (shell)
-      (setq current (selected-window))
-      (setq window (get-buffer-window "*shell*"))
-      (select-window window)
-      (setq height (window-height window))
-      (shrink-window (- height 10))
-      (select-window current))))
-#+END_SRC
-
 *** ace-window
 quickly move between windows using M-o number
 #+BEGIN_SRC emacs-lisp
@@ -821,13 +828,6 @@ We want to limit the amount and location of files created by emacs.
     :config
     (setq auto-save-file-name-transforms
        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
-#+END_SRC
-
-*** saveplace
-Saves the cursor place in a buffer, so you go to the same place between seesions
-Automatically save the last place we were on files when closing 
-#+BEGIN_SRC emacs-lisp
-(save-place-mode 1)
 #+END_SRC
 
 *** emacsql
