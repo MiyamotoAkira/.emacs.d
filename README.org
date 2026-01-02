@@ -967,23 +967,23 @@ It also updates the buffer with the possible completions as you type
 
 Is currently pinned to melpa stable, as there was some issues with the 20241105 version
 #+BEGIN_SRC emacs-lisp
-;; (use-package vertico
-;;   :defer nil
-;;   :pin melpa-stable
-;;   :config
-;;   (setq vertico-cycle t)
-;;   (setq vertico-resize nil)
-;;   (vertico-mode 1))
+(use-package vertico
+  :defer nil
+  :pin melpa-stable
+  :config
+  (setq vertico-cycle t)
+  (setq vertico-resize nil)
+  (vertico-mode 1))
 #+END_SRC
 
 *** Vertico PosFrame
 Having vertico use posframe. Instead of the minibuffer it uses posframe to show
 the completions where you are located
 #+BEGIN_SRC emacs-lisp
-;; (use-package vertico-posframe
-;;   :defer nil
-;;   :config
-;;   (vertico-posframe-mode 1))
+(use-package vertico-posframe
+  :defer nil
+  :config
+  (vertico-posframe-mode 1))
 #+END_SRC
 
 *** Save history
@@ -996,19 +996,19 @@ This saves history of the minibuffer. Vertico uses it to put recently selected o
 This package adds annotations to completion candidates in the minibuffer. The information
 show is dependant on the candidate
 #+BEGIN_SRC emacs-lisp
-;; (use-package marginalia
-;;   :defer nil
-;;   :config
-;;   (marginalia-mode 1))
+(use-package marginalia
+  :defer nil
+  :init
+  (marginalia-mode))
 #+END_SRC
 
 *** Orderless
 This package adds an out-of-order algorithm for searching for completion candidates.
 #+BEGIN_SRC emacs-lisp
-;; (use-package orderless
-;;   :defer nil
-;;   :config
-;;   (setq completion-styles '(orderless basic)))
+(use-package orderless
+  :defer nil
+  :config
+  (setq completion-styles '(orderless basic)))
 #+END_SRC
 
 *** Consult
