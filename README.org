@@ -1041,7 +1041,7 @@ Ties together embark and consult
 *** pos-tip
 This is a base package to be able to show tooltip at the cursor position.
 #+BEGIN_SRC emacs-lisp
-;; (use-package pos-tip)
+(use-package pos-tip)
 #+END_SRC
 
 *** flyspell
