@@ -849,15 +849,15 @@ Like magit but for Mercurial
 *** ag
 Using ag, the silver searcher, from inside emacs
 #+BEGIN_SRC emacs-lisp
-;; (use-package ag
-;;   :bind (("C-c a a" . ag)
-;;          ("C-c a f" . ag-files)
-;;          ("C-c a d" . ag-dired)
-;;          ("C-c a r" . ag-regex)
-;;          ("C-c a p" . ag-project))
-;;   :config
-;;   (setq ag-reuse-buffers 't)
-;;   (setq ag-highlight-search 't))
+(use-package ag
+  :bind (("C-c a a" . ag)
+         ("C-c a f" . ag-files)
+         ("C-c a d" . ag-dired)
+         ("C-c a r" . ag-regex)
+         ("C-c a p" . ag-project))
+  :config
+  (setq ag-reuse-buffers 't)
+  (setq ag-highlight-search 't))
 #+END_SRC
 
 *** dired-sidebar
