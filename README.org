@@ -88,8 +88,7 @@
     - [[#pos-tip][pos-tip]]
     - [[#flyspell][flyspell]]
     - [[#structurizr][Structurizr]]
-    - [[#plantuml][Plantuml]]
-    - [[#elfeed][elfeed]]
+    - [[#esup][esup]]
     - [[#vterm][vterm]]
     - [[#pomm][Pomm]]
     - [[#combobulate][Combobulate]]
@@ -939,8 +938,12 @@ Reduces the amount of messages being throw my emacs and some packages
 
 *** multiple-cursors
 #+BEGIN_SRC emacs-lisp
-;; (use-package multiple-cursors
-;;   :defer 2)
+(use-package multiple-cursors
+  :bind (("C-S-c C-S-c" . mc/edit-lines)
+         ("C->" . mc/mark-next-like-this)
+         ("C-<" . mc/mark-previous-like-this)
+         ("C-c C-<" . mc/mark-all-like-this))
+  :defer 2)
 #+END_SRC
 
 *** Nov
@@ -1087,40 +1090,19 @@ TODO This need to be converted to use ts
       (require 'structurizr-mode)))
 #+END_SRC
 
-*** Plantuml
-Mode to use plantuml withing emacs
-#+BEGIN_SRC emacs-lisp
-;; (use-package plantuml-mode
-;;   :config
-;;   (setq plantuml-jar-path "~/bin/plantuml.jar")
-;;   (setq plantuml-default-exec-mode 'jar)
-;;   (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode))
-;;   (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode)))
-#+END_SRC
-
+*** esup
 Esup allows to do performance of the emacs startup
 [[https://github.com/jschaf/esup][Esup Homepage]]
 #+BEGIN_SRC emacs-lisp
 (use-package esup)
 #+END_SRC
 
-*** elfeed
-#+BEGIN_SRC emacs-lisp
-;; (use-package elfeed
-;;   :commands elfeed
-;;   :bind (("C-x w" . elfeed))
-;;   :config
-;;   (setq elfeed-db-directory "~/Sync/elfeed/db"
-;;         elfeed-enclosure-default-dir "~/Sync/elfeed/enclosures/")
-;;   (make-directory elfeed-db-directory t))
-#+END_SRC
-
 *** vterm
 A shell terminal
 #+BEGIN_SRC emacs-lisp
-;; (use-package vterm
-;;   :ensure t
-;;   :bind (("C-q" . vterm-send-next-key)))
+(use-package vterm
+  :ensure t
+  :bind (("C-q" . vterm-send-next-key)))
 #+END_SRC
 
 *** Pomm
