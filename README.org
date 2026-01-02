@@ -59,9 +59,9 @@
     - [[#magit][magit]]
     - [[#project-handling][Project handling]]
     - [[#trash-files][Trash files]]
+    - [[#saveplace][saveplace]]
     - [[#emacsql][emacsql]]
     - [[#pgmacs][pgmacs]]
-    - [[#saveplace][saveplace]]
     - [[#monky][monky]]
     - [[#ag][ag]]
     - [[#dired-sidebar][dired-sidebar]]
@@ -823,6 +823,13 @@ We want to limit the amount and location of files created by emacs.
        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
 #+END_SRC
 
+*** saveplace
+Saves the cursor place in a buffer, so you go to the same place between seesions
+Automatically save the last place we were on files when closing 
+#+BEGIN_SRC emacs-lisp
+(save-place-mode 1)
+#+END_SRC
+
 *** emacsql
 Library to use sqlite from emacs
 #+BEGIN_SRC emacs-lisp
@@ -837,15 +844,6 @@ Libraries to have visual editing of postgresql
 #+BEGIN_SRC emacs-lisp
 ;; (use-package pg :vc (:url "https://github.com/emarsden/pg-el/"))
 ;; (use-package pgmacs :vc (:url "https://github.com/emarsden/pgmacs/"))
-#+END_SRC
-
-*** saveplace
-Automatically save the last place we were on files when closing 
-#+BEGIN_SRC emacs-lisp
-;; (use-package saveplace
-;;   :defer nil
-;;   :config
-;;   (save-place-mode))
 #+END_SRC
 
 *** monky
