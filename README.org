@@ -1294,8 +1294,14 @@ Syntax checker
 #+END_SRC
 
 *** tagedit
+This packages add paredit functionality to html mode
 #+BEGIN_SRC emacs-lisp
-;; (use-package tagedit)
+(use-package tagedit
+  :after (sgml-mode)
+  :config
+  (tagedit-add-paredit-like-keybindings)
+  :hook
+  (html-mode . tagedit-mode))
 #+END_SRC
 
 *** EditorConfig
