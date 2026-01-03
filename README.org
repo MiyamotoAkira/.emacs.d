@@ -924,15 +924,17 @@ Reduces the amount of messages being throw my emacs and some packages
 #+END_SRC
 
 *** undo-tree
+This changes the way that the undo works, showing as an actual tree, rather than thinking about linearly
 #+BEGIN_SRC emacs-lisp
 (use-package undo-tree
   :defer 2)
 #+END_SRC
 
 *** goto-chg
+This allows you to move to the last place you were editing (and keep going back as you needed)
 #+BEGIN_SRC emacs-lisp
-;; (use-package goto-chg
-;;   :defer 2)
+(use-package goto-chg
+  :defer 2)
 #+END_SRC
 
 *** multiple-cursors
