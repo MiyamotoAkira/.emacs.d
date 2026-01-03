@@ -1047,22 +1047,23 @@ This is a base package to be able to show tooltip at the cursor position.
 *** flyspell
 Spell checker. We want it only in text and org modes
 #+BEGIN_SRC emacs-lisp
-;; (use-package flyspell
-;;   :diminish flyspell-mode
-;;   :hook
-;;     (prog-mode . flyspell-prog-mode)
-;;     ((text-mode org-mode) . (lambda () (flyspell-mode 1)))
-;;     ((change-log-mode log-edit-mode org-agenda-mode) . (lambda () (flyspell-mode -1)))
+(use-package flyspell
+  :diminish flyspell-mode
+  :hook
+    (prog-mode . flyspell-prog-mode)
+    ((text-mode org-mode) . (lambda () (flyspell-mode 1)))
+    ((change-log-mode log-edit-mode org-agenda-mode) . (lambda () (flyspell-mode -1)))
 
-;;   :config
-;;     (setq ;;ispell-program-name "/usr/local/bin/aspell"
-;;      ispell-local-dictionary "en_GB"
-;;      ispell-dictionary "english" ; better for aspell
-;;      ispell-extra-args '("--sug-mode=ultra" "--lang=en_GB")
-;;      ispell-list-command "--list"
-;;      ispell-local-dictionary-alist '(("en_GB" "[[:alpha:]]" "[^[:alpha:]]" "['‘’]"
-;;                                       t ; Many other characters
-;;                                       ("-d" "en_GB") nil utf-8))))
+  :config
+    (setq ;;ispell-program-name "/usr/local/bin/aspell"
+     flyspell-delay 1.5
+     flyspell-incorrect-hook nil
+     ispell-local-dictionary "en_GB"
+     ispell-dictionary "english" ; better for aspell
+     ispell-list-command "--list"
+     ispell-local-dictionary-alist '(("en_GB" "[[:alpha:]]" "[^[:alpha:]]" "['‘’]"
+                                      t ; Many other characters
+                                      ("-d" "en_GB") nil utf-8))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -1240,24 +1241,24 @@ This package allows for the folding of lines on code, with knowledge gained from
 
 *** Yasnippet
 #+BEGIN_SRC emacs-lisp
-;; (use-package yasnippet
-;;   :pin melpa-stable
-;;   :diminish yas-minor-mode
-;;   ;; :defines tools-map
-;;   ;; :bind (:map yas-minor-mode-map
-;;   ;;             ("n" . yas-new-snippet)
-;;   ;;             ("s" . yas-insert-snippet)
-;;   ;;             ("v" . yas-visit-snippet-file))
-;;   :config
-;;   ;; (evil-leader/set-key-for-mode 'emacs-lisp-mode "b" 'byte-compile-file)
-;;   ;; (define-prefix-command 'yas-minor-mode-map)
-;;   ;; (define-key tools-map (kbd "y") 'yas-minor-mode-map)
-;;   (yas-global-mode 1))
+(use-package yasnippet
+  :pin melpa-stable
+  :diminish yas-minor-mode
+  ;; :defines tools-map
+  ;; :bind (:map yas-minor-mode-map
+  ;;             ("n" . yas-new-snippet)
+  ;;             ("s" . yas-insert-snippet)
+  ;;             ("v" . yas-visit-snippet-file))
+  :config
+  ;; (evil-leader/set-key-for-mode 'emacs-lisp-mode "b" 'byte-compile-file)
+  ;; (define-prefix-command 'yas-minor-mode-map)
+  ;; (define-key tools-map (kbd "y") 'yas-minor-mode-map)
+  (yas-global-mode 1))
 
-;; (use-package yasnippet-snippets)
+(use-package yasnippet-snippets)
 
-;; (use-package auto-yasnippet
-;;   :diminish yas-minor-mode)
+(use-package auto-yasnippet
+  :diminish yas-minor-mode)
 #+END_SRC
 
 *** Flycheck
@@ -1280,14 +1281,14 @@ Syntax checker
 
 *** eldoc
 #+BEGIN_SRC emacs-lisp
-;; (use-package eldoc
-;;   :diminish
-;;   :hook
-;;   (prog-mode . turn-on-eldoc-mode)
-;;   (cider-repl-mode . turn-on-eldoc-mode)
-;;   (emacs-lisp-mode . turn-on-eldoc-mode)
-;;   (lisp-interaction-mode . turn-on-eldoc-mode)
-;;   (ielm-mode . turn-on-eldoc-mode))
+(use-package eldoc
+  :diminish
+  :hook
+  (prog-mode . turn-on-eldoc-mode)
+  (cider-repl-mode . turn-on-eldoc-mode)
+  (emacs-lisp-mode . turn-on-eldoc-mode)
+  (lisp-interaction-mode . turn-on-eldoc-mode)
+  (ielm-mode . turn-on-eldoc-mode))
 #+END_SRC
 
 *** tagedit
@@ -1297,10 +1298,10 @@ Syntax checker
 
 *** EditorConfig
 #+BEGIN_SRC emacs-lisp
-;; (use-package editorconfig
-;;   :diminish
-;;   :config
-;;   (editorconfig-mode 1))
+(use-package editorconfig
+  :diminish
+  :config
+  (editorconfig-mode 1))
 #+END_SRC
 
 *** aggressive-indent
