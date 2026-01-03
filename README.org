@@ -106,7 +106,7 @@
     - [[#lsp][LSP]]
   - [[#specific][Specific]]
     - [[#zig][Zig]]
-    - [[#go][Go]]
+    - [[#buttercup][Buttercup]]
     - [[#json][Json]]
     - [[#python][Python]]
     - [[#docker][Docker]]
@@ -1307,38 +1307,38 @@ Syntax checker
 *** aggressive-indent
 It autoindents as soon as you move from a line
 #+BEGIN_SRC emacs-lisp
-;; (use-package aggressive-indent
-;;   :hook
-;;   ((emacs-lisp-mode . aggressive-indent-mode)))
+(use-package aggressive-indent
+  :hook
+  ((emacs-lisp-mode . aggressive-indent-mode)))
 #+END_SRC
 
 *** Company
 Basic setup for company
 #+BEGIN_SRC emacs-lisp
-;; (use-package company
-;;   :defer nil
-;;   :diminish
-;;   :bind (("C-S-i" . company-complete)
-;;          ;; :map company-mode-map
-;; 	 ;; ("<tab>". tab-indent-or-complete)
-;; 	 ;; ("TAB". tab-indent-or-complete)
-;;          :map company-active-map
-;;          ("C-n". company-select-next)
-;; 	 ("C-p". company-select-previous)
-;; 	 ("M-<". company-select-first)
-;; 	 ("M->". company-select-last))
-;;   :hook
-;;   ((after-init . global-company-mode)))
+(use-package company
+  :defer nil
+  :diminish
+  :bind (("C-S-i" . company-complete)
+         ;; :map company-mode-map
+	 ;; ("<tab>". tab-indent-or-complete)
+	 ;; ("TAB". tab-indent-or-complete)
+         :map company-active-map
+         ("C-n". company-select-next)
+	 ("C-p". company-select-previous)
+	 ("M-<". company-select-first)
+	 ("M->". company-select-last))
+  :hook
+  ((after-init . global-company-mode)))
 
-;; (use-package company-quickhelp
-;;   :config
-;;   (company-quickhelp-mode 1))
+(use-package company-quickhelp
+  :config
+  (company-quickhelp-mode 1))
 #+END_SRC
 
 This is a company front-end with icons
 #+BEGIN_SRC emacs-lisp
-;; (use-package company-box
-;;   :hook (company-mode . company-box-mode))
+(use-package company-box
+  :hook (company-mode . company-box-mode))
 #+END_SRC
 
 *** LSP
@@ -1455,33 +1455,6 @@ Adding support for tailwind
 ;;   :hook ((zig-mode .eglot-ensure)))
 #+END_SRC
 
-*** Go
-#+BEGIN_SRC emacs-lisp
-;; (use-package go-mode)
-
-;; (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
-;; (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))
-;; (add-hook 'go-mode-hook (lambda ()
-;;                           (setq tab-width 4)
-;;                           (setq indent-tabs-mode 1)))
-
-;; (add-hook 'go-ts-mode-hook (lambda ()
-;;                              (setq tab-width 4)
-;;                              (setq indent-tabs-mode 1)
-;;                              (setq go-ts-mode-indent-offset 4)))
-
-;; (use-package gotest
-;;   :diminish
-;;   :after go-ts-mode
-;;   :bind (:map go-ts-mode-map
-;;               ("C-c t f" . go-test-current-file)
-;; 	      ("C-c t t" . go-test-current-test)
-;; 	      ("C-c t p" . go-test-current-project)
-;; 	      ("C-c t b" . go-test-current-benchmark)
-;;               ("C-c t c" . go-test-current-coverage)
-;;               ("C-c x" . go-run)))
-#+END_SRC
-
 #+BEGIN_SRC emacs-lisp
 ;; (use-package mmm-mode
 ;;   :config
@@ -1490,8 +1463,10 @@ Adding support for tailwind
 ;;   )
 #+END_SRC
 
+*** Buttercup
+This is a testing library for emacs to do Behavior Driven Testing
 #+BEGIN_SRC emacs-lisp
-;; (use-package buttercup)
+(use-package buttercup)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -1508,7 +1483,7 @@ Adding support for tailwind
 
 *** Json
 #+BEGIN_SRC emacs-lisp
-;; (use-package json-mode)
+(use-package json-mode)
 #+END_SRC
 
 *** Python
@@ -1590,24 +1565,24 @@ TODO this is not loading correctly
 
 *** Docker
 #+BEGIN_SRC emacs-lisp
-;; (use-package dockerfile-mode
-;;   :mode "\\.Dockerfile\\'")
+(use-package dockerfile-mode
+  :mode "\\.Dockerfile\\'")
 #+END_SRC
 
 *** Yaml
 #+BEGIN_SRC emacs-lisp
-;; (use-package yaml-mode)
+(use-package yaml-mode)
 #+END_SRC
 
 *** Terraform
 #+BEGIN_SRC emacs-lisp
-;; (use-package terraform-mode
-;;   :hook
-;;   ((terraform-mode . terraform-format-on-save-mode)))
+(use-package terraform-mode
+  :hook
+  ((terraform-mode . terraform-format-on-save-mode)))
 
-;; (use-package company-terraform
-;;   :config
-;;   (company-terraform-init))
+(use-package company-terraform
+  :config
+  (company-terraform-init))
 #+END_SRC
 
 *** Elixir
