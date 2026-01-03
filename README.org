@@ -919,8 +919,8 @@ Adding some keybindings for the hmtl mode map
 *** shut-up
 Reduces the amount of messages being throw my emacs and some packages
 #+BEGIN_SRC emacs-lisp
-;; (use-package shut-up
-;;   :defer 2)
+(use-package shut-up
+  :defer 2)
 #+END_SRC
 
 *** undo-tree
