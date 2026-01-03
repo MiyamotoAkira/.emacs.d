@@ -925,8 +925,8 @@ Reduces the amount of messages being throw my emacs and some packages
 
 *** undo-tree
 #+BEGIN_SRC emacs-lisp
-;; (use-package undo-tree
-;;   :defer 2)
+(use-package undo-tree
+  :defer 2)
 #+END_SRC
 
 *** goto-chg
