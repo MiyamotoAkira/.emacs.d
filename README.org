@@ -1772,17 +1772,17 @@ For mermaid you need to have downloaded the mermaid cli tool using `npm install 
 
 *** Common Lisp
 #+BEGIN_SRC emacs-lisp
-;; (use-package slime
-;;   :config
-;;   (setq inferior-lisp-program "/usr/bin/sbcl")
-;;   (setq slime-contribs '(slime-fancy))
-;;   (slime-setup '(slime-fancy slime-company))
-;;   (setq slime-lisp-implementations
-;;         '((sbcl ("/usr/bin/sbcl") :coding-system utf-8-unix)))
-;;   :config
-;;   (unbind-key "C-c M-p" slime-mode-indirect-map)
-;;   :bind (:map slime-mode-indirect-map
-;;               ("C-c P" . slime-repl-set-package)))
+(use-package slime
+  :config
+  (setq inferior-lisp-program "/usr/bin/sbcl")
+  (setq slime-contribs '(slime-fancy))
+  (slime-setup '(slime-fancy slime-company))
+  (setq slime-lisp-implementations
+        '((sbcl ("/usr/bin/sbcl") :coding-system utf-8-unix)))
+  :config
+  (unbind-key "C-c M-p" slime-mode-indirect-map)
+  :bind (:map slime-mode-indirect-map
+              ("C-c P" . slime-repl-set-package)))
 
 (use-package slime-company
   :config
@@ -1792,24 +1792,24 @@ For mermaid you need to have downloaded the mermaid cli tool using `npm install 
 *** Parens!!!!
 This one has to happen after all modes that use parens are loaded
 #+BEGIN_SRC emacs-lisp
-;; (use-package paredit
-;;   :diminish
-;;   :init
-;;   (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
-;;   :hook
-;;   ((emacs-lisp-mode . enable-paredit-mode)
-;;    (eval-expression-minibuffer-setup . enable-paredit-mode)
-;;    (ielm-mode . enable-paredit-mode)
-;;    (lisp-mode . enable-paredit-mode)
-;;    (lisp-interaction-mode . enable-paredit-mode)
-;;    (scheme-mode . enable-paredit-mode)
-;;    (clojure-mode . enable-paredit-mode)
-;;    (lfe-mode . enable-paredit-mode)))
+(use-package paredit
+  :diminish
+  :init
+  (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+  :hook
+  ((emacs-lisp-mode . enable-paredit-mode)
+   (eval-expression-minibuffer-setup . enable-paredit-mode)
+   (ielm-mode . enable-paredit-mode)
+   (lisp-mode . enable-paredit-mode)
+   (lisp-interaction-mode . enable-paredit-mode)
+   (scheme-mode . enable-paredit-mode)
+   (clojure-mode . enable-paredit-mode)
+   (lfe-mode . enable-paredit-mode)))
 
-;; (use-package rainbow-delimiters
-;;   :diminish
-;;   :hook
-;;   ((prog-mode . rainbow-delimiters-mode)))
+(use-package rainbow-delimiters
+  :diminish
+  :hook
+  ((prog-mode . rainbow-delimiters-mode)))
 #+END_SRC
 
 *** Latex
