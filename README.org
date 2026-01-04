@@ -1890,7 +1890,3 @@ You will need to download opam and Merlin
 ;;   :hook
 ;;   ((tuareg.mode . opam-switch-mode)))
 #+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-;; (use-package glsl-mode)
-#+END_SRC
