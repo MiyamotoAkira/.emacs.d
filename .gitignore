@@ -73,5 +73,7 @@ data/
 
 eln-cache/
 
+tree-sitter/
+
 # No need to have the tangled readme file in git
 README.el
