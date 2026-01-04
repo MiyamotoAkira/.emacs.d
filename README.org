@@ -1572,11 +1572,6 @@ TODO this is not loading correctly
 ;;    '(markdown-command "/usr/bin/pandoc")))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-;; (use-package adoc-mode
-;;   :diminish)
-#+END_SRC
-
 *** Clojure
 Kondo working with flycheck
 #+BEGIN_SRC emacs-lisp
