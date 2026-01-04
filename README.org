@@ -1130,6 +1130,9 @@ Some additional configuration for Eglot
                        ("C-c e r" . eglot-rename))))
 #+END_SRC
 *** Treesit
+This installs and setups treesitter for several languages.
+
+Remember the development tools need to be installed (build-essentials for debian based, c-development and development-tools groups for fedora)
 #+BEGIN_SRC emacs-lisp
 (dolist (modes
          '(("\\.tsx\\'" . tsx-ts-mode)
