@@ -112,7 +112,6 @@
     - [[#docker][Docker]]
     - [[#yaml][Yaml]]
     - [[#terraform][Terraform]]
-    - [[#elixir][Elixir]]
     - [[#markdown][Markdown]]
     - [[#clojure][Clojure]]
     - [[#mermaid][Mermaid]]
@@ -1561,48 +1560,6 @@ TODO this is not loading correctly
 (use-package company-terraform
   :config
   (company-terraform-init))
-#+END_SRC
-
-*** Elixir
-#+BEGIN_SRC emacs-lisp
-;; (use-package elixir-ts-mode
-;;     :ensure t
-;;     :hook
-;;     (elixir-ts-mode
-;;      .
-;;      (lambda ()
-;;        (push '(">=" . ?\u2265) prettify-symbols-alist)
-;;        (push '("<=" . ?\u2264) prettify-symbols-alist)
-;;        (push '("!=" . ?\u2260) prettify-symbols-alist)
-;;        (push '("==" . ?\u2A75) prettify-symbols-alist)
-;;        (push '("=~" . ?\u2245) prettify-symbols-alist)
-;;        (push '("<-" . ?\u2190) prettify-symbols-alist)
-;;        (push '("->" . ?\u2192) prettify-symbols-alist)
-;;        (push '("<-" . ?\u2190) prettify-symbols-alist)
-;;        (push '("|>" . ?\u25B7) prettify-symbols-alist))))
-
-;; (use-package heex-ts-mode
-;;   :bind (:map heex-ts-mode-map
-;;          ("C-c C-p" . facemenu-keymap)
-;;          ("M-o" . ace-window))
-;;   :config
-;;   (unbind-key "M-o" heex-ts-mode-map))
-
-;; (use-package mix
-;;   :config
-;;   (add-hook 'elixir-ts-mode-hook 'mix-minor-mode))
-
-;; (use-package exunit
-;;   :diminish t
-;;   :bind
-;;   (:map elixir-ts-mode-map
-;;    ("C-c e ." . exunit-verify-single)
-;;    ("C-c e b" . exunit-verify)
-;;    ("C-c e u a" . exunit-verify-all-in-umbrella)
-;;    ("C-c e a" . exunit-verify-all)
-;;    ("C-c e l" . exunit-rerun))
-;;   :hook
-;;   ((elixir-ts-mode . exunit-mode)))
 #+END_SRC
 
 *** Markdown
