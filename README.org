@@ -1100,11 +1100,11 @@ A shell terminal
 *** Pomm
 Pomodoro library to be used within Emacs
 #+BEGIN_SRC emacs-lisp
-;; (use-package pomm
-;;   :commands (pomm pomm-third-time)
-;;   :custom
-;;   (alert-default-style 'libnotify)
-;;   (pomm-audio-enabled t))
+(use-package pomm
+  :commands (pomm pomm-third-time)
+  :custom
+  (alert-default-style 'libnotify)
+  (pomm-audio-enabled t))
 #+END_SRC
 
 *** Combobulate
