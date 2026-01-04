@@ -907,12 +907,12 @@ Allows treemacs buffers to be unique to the perspective
 #+END_SRC
 
 *** html
-Adding some keybindings for the hmtl mode map
+Adding some keybindings for the hmtl mode map, mostly so they don't mess up other tools
 #+BEGIN_SRC emacs-lisp
-;; (add-hook 'mhtml-mode-hook (lambda ()
-;;                              (define-key html-mode-map (kbd "M-o") nil)
-;;                              (define-key html-mode-map (kbd "C-c C-p") 'facemenu-keymap)
-;;                              (define-key html-mode-map (kbd "M-o") 'ace-window)))
+(add-hook 'mhtml-mode-hook (lambda ()
+                             (define-key html-mode-map (kbd "M-o") nil)
+                             (define-key html-mode-map (kbd "C-c C-p") 'facemenu-keymap)
+                             (define-key html-mode-map (kbd "M-o") 'ace-window)))
 #+END_SRC
 
 *** shut-up
