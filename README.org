@@ -1333,85 +1333,82 @@ We make sure that we hook the ui mode
 `lsp-apply-edits-after-file-operations nil` is there because otherwise the LSP for Typescript kills emacs on
 certain scenarios
 #+BEGIN_SRC emacs-lisp
-;; (use-package lsp-mode
-;;   :defines lsp-highlight-symbol-at-point
-;;   :commands (lsp lsp-deferred)
-;;   :hook ((clojure-mode . lsp)
-;;          (clojurescript-mode . lsp)
-;;          (clojurec-mode . lsp)
-;;          (elixir-ts-mode . lsp)
-;;          ((tsx-ts-mode
-;;            typescript-ts-mode
-;;            js-ts-mode) . lsp)
-;;          (lsp-mode . lsp-enable-which-key-integration))
-;;   :init (setq lsp-eldoc-render-all nil
-;;               lsp-highlight-symbol-at-point nil
-;;               lsp-keymap-prefix "C-c l"
+(use-package lsp-mode
+  :defines lsp-highlight-symbol-at-point
+  :commands (lsp lsp-deferred)
+  :hook ((clojure-mode . lsp)
+         (clojurescript-mode . lsp)
+         (clojurec-mode . lsp)
+         ((tsx-ts-mode
+           typescript-ts-mode
+           js-ts-mode) . lsp)
+         (lsp-mode . lsp-enable-which-key-integration))
+  :init (setq lsp-eldoc-render-all nil
+              lsp-highlight-symbol-at-point nil
+              lsp-keymap-prefix "C-c l"
 
-;;               lsp-lens-enable t
-;;               lsp-signature-auto-activate nil
-;;               lsp-apply-edits-after-file-operations nil
-;;               lsp-before-save-edits nil)
-;;   :config
-;;   (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-;;   (setq lsp-typescript-preferences-include-package-json-auto-imports "on")
-;;   (setq lsp-typescript-suggest-auto-imports t)
-;;   (setq lsp-typescript-auto-closing-tags t)
-;;   (setq lsp-typescript-suggest-complete-js-docs t)  
-;;   (add-to-list 'lsp-disabled-clients 'omnisharp))
+              lsp-lens-enable t
+              lsp-signature-auto-activate nil
+              lsp-apply-edits-after-file-operations nil
+              lsp-before-save-edits nil)
+  :config
+  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+  (setq lsp-typescript-preferences-include-package-json-auto-imports "on")
+  (setq lsp-typescript-suggest-auto-imports t)
+  (setq lsp-typescript-auto-closing-tags t)
+  (setq lsp-typescript-suggest-complete-js-docs t)  
+  (add-to-list 'lsp-disabled-clients 'omnisharp))
 #+END_SRC
 
 The below is a wrapper that allows me to add the display-action to lsp-find-definition.
 This is because sometimes I want to open the definition in a separate buffer.
 If we wanted to removed we need to call (advice-remove 'lsp-find-definition #'jgg/lsp-find-definition-other)
 #+BEGIN_SRC emacs-lisp
-;; (defun jgg/lsp-find-in-other-buffer (original-function &optional args)
-;;   (interactive "P")
-;;   (if current-prefix-arg
-;;       (funcall original-function :display-action 'window)
-;;       (funcall original-function)))
+(defun jgg/lsp-find-in-other-buffer (original-function &optional args)
+  (interactive "P")
+  (if current-prefix-arg
+      (funcall original-function :display-action 'window)
+      (funcall original-function)))
 
-;; (advice-add 'lsp-find-definition :around #'jgg/lsp-find-in-other-buffer)
-;; ;;(advice-add 'lsp-find-type-definition :around #'jgg/lsp-find-in-other-buffer)
+(advice-add 'lsp-find-definition :around #'jgg/lsp-find-in-other-buffer)
+;;(advice-add 'lsp-find-type-definition :around #'jgg/lsp-find-in-other-buffer)
 #+END_SRC
 
 This add ui elements to lsp mode
 #+BEGIN_SRC emacs-lisp
-;; (use-package lsp-ui
-;;   :commands lsp-ui-mode
-;;   :bind (:map lsp-ui-mode-map
-;;               ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-;;               ([remap xref-find-references] . lsp-ui-peek-find-references))
-;;   :init (setq lsp-ui-doc-delay 0.5
-;;               lsp-ui-doc-position 'at-point
-;; 	      lsp-ui-doc-max-width 100)
-;;   :custom
-;;   (lsp-ui-sideline-update-mode 'point)
-;;   (lsp-ui-peek-always-show t)
-;;   (lsp-ui-sideline-show-hover nil)
-;;   (lsp-ui-sideline-enable t)
-;;   (lsp-ui-doc-enable t)
-;;   (lsp-ui-peek-enable t)
-;;   (lsp-ui-peek-show-directory t))
-
+(use-package lsp-ui
+  :commands lsp-ui-mode
+  :bind (:map lsp-ui-mode-map
+              ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+              ([remap xref-find-references] . lsp-ui-peek-find-references))
+  :init (setq lsp-ui-doc-delay 0.5
+              lsp-ui-doc-position 'at-point
+	      lsp-ui-doc-max-width 100)
+  :custom
+  (lsp-ui-sideline-update-mode 'point)
+  (lsp-ui-peek-always-show t)
+  (lsp-ui-sideline-show-hover nil)
+  (lsp-ui-sideline-enable t)
+  (lsp-ui-doc-enable t)
+  (lsp-ui-peek-enable t)
+  (lsp-ui-peek-show-directory t))
 #+END_SRC
 
 This links lsp with treemacs
 #+BEGIN_SRC emacs-lisp
-;; (use-package lsp-treemacs
-;;   :commands lsp-treemacs-errors-list)
-
+(use-package lsp-treemacs
+  :commands lsp-treemacs-errors-list)
 #+END_SRC
 
 We are adding a debugger mode to lsp
 #+BEGIN_SRC emacs-lisp
-;; (use-package dap-mode
-;;   :after lsp-mode
-;;   :bind (:map lsp-mode-map
-;;               ("<f5>" . dap-debug))
-;;   :config
-;;   (dap-mode t)
-;;   (dap-ui-mode t))
+(use-package dap-mode
+  :after lsp-mode
+  :bind (:map lsp-mode-map
+              ("<f5>" . dap-debug))
+  :config
+  (dap-mode t)
+  (dap-ui-mode t))
 #+END_SRC
 
 Adding support for tailwind
