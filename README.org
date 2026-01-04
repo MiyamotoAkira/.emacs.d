@@ -1111,12 +1111,12 @@ Pomodoro library to be used within Emacs
 *** Combobulate
 This package uses tree-sitter for structured editing
 #+BEGIN_SRC emacs-lisp
-;; (use-package combobulate
-;;   :custom
-;;   (combobulate-key-prefix "C-c o")
-;;   :hook ((prog-mode . combobulate-mode))
-;;   :vc (:url "https://github.com/mickeynp/combobulate"
-;;        :branch "main"))
+(use-package combobulate
+  :custom
+  (combobulate-key-prefix "C-c o")
+  :hook ((prog-mode . combobulate-mode))
+  :vc (:url "https://github.com/mickeynp/combobulate"
+       :branch "main"))
 #+END_SRC
 * Languages
 ** General
@@ -1131,114 +1131,87 @@ Some additional configuration for Eglot
 #+END_SRC
 *** Treesit
 #+BEGIN_SRC emacs-lisp
-;; (dolist (modes
-;;          '(("\\.tsx\\'" . tsx-ts-mode)
-;;            ("\\.js\\'"  . typescript-ts-mode)
-;;            ("\\.mjs\\'" . typescript-ts-mode)
-;;            ("\\.mts\\'" . typescript-ts-mode)
-;;            ("\\.cjs\\'" . typescript-ts-mode)
-;;            ("\\.ts\\'"  . typescript-ts-mode)
-;;            ("\\.jsx\\'" . tsx-ts-mode)
-;;            ("\\.json\\'" .  json-ts-mode)
-;;            ("\\.Dockerfile\\'" . dockerfile-ts-mode)
-;;            ("\\.go\\'" . go-ts-mode)
-;;            ("/go\\.mod\\'" . go-mod-ts-mode)
-;;            ("\\.ex" . elixir-ts-mode)
-;;            ("\\.exs" . elixir-ts-mode)
-;;            ("\\.heex" . heex-ts-mode)))
-;;   (add-to-list 'auto-mode-alist modes))
+(dolist (modes
+         '(("\\.tsx\\'" . tsx-ts-mode)
+           ("\\.js\\'"  . typescript-ts-mode)
+           ("\\.mjs\\'" . typescript-ts-mode)
+           ("\\.mts\\'" . typescript-ts-mode)
+           ("\\.cjs\\'" . typescript-ts-mode)
+           ("\\.ts\\'"  . typescript-ts-mode)
+           ("\\.jsx\\'" . tsx-ts-mode)
+           ("\\.json\\'" .  json-ts-mode)
+           ("\\.Dockerfile\\'" . dockerfile-ts-mode)))
+  (add-to-list 'auto-mode-alist modes))
 
-;; (setq treesit-language-source-alist
-;;       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-;;         (css "https://github.com/tree-sitter/tree-sitter-css")
-;;         (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp")
-;;         (elixir "https://github.com/elixir-lang/tree-sitter-elixir")
-;;         (heex "https://github.com/phoenixframework/tree-sitter-heex.git")
-;;         (eex "https://github.com/connorlay/tree-sitter-eex")
-;;         (go "https://github.com/tree-sitter/tree-sitter-go" "v0.19.1")
-;;         (gomod "https://github.com/camdencheek/tree-sitter-go-mod")
-;;         (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
-;;         (html "https://github.com/tree-sitter/tree-sitter-html")
-;;         (json "https://github.com/tree-sitter/tree-sitter-json")
-;;         (make "https://github.com/alemuller/tree-sitter-make")
-;;         (markdown "https://github.com/ikatyang/tree-sitter-markdown")
-;;         (python "https://github.com/tree-sitter/tree-sitter-python" "v0.20.4")
-;;         (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.20.1" "src")
-;;         (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")
-;;         (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
-;;         (toml "https://github.com/tree-sitter/tree-sitter-toml" "v0.5.1")
-;;         (yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")))
+(setq treesit-language-source-alist
+      '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+        (css "https://github.com/tree-sitter/tree-sitter-css" "v0.20.0")
+        (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp")
+        (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
+        (html "https://github.com/tree-sitter/tree-sitter-html" "v0.20.1")
+        (json "https://github.com/tree-sitter/tree-sitter-json" "v0.20.2")
+        (make "https://github.com/alemuller/tree-sitter-make")
+        (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+        (python "https://github.com/tree-sitter/tree-sitter-python" "v0.20.4")
+        (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.20.1" "src")
+        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")
+        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
+        (toml "https://github.com/tree-sitter/tree-sitter-toml" "v0.5.1")
+        (yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")))
 
 ;; Should we try this again?
-;; (dolist (grammar
-;;       '((bash ("https://github.com/tree-sitter/tree-sitter-bash"))
-;;         (css ("https://github.com/tree-sitter/tree-sitter-css"))
-;;         (c-sharp ("https://github.com/tree-sitter/tree-sitter-c-sharp"))
-;;         (go ("https://github.com/tree-sitter/tree-sitter-go" "v0.19.1"))
-;;         (gomod ("https://github.com/camdencheek/tree-sitter-go-mod"))
-;;         (dockerfile ("https://github.com/camdencheek/tree-sitter-dockerfile"))
-;;         (html ("https://github.com/tree-sitter/tree-sitter-html"))
-;;         (json ("https://github.com/tree-sitter/tree-sitter-json"))
-;;         (make ("https://github.com/alemuller/tree-sitter-make"))
-;;         (markdown ("https://github.com/ikatyang/tree-sitter-markdown"))
-;;         (python ("https://github.com/tree-sitter/tree-sitter-python"))
-;;         (javascript ("https://github.com/tree-sitter/tree-sitter-javascript" "v0.20.1" "src"))
-;;         (tsx ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.1" "src"))
-;;         (typescript ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src"))
-;;         (toml ("https://github.com/tree-sitter/tree-sitter-toml"))
-;;         (yaml ("https://github.com/ikatyang/tree-sitter-yaml"))))
-;;   (add-to-list 'treesit-language-source-alist grammar)
-;;   (unless (treesit-language-available-p (car grammar))
-;;     (treesit-install-language-grammar (car grammar))))
+(dolist (grammar treesit-language-source-alist)
+  (print (car grammar))
+  (unless (treesit-language-available-p (car grammar))
+    (treesit-install-language-grammar (car grammar))))
 
- ;; (dolist (mapping
- ;;            '((python-mode . python-ts-mode)
- ;;              (csharp-mode . csharp-ts-mode)
- ;;              (css-mode . css-ts-mode)
- ;;              (elixir-mode . elixir-ts-mode)
- ;;              (typescript-mode . typescript-ts-mode)
- ;;              (js-mode . typescript-ts-mode)
- ;;              (js2-mode . typescript-ts-mode)
- ;;              (go-mode . go-ts-mode)
- ;;              (c-mode . c-ts-mode)
- ;;              (c++-mode . c++-ts-mode)
- ;;              (c-or-c++-mode . c-or-c++-ts-mode)
- ;;              (bash-mode . bash-ts-mode)
- ;;              (css-mode . css-ts-mode)
- ;;              (json-mode . json-ts-mode)
- ;;              (js-json-mode . json-ts-mode)
- ;;              (sh-mode . bash-ts-mode)
- ;;              (sh-base-mode . bash-ts-mode)))
- ;;   (add-to-list 'major-mode-remap-alist mapping))
+(dolist (mapping
+         '((python-mode . python-ts-mode)
+           (csharp-mode . csharp-ts-mode)
+           (css-mode . css-ts-mode)
+           (typescript-mode . typescript-ts-mode)
+           (js-mode . typescript-ts-mode)
+           (js2-mode . typescript-ts-mode)
+           (c-mode . c-ts-mode)
+           (c++-mode . c++-ts-mode)
+           (c-or-c++-mode . c-or-c++-ts-mode)
+           (bash-mode . bash-ts-mode)
+           (css-mode . css-ts-mode)
+           (python-mode. python-ts-mode)
+           (json-mode . json-ts-mode)
+           (js-json-mode . json-ts-mode)
+           (sh-mode . bash-ts-mode)
+           (sh-base-mode . bash-ts-mode)))
+  (add-to-list 'major-mode-remap-alist mapping))
 
-;; (use-package treesit-auto
-;;   :custom
-;;   (treesit-auto-install 'prompt)
-;;   :config
-;;   (treesit-auto-add-to-auto-mode-alist 'all)
-;;   (global-treesit-auto-mode))
+(use-package treesit-auto
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
 #+END_SRC
 
 *** Treesit-fold
 
 This package allows for the folding of lines on code, with knowledge gained from treesit
 #+BEGIN_SRC emacs-lisp
-;; (use-package treesit-fold
-;;   :diminish
-;;   :bind (("C-c f o o" . treesit-fold-open)
-;;          ("C-c f o a" . treesit-fold-open-all)
-;;          ("C-c f o r" . treesit-fold-open-recursively)
-;;          ("C-c f c c" . treesit-fold-close)
-;;          ("C-c f c a" . treesit-fold-close-all)
-;;          ("C-c f t" . treesit-fold-toogle))
-;;   :custom
-;;   (global-treesit-fold-mode t)
-;;   (global-treesit-fold-indicators-mode t)
-;;   (treesit-fold-line-count-show t)
-;;   (treesit-fold-line-count-format " <%d lines> ")
+(use-package treesit-fold
+  :diminish
+  :bind (("C-c f o o" . treesit-fold-open)
+         ("C-c f o a" . treesit-fold-open-all)
+         ("C-c f o r" . treesit-fold-open-recursively)
+         ("C-c f c c" . treesit-fold-close)
+         ("C-c f c a" . treesit-fold-close-all)
+         ("C-c f t" . treesit-fold-toogle))
+  :custom
+  (global-treesit-fold-mode t)
+  (global-treesit-fold-indicators-mode t)
+  (treesit-fold-line-count-show t)
+  (treesit-fold-line-count-format " <%d lines> ")
   
-;;   :vc (:url "https://github.com/emacs-tree-sitter/treesit-fold"
-;;        :branch "main"))
+  :vc (:url "https://github.com/emacs-tree-sitter/treesit-fold"
+       :branch "main"))
 #+END_SRC
 
 *** Yasnippet
@@ -1495,12 +1468,6 @@ This is a testing library for emacs to do Behavior Driven Testing
 #+END_SRC
 
 *** Python
-
-#+BEGIN_SRC emacs-lisp
-;; (setq major-mode-remap-alist
-;;       '((python-mode . python-ts-mode)))
-#+END_SRC
-
 We use eglot for python
 #+BEGIN_SRC emacs-lisp
 ;; (use-package python
