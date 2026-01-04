@@ -1123,11 +1123,11 @@ This package uses tree-sitter for structured editing
 *** Eglot
 Some additional configuration for Eglot
 #+BEGIN_SRC emacs-lisp
-;; (add-hook 'eglot-managed-mode-hook
-;;           (lambda ()
-;;             (bind-keys :map eglot-mode-map
-;;                        ("C-c e a" . eglot-code-actions)
-;;                        ("C-c e r" . eglot-rename))))
+(add-hook 'eglot-managed-mode-hook
+          (lambda ()
+            (bind-keys :map eglot-mode-map
+                       ("C-c e a" . eglot-code-actions)
+                       ("C-c e r" . eglot-rename))))
 #+END_SRC
 *** Treesit
 #+BEGIN_SRC emacs-lisp
