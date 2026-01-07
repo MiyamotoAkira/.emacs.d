@@ -109,6 +109,7 @@
     - [[#buttercup][Buttercup]]
     - [[#json][Json]]
     - [[#python][Python]]
+    - [[#apheleia][Apheleia]]
     - [[#docker][Docker]]
     - [[#yaml][Yaml]]
     - [[#terraform][Terraform]]
@@ -1492,21 +1493,6 @@ uv mode package
 ;; (use-package python-docstring)
 #+END_SRC
 
-The apheleia package formats python (black), js (prettier)  and go (gofmt) by default.
-
-We have added some configuration for prettier, so it uses the file name to infer the parser to use (to distinguish between js/ts/css)
-#+BEGIN_SRC emacs-lisp
-(use-package apheleia
-  :diminish
-  :defines
-  apheleia-formatters
-  apheleia-mode-alist
-  :init (apheleia-global-mode +1)
-  :config
-  (setf (alist-get 'prettier-json apheleia-formatters)
-        '("prettier" "--stdin-filepath" filepath)))
-#+END_SRC
-
 
 This package allows the use of isort when saving a python file
 #+BEGIN_SRC emacs-lisp
@@ -1528,6 +1514,22 @@ TODO this is not loading correctly
 ;; (use-package pyvenv
 ;;   :init
 ;;   (setenv "WORKON_HOME" "~/.pyenv/versions"))
+#+END_SRC
+
+*** Apheleia
+The apheleia package formats python (black), js (prettier)  and go (gofmt) by default.
+
+We have added some configuration for prettier, so it uses the file name to infer the parser to use (to distinguish between js/ts/css)
+#+BEGIN_SRC emacs-lisp
+(use-package apheleia
+  :diminish
+  :defines
+  apheleia-formatters
+  apheleia-mode-alist
+  :init (apheleia-global-mode +1)
+  :config
+  (setf (alist-get 'prettier-json apheleia-formatters)
+        '("prettier" "--stdin-filepath" filepath)))
 #+END_SRC
 
 *** Docker
