@@ -581,7 +581,7 @@ This is to get the path variable read from the shell environment.
                                              "ZSH"
                                              "NVM_DIR"))
       (exec-path-from-shell-initialize))
-  ;; )                                     
+  ;; )
   #+END_SRC
 
 * Org Configuration
@@ -1496,15 +1496,15 @@ The apheleia package formats python (black), js (prettier)  and go (gofmt) by de
 
 We have added some configuration for prettier, so it uses the file name to infer the parser to use (to distinguish between js/ts/css)
 #+BEGIN_SRC emacs-lisp
-;; (use-package apheleia
-;;   :diminish
-;;   :defines
-;;   apheleia-formatters
-;;   apheleia-mode-alist
-;;   :init (apheleia-global-mode +1)
-;;   :config
-;;   (setf (alist-get 'prettier-json apheleia-formatters)
-;;         '("prettier" "--stdin-filepath" filepath)))
+(use-package apheleia
+  :diminish
+  :defines
+  apheleia-formatters
+  apheleia-mode-alist
+  :init (apheleia-global-mode +1)
+  :config
+  (setf (alist-get 'prettier-json apheleia-formatters)
+        '("prettier" "--stdin-filepath" filepath)))
 #+END_SRC
 
 
