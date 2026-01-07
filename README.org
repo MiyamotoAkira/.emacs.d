@@ -565,8 +565,8 @@ Configuration that depends on the Operative system
 
 We use zsh when possible
 #+BEGIN_SRC emacs-lisp
-;; (if (memq window-system '(mac ns))
-    ;; (setenv "SHELL" "/bin/zsh"))        
+(if (memq window-system '(mac ns x))
+    (setenv "SHELL" "/bin/zsh"))
   #+END_SRC
 
 We check if we are in a nix system. daemonp will only happen in nix system (I think)
@@ -574,21 +574,14 @@ This is to get the path variable read from the shell environment.
 #+BEGIN_SRC emacs-lisp
 ;; (if (or (memq window-system '(mac ns x))
 ;;         (daemonp))
-;;     (use-package exec-path-from-shell
-;;       :defer nil
-;;       :config
-;;       (setq exec-path-from-shell-variables '("PATH"
-;;                                              "ZSH"
-;;                                              "PYENV_ROOT"
-;;                                              "VIRTUALENVWRAPPER_PYTHON"
-;;                                              "PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV"
-;;                                              "WORKON_HOME"
-;;                                              "PROJECT_HOME"
-;;                                              "ANDROID_HOME"
-;;                                              "JAVA_HOME"
-;;                                              "SDKMAN_DIR"
-;;                                              "GOPATH"))
-;;       (exec-path-from-shell-initialize)))
+    (use-package exec-path-from-shell
+      :defer nil
+      :config
+      (setq exec-path-from-shell-variables '("PATH"
+                                             "ZSH"
+                                             "NVM_DIR"))
+      (exec-path-from-shell-initialize))
+  ;; )                                     
   #+END_SRC
 
 * Org Configuration
