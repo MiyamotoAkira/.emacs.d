@@ -1556,12 +1556,12 @@ We have added some configuration for prettier, so it uses the file name to infer
 
 *** Markdown
 #+BEGIN_SRC emacs-lisp
-;; (use-package markdown-mode
-;;   :diminish
-;;   :mode ("\\.text\\'" "\\.markdown\\'" "\\.md\\'")
-;;   :config
-;;   (custom-set-variables
-;;    '(markdown-command "/usr/bin/pandoc")))
+(use-package markdown-mode
+  :diminish
+  :mode ("\\.text\\'" "\\.markdown\\'" "\\.md\\'")
+  :config
+  (custom-set-variables
+   '(markdown-command "/usr/bin/pandoc")))
 #+END_SRC
 
 *** Clojure
