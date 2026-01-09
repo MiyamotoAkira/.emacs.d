@@ -927,6 +927,8 @@ This changes the way that the undo works, showing as an actual tree, rather than
 This allows you to move to the last place you were editing (and keep going back as you needed)
 #+BEGIN_SRC emacs-lisp
 (use-package goto-chg
+  :bind (("C-c g g" . goto-last-change)
+         ("C-c g r" . goto-last-change-reverse))
   :defer 2)
 #+END_SRC
 
