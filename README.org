@@ -1407,36 +1407,12 @@ We are adding a debugger mode to lsp
   (dap-ui-mode t))
 #+END_SRC
 
-Adding support for tailwind
-#+BEGIN_SRC emacs-lisp
-;; (use-package lsp-tailwindcss
-;;   :init (setq lsp-tailwindcss-add-on-mode t)
-;;   :config
-;;   (dolist (tw-major-mode
-;;            '(css-mode
-;;              css-ts-mode
-;;              typescript-mode
-;;              typescript-ts-mode
-;;              tsx-ts-mode
-;;              js2-mode
-;;              js-ts-mode))
-;;     (add-to-list 'lsp-tailwindcss-major-modes tw-major-mode)))
-#+END_SRC
-
 ** Specific
 *** Zig
 #+BEGIN_SRC emacs-lisp
-;; (use-package reformatter)
-;; (use-package zig-mode
-;;   :hook ((zig-mode .eglot-ensure)))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-;; (use-package mmm-mode
-;;   :config
-;;   (setq mmm-global-mode 'maybe)
-;;   ;; (mmm-add-mode-ext-class 'html-mode "\\.php\\'" 'html-php)
-;;   )
+(use-package reformatter)
+(use-package zig-mode
+;;   :hook ((zig-mode . eglot-ensure)))
 #+END_SRC
 
 *** Buttercup
