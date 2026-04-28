@@ -1366,29 +1366,34 @@ certain scenarios
 #+END_SRC
 
 The below is a wrapper that allows me to select the window for the display of lsp-find-definition.
-With the prefix, we open the window into a selected buffer.
+With the prefix, we open the window into a selected buffer. With double universal prefix, we open a new window following my default settings.
 If we wanted to removed we need to call (advice-remove 'lsp-find-definition #'jgg/lsp-find-definition-other)
 #+BEGIN_SRC emacs-lisp
 (defun jgg/lsp-find-in-other-buffer (original-function &optional args)
   (interactive "P")
-  (if current-prefix-arg
-      ;; We peek into another window
-      (let ((window (aw-select "Select window for definition"))
-            (origin-buffer (current-buffer))
-            (origin-point (point)))
-        (with-selected-window window
-          (with-current-buffer origin-buffer
-            (save-excursion
-              (goto-char origin-point)
-              (funcall original-function)))))
-      ;;; We go to the window selected
-      (let ((window (aw-select "Select window for definition"))
-            (origin-buffer (current-buffer))
-            (origin-point (point)))
-        (select-window window)
+  (cond
+   ;; C-u: peek into selected window (cursor stays)
+   ((equal current-prefix-arg '(4))
+    (let ((window (aw-select "Select window for definition"))
+          (origin-buffer (current-buffer))
+          (origin-point (point)))
+      (with-selected-window window
         (with-current-buffer origin-buffer
-          (goto-char origin-point)
-          (funcall original-function)))))
+          (save-excursion
+            (goto-char origin-point)
+            (funcall original-function))))))
+   ;; C-u C-u: open in a new window
+   ((equal current-prefix-arg '(16))
+    (funcall original-function :display-action 'window))
+   ;; No prefix: go to selected window (cursor moves)
+   (t
+    (let ((window (aw-select "Select window for definition"))
+          (origin-buffer (current-buffer))
+          (origin-point (point)))
+      (select-window window)
+      (with-current-buffer origin-buffer
+        (goto-char origin-point)
+        (funcall original-function))))))
 
 (advice-add 'lsp-find-definition :around #'jgg/lsp-find-in-other-buffer)
 ;;(advice-add 'lsp-find-type-definition :around #'jgg/lsp-find-in-other-buffer)
