@@ -1367,6 +1367,7 @@ certain scenarios
 
 The below is a wrapper that allows me to select the window for the display of lsp-find-definition.
 With the prefix, we open the window into a selected buffer. With double universal prefix, we open a new window following my default settings.
+We require ace-window to be installed for with-selected-window and select-window.
 If we wanted to removed we need to call (advice-remove 'lsp-find-definition #'jgg/lsp-find-definition-other)
 #+BEGIN_SRC emacs-lisp
 (defun jgg/lsp-find-in-other-buffer (original-function &optional args)
