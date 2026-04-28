@@ -1365,15 +1365,30 @@ certain scenarios
   (add-to-list 'lsp-disabled-clients 'omnisharp))
 #+END_SRC
 
-The below is a wrapper that allows me to add the display-action to lsp-find-definition.
-This is because sometimes I want to open the definition in a separate buffer.
+The below is a wrapper that allows me to select the window for the display of lsp-find-definition.
+With the prefix, we open the window into a selected buffer.
 If we wanted to removed we need to call (advice-remove 'lsp-find-definition #'jgg/lsp-find-definition-other)
 #+BEGIN_SRC emacs-lisp
 (defun jgg/lsp-find-in-other-buffer (original-function &optional args)
   (interactive "P")
   (if current-prefix-arg
-      (funcall original-function :display-action 'window)
-      (funcall original-function)))
+      ;; We peek into another window
+      (let ((window (aw-select "Select window for definition"))
+            (origin-buffer (current-buffer))
+            (origin-point (point)))
+        (with-selected-window window
+          (with-current-buffer origin-buffer
+            (save-excursion
+              (goto-char origin-point)
+              (funcall original-function)))))
+      ;;; We go to the window selected
+      (let ((window (aw-select "Select window for definition"))
+            (origin-buffer (current-buffer))
+            (origin-point (point)))
+        (select-window window)
+        (with-current-buffer origin-buffer
+          (goto-char origin-point)
+          (funcall original-function)))))
 
 (advice-add 'lsp-find-definition :around #'jgg/lsp-find-in-other-buffer)
 ;;(advice-add 'lsp-find-type-definition :around #'jgg/lsp-find-in-other-buffer)
