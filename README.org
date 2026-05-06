@@ -1297,7 +1297,12 @@ It autoindents as soon as you move from a line
 #+BEGIN_SRC emacs-lisp
 (use-package aggressive-indent
   :hook
-  ((emacs-lisp-mode . aggressive-indent-mode)))
+  ((emacs-lisp-mode . aggressive-indent-mode))
+  :config
+  (add-hook 'org-src-mode-hook
+            (lambda ()
+              (when (eq major-mode 'emacs-lisp-mode)
+                (aggressive-indent-mode 1)))))
 #+END_SRC
 
 *** Company
