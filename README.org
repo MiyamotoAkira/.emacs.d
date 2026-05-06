@@ -1056,20 +1056,20 @@ Spell checker. We want it only in text and org modes
 (use-package flyspell
   :diminish flyspell-mode
   :hook
-    (prog-mode . flyspell-prog-mode)
-    ((text-mode org-mode) . (lambda () (flyspell-mode 1)))
-    ((change-log-mode log-edit-mode org-agenda-mode) . (lambda () (flyspell-mode -1)))
+  (prog-mode . flyspell-prog-mode)
+  ((text-mode org-mode) . (lambda () (flyspell-mode 1)))
+  ((change-log-mode log-edit-mode org-agenda-mode) . (lambda () (flyspell-mode -1)))
 
   :config
-    (setq ;;ispell-program-name "/usr/local/bin/aspell"
-     flyspell-delay 1.5
-     flyspell-incorrect-hook nil
-     ispell-local-dictionary "en_GB"
-     ispell-dictionary "english" ; better for aspell
-     ispell-list-command "--list"
-     ispell-local-dictionary-alist '(("en_GB" "[[:alpha:]]" "[^[:alpha:]]" "['‘’]"
-                                      t ; Many other characters
-                                      ("-d" "en_GB") nil utf-8))))
+  (setq ;;ispell-program-name "/usr/local/bin/aspell"
+   flyspell-delay 1.5
+   flyspell-incorrect-hook nil
+   ispell-local-dictionary "en_GB"
+   ispell-dictionary "english" ; better for aspell
+   ispell-list-command "--list"
+   ispell-local-dictionary-alist '(("en_GB" "[[:alpha:]]" "[^[:alpha:]]" "['‘’]"
+                                    t ; Many other characters
+                                    ("-d" "en_GB") nil utf-8))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
