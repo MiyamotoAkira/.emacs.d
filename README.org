@@ -1412,7 +1412,9 @@ This add ui elements to lsp mode
   :commands lsp-ui-mode
   :bind (:map lsp-ui-mode-map
               ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-              ([remap xref-find-references] . lsp-ui-peek-find-references))
+              ([remap xref-find-references] . lsp-ui-peek-find-references)
+              ("C-S-n" . jgg/lsp-ui-doc-scroll-down)
+              ("C-S-p" . jgg/lsp-ui-doc-scroll-up))
   :init (setq lsp-ui-doc-delay 0.5
               lsp-ui-doc-position 'at-point
 	      lsp-ui-doc-max-width 100)
@@ -1423,7 +1425,20 @@ This add ui elements to lsp mode
   (lsp-ui-sideline-enable t)
   (lsp-ui-doc-enable t)
   (lsp-ui-peek-enable t)
-  (lsp-ui-peek-show-directory t))
+  (lsp-ui-peek-show-directory t)
+  :config
+  (defun jgg/lsp-ui-doc-scroll-down (n)
+    (interactive "p")
+    (when-let* ((frame (lsp-ui-doc--get-frame))
+                (win (frame-selected-window frame)))
+      (with-selected-window win
+        (scroll-up n))))
+  (defun jgg/lsp-ui-doc-scroll-up (n)
+    (interactive "p")
+    (when-let* ((frame (lsp-ui-doc--get-frame))
+                (win (frame-selected-window frame)))
+      (with-selected-window win
+        (scroll-down n)))))
 #+END_SRC
 
 This links lsp with treemacs
