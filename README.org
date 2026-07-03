@@ -52,7 +52,6 @@
   - [[#org-roam-section][Org Roam section]]
     - [[#org-roam][org-roam]]
     - [[#org-roam-ui][org-roam-ui]]
-    - [[#flx][flx]]
 - [[#tools][Tools]]
   - [[#llm-section][LLM Section]]
     - [[#gptel][gptel]]
@@ -739,14 +738,6 @@ This allows you to see a graph on the browser of the org roam nodes
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-roam-ui)
-#+END_SRC
-
-*** flx
-Fuzzy search
-TODO is it useful now with ivy at all?
-#+BEGIN_SRC emacs-lisp
-;; (use-package flx
-;;   :defer 2)
 #+END_SRC
 
 * Tools
