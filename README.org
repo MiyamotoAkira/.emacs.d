@@ -836,12 +836,19 @@ Like magit but for Mercurial
 *** ag
 Using ag, the silver searcher, from inside emacs
 #+BEGIN_SRC emacs-lisp
+(defun jgg/ag-project-no-tests (string)
+    "Like `ag-project', but ignore files whose name contains \"test\"."
+    (interactive (list (ag/read-from-minibuffer "Search string")))
+    (let ((ag-arguments (append ag-arguments '("--ignore" "*test*"))))
+      (ag-project string)))
+
 (use-package ag
   :bind (("C-c a a" . ag)
          ("C-c a f" . ag-files)
          ("C-c a d" . ag-dired)
          ("C-c a r" . ag-regex)
-         ("C-c a p" . ag-project))
+         ("C-c a p" . ag-project)
+         ("C-c a P" . jgg/ag-project-no-tests))
   :config
   (setq ag-reuse-buffers 't)
   (setq ag-highlight-search 't))
