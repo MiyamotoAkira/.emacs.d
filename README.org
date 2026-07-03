@@ -151,8 +151,13 @@ This setups the basic packaging system, with the packages repositories and some 
   (package-initialize)
 #+END_SRC
 
-This refreshes the packages unless we have them already
+We force the upgrading of packages built into emacs
 #+BEGIN_SRC emacs-lisp
+(setq package-install-upgrade-built-in t)
+#+END_SRC
+
+This refreshes the packages unless we have them already
+,#+BEGIN_SRC emacs-lisp
 (unless package-archive-contents
   (package-refresh-contents))
 
