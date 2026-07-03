@@ -1204,6 +1204,16 @@ Remember the development tools need to be installed (build-essentials for debian
   (global-treesit-auto-mode))
 #+END_SRC
 
+Both =treesit-auto= and our manual =auto-mode-alist= claim =.js=, so a file can
+end up in either =js-ts-mode= or =typescript-ts-mode=. They read different
+indent variables (=js-indent-level= defaults to 4, =typescript-ts-mode-indent-offset=
+defaults to 2), so we pin both to 2 to get consistent indentation regardless of
+which mode wins.
+#+BEGIN_SRC emacs-lisp
+(setq js-indent-level 2
+      typescript-ts-mode-indent-offset 2)
+#+END_SRC
+
 *** Treesit-fold
 
 This package allows for the folding of lines on code, with knowledge gained from treesit
