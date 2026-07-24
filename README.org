@@ -25,8 +25,8 @@
     - [[#end-of-line-spaces][End of line spaces]]
     - [[#saveplace][saveplace]]
     - [[#splitting-of-buffers][Splitting of buffers]]
-    - [[#spaceline][spaceline]]
     - [[#all-the-icons][all-the-icons]]
+    - [[#mode-line][Mode line]]
     - [[#ace-window][ace-window]]
     - [[#smooth-scrolling][smooth-scrolling]]
     - [[#page-break-lines][page-break-lines]]
@@ -378,15 +378,6 @@ Favour vertical split over horizontal split
       (select-window current))))
 #+END_SRC
 
-*** spaceline
-This is the info line at the bottom of a buffer.
-#+BEGIN_SRC emacs-lisp
-  (use-package spaceline
-    :defer nil
-    :config
-    (spaceline-emacs-theme))
-#+END_SRC
-
 *** all-the-icons
 Lots of icons to work with emacs
 #+BEGIN_SRC emacs-lisp
@@ -398,9 +389,15 @@ Lots of icons to work with emacs
   ;;   :after (dired-sidebar all-the-icons)
   ;;   :hook
   ;;   (dired-mode-hook . all-the-icons-dired-mode))
-  (use-package spaceline-all-the-icons
-    :after spaceline
-    :config (spaceline-all-the-icons-theme))
+#+END_SRC
+*** Mode line
+doom-modeline replaces the abandoned spaceline-all-the-icons, which spammed
+"Invalid face attribute :family nil" on every redisplay. Icons come from
+nerd-icons — run =M-x nerd-icons-install-fonts= once if glyphs look wrong.
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1))
 #+END_SRC
 *** ace-window
 quickly move between windows using M-o number
