@@ -1508,7 +1508,14 @@ This is a testing library for emacs to do Behavior Driven Testing
 We use eglot for python
 #+BEGIN_SRC emacs-lisp
 (use-package python
-  :hook ((python-ts-mode . eglot-ensure)))
+  :hook ((python-ts-mode . eglot-ensure)
+         ;; pylsp answers textDocument/signatureHelp with [] (an empty array)
+         ;; instead of null, which trips eglot's plist handling:
+         ;; "Error running timer: (wrong-type-argument plistp [])".
+         ;; Ignore that capability for pylsp so eglot never issues the request.
+         (python-ts-mode . (lambda ()
+                             (setq-local eglot-ignored-server-capabilities
+                                         '(:signatureHelpProvider))))))
 #+END_SRC
 
 This package allows to get the right environment.
@@ -1516,10 +1523,11 @@ python-base-mode-hook works for python-mode and python-ts-mode.
 The -10 tells emacs to load it as soon as possible
 TODO can :hook do that -10?
 #+BEGIN_SRC emacs-lisp
-;; (use-package pet
-;;   :defer nil
-;;   :config
-;;   (add-hook 'python-base-mode-hook 'pet-mode -10))
+(use-package pet
+  :ensure t
+  :defer nil
+  :config
+  (add-hook 'python-base-mode-hook 'pet-mode -10))
 #+END_SRC
 
 uv mode package
@@ -1543,9 +1551,12 @@ TODO this is not loading correctly
 ;;   :bind (("C-c t" . python-pytest-dispatch)))
 #+END_SRC
 
+Disabled: eglot manages Python completion via company-capf. Running company-jedi
+as a second backend on the idle timer caused "Error running timer:
+(wrong-type-argument plistp [])".
 #+BEGIN_SRC emacs-lisp
-(use-package company-jedi
-  :hook ((python-base-mode . (lambda () (add-to-list 'company-backends 'company-jedi)))))
+;; (use-package company-jedi
+;;   :hook ((python-base-mode . (lambda () (add-to-list 'company-backends 'company-jedi)))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
