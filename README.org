@@ -190,7 +190,12 @@ Let's get it out for now
 #+BEGIN_SRC emacs-lisp
 ;; font size utilities to handle different screens and dpi
 (defun set-size-font (size)
-  (set-face-attribute 'default nil :font (concat "Iosevka Curly Extended-" (number-to-string size))))
+  ;; Set :family (not a combined :font string) so the default face always has an
+  ;; explicit family. Otherwise posframe child frames inherit :family nil and
+  ;; spam "Invalid face attribute :family nil". :height is in 1/10 pt.
+  (set-face-attribute 'default nil
+                      :family "Iosevka Curly Extended"
+                      :height (* size 10)))
 
 (defun set-standard-font ()
   (set-size-font 12))
