@@ -29,7 +29,16 @@
 
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 
-;; This is to move setup into an org file
+;; This is to move setup into an org file.
+;; Org must come from ELPA before `org-babel-load-file' pulls in the built-in
+;; version -- otherwise a later Org install is byte-compiled against the older
+;; built-in Org and every startup warns "Org version mismatch".
+(require 'package)
+(unless (assq 'org package-alist)
+  (unless package-archive-contents (package-refresh-contents))
+  (let ((package-install-upgrade-built-in t))
+    (package-install 'org)))
+
 (require 'org)
 (org-babel-load-file (expand-file-name "README.org" user-emacs-directory))
 

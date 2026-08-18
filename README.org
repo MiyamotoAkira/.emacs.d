@@ -596,8 +596,13 @@ This is to get the path variable read from the shell environment.
 This file configures the org mode and associated packages
 
 ** Main Org Section
+Org itself is installed and loaded by =init.el=, before =org-babel-load-file= runs -- otherwise
+the built-in Org loads first and a later ELPA Org gets byte-compiled against it, which produces
+the "Org version mismatch" warning on every startup (=fix-org.sh= repairs that if it happens).
+So this block only configures Org, hence =:ensure nil=.
 #+BEGIN_SRC emacs-lisp
   (use-package org
+    :ensure nil
     :defer 2
     :config
     (setq org-startup-truncated nil)
