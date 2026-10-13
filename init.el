@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 ;;; package --- Summary
 ;;; Commentary:
 ;;; This is my configuration of Emacs.
@@ -13,7 +14,6 @@
 
 ;; Which means on every .el and .elc file loaded during start up, it has to runs those regexps against the filename.
 ;; (let ((file-name-handler-alist nil)))
-
 
 (add-hook 'emacs-startup-hook
           (lambda ()

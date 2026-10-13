@@ -136,6 +136,8 @@ is loaded by init.el
 
 This setups the basic packaging system, with the packages repositories and some additional tooling.
 #+BEGIN_SRC emacs-lisp
+;;; -*- lexical-binding: t; -*-
+
   (require 'package)
   (require 'use-package)
   (require 'bind-key)
@@ -156,7 +158,7 @@ We force the upgrading of packages built into emacs
 #+END_SRC
 
 This refreshes the packages unless we have them already
-,#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (unless package-archive-contents
   (package-refresh-contents))
 
@@ -1149,68 +1151,43 @@ This installs and setups treesitter for several languages.
 Remember the development tools need to be installed (build-essentials for debian based, c-development and development-tools groups for fedora)
 #+BEGIN_SRC emacs-lisp
 (dolist (modes
-         '(("\\.tsx\\'" . tsx-ts-mode)
-           ("\\.js\\'"  . typescript-ts-mode)
+         '(("\\.js\\'"  . typescript-ts-mode)
            ("\\.mjs\\'" . typescript-ts-mode)
-           ("\\.mts\\'" . typescript-ts-mode)
            ("\\.cjs\\'" . typescript-ts-mode)
-           ("\\.ts\\'"  . typescript-ts-mode)
-           ("\\.jsx\\'" . tsx-ts-mode)
-           ("\\.json\\'" .  json-ts-mode)
-           ("\\.Dockerfile\\'" . dockerfile-ts-mode)))
+           ("\\.mts\\'" . typescript-ts-mode)
+           ("\\.jsx\\'" . tsx-ts-mode)))
   (add-to-list 'auto-mode-alist modes))
 
-(setq treesit-language-source-alist
-      '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-        (css "https://github.com/tree-sitter/tree-sitter-css" "v0.20.0")
-        (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp")
-        (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
-        (html "https://github.com/tree-sitter/tree-sitter-html" "v0.20.1")
-        (json "https://github.com/tree-sitter/tree-sitter-json" "v0.20.2")
-        (make "https://github.com/alemuller/tree-sitter-make")
-        (markdown "https://github.com/ikatyang/tree-sitter-markdown")
-        (python "https://github.com/tree-sitter/tree-sitter-python" "v0.20.4")
-        (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.20.1" "src")
-        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src")
-        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src")
-        (toml "https://github.com/tree-sitter/tree-sitter-toml" "v0.5.1")
-        (yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")))
+;; Emacs 31.1 native tree-sitter setup, replacing the old hand-maintained
+;; grammar list, the install loop, and treesit-auto:
+;;   - `treesit-enabled-modes' routes every language that has a built-in
+;;     *-ts-mode to that mode (it populates `major-mode-remap-alist').
+;;   - `treesit-auto-install-grammar' installs a missing grammar on demand
+;;     from the recipe each *-ts-mode registers into
+;;     `treesit-language-source-alist' -- pinned to the commit THIS Emacs
+;;     build was tested against, so grammar versions track the editor and
+;;     we never hand-write a commit again.  Use 'ask instead of 'always to
+;;     be prompted before each install.
+;; Must be `setopt', not `setq': `treesit-enabled-modes' does its work in a
+;; custom :set function that plain `setq' would skip.
+(setopt treesit-enabled-modes t
+        treesit-auto-install-grammar 'always)
 
-;; Should we try this again?
-(dolist (grammar treesit-language-source-alist)
-  (print (car grammar))
-  (unless (treesit-language-available-p (car grammar))
-    (treesit-install-language-grammar (car grammar))))
-
-(dolist (mapping
-         '((python-mode . python-ts-mode)
-           (csharp-mode . csharp-ts-mode)
-           (css-mode . css-ts-mode)
-           (typescript-mode . typescript-ts-mode)
-           (js-mode . typescript-ts-mode)
-           (js2-mode . typescript-ts-mode)
-           (c-mode . c-ts-mode)
-           (c++-mode . c++-ts-mode)
-           (c-or-c++-mode . c-or-c++-ts-mode)
-           (bash-mode . bash-ts-mode)
-           (css-mode . css-ts-mode)
-           (python-mode. python-ts-mode)
-           (json-mode . json-ts-mode)
-           (js-json-mode . json-ts-mode)
-           (sh-mode . bash-ts-mode)
-           (sh-base-mode . bash-ts-mode)))
+;; Keep the whole JS family in typescript-ts-mode at the major-mode level
+;; too, not the default js-ts-mode that `treesit-enabled-modes' would map.
+(dolist (mapping '((js-mode . typescript-ts-mode)
+                   (js2-mode . typescript-ts-mode)))
   (add-to-list 'major-mode-remap-alist mapping))
 
-(use-package treesit-auto
-  :custom
-  (treesit-auto-install 'prompt)
-  :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode))
+;; `make' has no built-in ts-mode, so nothing registers a recipe or triggers
+;; its install; supply both ourselves.
+(add-to-list 'treesit-language-source-alist
+             '(make "https://github.com/alemuller/tree-sitter-make"))
+(treesit-ensure-installed 'make)
 #+END_SRC
 
-Both =treesit-auto= and our manual =auto-mode-alist= claim =.js=, so a file can
-end up in either =js-ts-mode= or =typescript-ts-mode=. They read different
+Our =auto-mode-alist= sends =.js= to =typescript-ts-mode=, but other entry
+points (e.g. =M-x js-mode=) can still land in =js-ts-mode=. They read different
 indent variables (=js-indent-level= defaults to 4, =typescript-ts-mode-indent-offset=
 defaults to 2), so we pin both to 2 to get consistent indentation regardless of
 which mode wins.

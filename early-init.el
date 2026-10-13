@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t; -*-
+
 ;; Less garbage collection to speed up the thing
 (setq gc-cons-threshold 10000000)
 
