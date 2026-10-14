@@ -148,8 +148,6 @@ This setups the basic packaging system, with the packages repositories and some 
           ("nongnu" . "https://elpa.nongnu.org/nongnu/")
           ("melpa-stable" . "https://stable.melpa.org/packages/")
           ("melpa" . "https://melpa.org/packages/"))))
-
-  (package-initialize)
 #+END_SRC
 
 We force the upgrading of packages built into emacs
