@@ -218,18 +218,18 @@ Let's get it out for now
 
 (load-theme 'solarized-dark t)
 
-(defvar current-dark t)
-
 (defun toggle-theme ()
-      "Change the theme used on Emacs between a dark and a light themes."
-      (interactive)
-      (if current-dark
-          (load-theme 'solarized-light t)
-        (load-theme 'solarized-dark t))
-      (setq current-dark (not current-dark)))
+  "Change the theme used on Emacs between a dark and a light themes.
+`load-theme' enables a theme on top of the ones already enabled, so the
+current ones are disabled first."
+  (interactive)
+  (let ((next (if (memq 'solarized-dark custom-enabled-themes)
+                  'solarized-light
+                'solarized-dark)))
+    (mapc #'disable-theme custom-enabled-themes)
+    (load-theme next t)))
 
-;; Doesn't work under Cider. Need to investigate.
-(global-set-key (kbd "C-c C-.") 'toggle-theme)
+(global-set-key (kbd "C-c t") 'toggle-theme)
 
 #+END_SRC
 
@@ -504,7 +504,7 @@ The behaviour change if you pass the default UNIVERSAL argument.  Without it, a 
       (end-of-line 0)
       (open-line 1))))
 
-(global-set-key (kbd "C-c C-n") 'insert-line-above)
+(global-set-key (kbd "C-c N") 'insert-line-above)
 
 (global-set-key (kbd "C-c n") 'insert-line-below)
 #+END_SRC

@@ -1,0 +1,70 @@
+#+TITLE: Free key bindings
+#+DATE: 2026-10-15
+
+Keys that are free in every mode of this configuration. Bind new global
+commands here and no major or minor mode will shadow them.
+
+Only keys Emacs reserves for users are considered: =C-c= followed by a
+letter, and =<f5>= to =<f9>=. Major and minor modes are not supposed to bind
+these. Other prefixes may look free today, but any package can claim them.
+
+* Free in all modes (35)
+** =C-c= + lowercase letter (11)
+=C-c c=, =C-c i=, =C-c j=, =C-c k=, =C-c m=, =C-c r=, =C-c s=, =C-c u=, =C-c v=,
+=C-c w=, =C-c y=
+
+** =C-c= + uppercase letter (21)
+=C-c A=, =C-c B=, =C-c C=, =C-c D=, =C-c F=, =C-c G=, =C-c H=, =C-c J=, =C-c K=,
+=C-c L=, =C-c M=, =C-c O=, =C-c Q=, =C-c R=, =C-c S=, =C-c U=, =C-c V=, =C-c W=,
+=C-c X=, =C-c Y=, =C-c Z=
+
+** Function keys (3)
+=<f6>=, =<f7>=, =<f9>=
+
+* Nearly free
+Free everywhere except combobulate's query-builder buffer:
+
+| Key     | Query-builder command                              |
+|---------+----------------------------------------------------|
+| =C-c b= | =combobulate-query-builder-install-into-buffer=    |
+| =C-c d= | =combobulate-query-builder-install-into-dir-local= |
+| =C-c h= | =combobulate-query-builder-copy-node-hierarchy-at-point= |
+| =C-c q= | =combobulate-query-builder-save-and-quit=          |
+
+* Taken
+| Key           | Command                    | Where                        | Set by      |
+|---------------+----------------------------+------------------------------+-------------|
+| =C-c a=       | prefix: ag                 | global                       | this config |
+| =C-c e=       | prefix: eglot              | eglot buffers                | this config |
+| =C-c f=       | prefix: treesit-fold       | global                       | this config |
+| =C-c g=       | prefix: goto-chg           | global                       | this config |
+| =C-c l=       | prefix: lsp-mode           | lsp buffers                  | this config |
+| =C-c n=       | =insert-line-below=        | global                       | this config |
+| =C-c N=       | =insert-line-above=        | global                       | this config |
+| =C-c o=       | prefix: combobulate        | tree-sitter buffers          | this config |
+| =C-c p=       | prefix: projectile         | global                       | this config |
+| =C-c t=       | =toggle-theme=             | global                       | this config |
+| =C-c z=       | prefix: org-roam           | global (more keys in org)    | this config |
+| =C-c P=       | =slime-repl-set-package=   | slime buffers                | this config |
+| =C-c x=       | =slime-export-symbol-at-point= | slime buffers            | slime       |
+| =C-c E=       | =slime-edit-value=         | slime buffers                | slime       |
+| =C-c I=       | =slime-inspect=            | slime buffers                | slime       |
+| =C-c T=       | =slime-trace-dialog=       | slime trace buffers          | slime       |
+| =<f5>=        | =dap-debug=                | lsp buffers                  | this config |
+| =<f8>=        | =treemacs-select-window=   | global                       | this config |
+
+* How this was checked
+Batch Emacs: loaded =init.el=, then =require='d every installed package plus
+the built-in modes the config uses. Each candidate key was looked up in
+=global-map= and in every keymap variable (=*-map=) that existed afterwards.
+=help-quick-use-map= and =widget-global-map= were ignored: they inherit from
+=global-map=, so they only repeat global bindings.
+
+Limits:
+- Bindings added only when a mode starts aren't visible. The eglot keys are
+  the known case (bound from =eglot-managed-mode-hook=), added to the table
+  by hand.
+- =vterm= wasn't loaded (loading it asks to compile its module), so its
+  keymap wasn't checked. A terminal buffer passes most keys to the shell
+  anyway.
+- Re-run the check after adding packages or bindings.

@@ -145,12 +145,19 @@ is lost in every buffer.
 
 Fix: =:bind (:map vterm-mode-map ("C-q" . vterm-send-next-key))= (line ~1112)
 
-** TODO =toggle-theme= stacks themes
+** DONE =toggle-theme= stacks themes
+CLOSED: [2026-10-15]
 =load-theme= enables the new theme on top of the old one, so after a toggle
 both solarized variants are active.
 
 Fix: call =(mapc #'disable-theme custom-enabled-themes)= before =load-theme=
 (line ~226)
+
+- [X] Fixed (2026-10-15). =toggle-theme= now disables the enabled themes
+  before loading the next one. It decides which theme comes next from
+  =custom-enabled-themes=, replacing the separate =current-dark= variable.
+  Test failed before (after two toggles: =(solarized-dark solarized-light)=)
+  and passes after (=(solarized-light)=, then =(solarized-dark)=).
 
 ** TODO =default-tab-width= no longer exists
 =(setq default-tab-width 4)= does nothing (variable is unbound in 31.1).
@@ -171,13 +178,20 @@ Fix: delete all three functions (lines ~328–341)
   passes after (none defined, prettify-symbols still on).
 
 * Keybinding conflicts
-** TODO =C-c C-<key>= bindings are reserved for major modes
+** DONE =C-c C-<key>= bindings are reserved for major modes
+CLOSED: [2026-10-15]
 - =C-c C-.= (=toggle-theme=) — explains the "Doesn't work under Cider" comment
   (line ~235)
 - =C-c C-n= (=insert-line-above=) — shadowed by org's next-heading and others
   (line ~531)
 
 Fix: move both to =C-c <letter>= bindings.
+
+- [X] Moved (2026-10-15): =toggle-theme= to =C-c t=, =insert-line-above= to
+  =C-c N= (pairs with =C-c n= for =insert-line-below=). Both keys were free
+  in every mode. Replaced the Cider comment, and updated the key in
+  =CLAUDE.md=. Test failed before and passes after; the old keys are no
+  longer bound globally. Free keys are listed in =free-key-bindings.org=.
 
 ** TODO Review org-roam's =C-M-i= override
 =C-M-i= is rebound to =completion-at-point= in =org-mode-map=, replacing org's
