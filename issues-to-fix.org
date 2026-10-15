@@ -206,7 +206,10 @@ still makes no archive refresh (1.40s).
 
 Finding: the dashboard never showed icons. =dashboard-set-heading-icons= and
 =dashboard-set-file-icons= both default to =nil=, so =dashboard-icon-type=
-had no visible effect. To get icons, set both to =t=.
+had no visible effect.
+- [X] Set both to =t= (2026-10-15). Test failed before (0 glyphs) and passes
+  after: with icon display forced on in batch, the dashboard renders 10
+  nerd-icons glyphs.
 
 ** TODO Revisit the vertico melpa-stable pin
 The pin was for a November 2024 bug. Vertico, consult, marginalia, orderless
