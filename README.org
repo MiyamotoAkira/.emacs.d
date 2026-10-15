@@ -265,10 +265,10 @@ by default highlight the matching paren
 #+END_SRC
 
 *** Tabs
-Use tabs instead of spaces
+Indent with spaces instead of tabs, and show any existing tab characters 4 columns wide
 #+BEGIN_SRC emacs-lisp
 (setq-default indent-tabs-mode nil)
-(setq default-tab-width 4)
+(setq-default tab-width 4)
 #+END_SRC
 
 *** Title bar

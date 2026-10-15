@@ -165,10 +165,18 @@ Fix: call =(mapc #'disable-theme custom-enabled-themes)= before =load-theme=
   Test failed before (after two toggles: =(solarized-dark solarized-light)=)
   and passes after (=(solarized-light)=, then =(solarized-dark)=).
 
-** TODO =default-tab-width= no longer exists
+** DONE =default-tab-width= no longer exists
+CLOSED: [2026-10-15]
 =(setq default-tab-width 4)= does nothing (variable is unbound in 31.1).
 
 Fix: =(setq-default tab-width 4)= (line ~274)
+
+- [X] Fixed (2026-10-15). Test failed before (default =tab-width= was 8, and
+  =default-tab-width= existed as a stray variable) and passes after (=4=, no
+  stray variable). Also corrected the section prose, which said "Use tabs
+  instead of spaces" while the code turns tabs off.
+- Note: tab characters in existing files now display 4 columns wide instead
+  of 8. =editorconfig= and per-mode settings can still override it per buffer.
 
 ** DONE =my-pretty-lambda= is wrong and unused
 CLOSED: [2026-10-15]
