@@ -309,9 +309,14 @@ It =setq='s =current=, =window= and =height=. Bind them with =let= instead.
 =byte-compile-warnings '(not obsolete)= in =early-init.el= hides warnings that
 would have flagged several items above. Turn it off once and read the output.
 
-** TODO Use =use-short-answers=
+** DONE Use =use-short-answers=
+CLOSED: [2026-10-15]
 Replace =(fset 'yes-or-no-p 'y-or-n-p)= with =(setopt use-short-answers t)=.
 (line ~322)
+
+- [X] Fixed (2026-10-15). Test failed before (=use-short-answers= nil,
+  =yes-or-no-p= redefined as =y-or-n-p=) and passes after (=t=, original
+  =yes-or-no-p= restored).
 
 ** TODO Avoid running flymake and flycheck together
 In Python and Zig buffers, eglot runs flymake. Once flycheck is actually on,

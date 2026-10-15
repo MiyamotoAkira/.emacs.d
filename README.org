@@ -327,7 +327,7 @@ Now selecting a region behaves as in most applications you overwrite the region
 *** Yes or No
 All questions are y or n, for consistency
 #+BEGIN_SRC emacs-lisp
-(fset 'yes-or-no-p 'y-or-n-p)
+(setopt use-short-answers t)
 #+END_SRC
 
 *** Prettify symbols
