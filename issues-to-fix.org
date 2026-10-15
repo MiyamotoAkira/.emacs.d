@@ -1,0 +1,169 @@
+#+TITLE: Issues to fix in the Emacs configuration
+#+DATE: 2026-10-15
+#+TODO: TODO | DONE WONTFIX
+
+Review of =README.org=, =init.el= and =early-init.el= on Emacs 31.1.
+Line numbers refer to =README.org= at commit =3dfd4a4= unless stated otherwise.
+
+* Bugs
+** TODO Flycheck never turns on
+=:after (flycheck-pos-tip-mode)= names a mode, not a library; the library is
+=flycheck-pos-tip=. The block (including =global-flycheck-mode=) is wrapped in
+=(eval-after-load 'flycheck-pos-tip-mode ...)=, which never fires (confirmed by
+macroexpansion).
+
+Fix: =:after flycheck-pos-tip=, or drop =:after= entirely. (Line ~1247)
+
+** TODO =:config= blocks that never run because of =use-package-always-defer=
+With =always-defer t=, =:config= only runs once the package loads, and nothing
+loads these. Use =:defer nil=, or move the mode call to =:hook= / =:init=.
+
+- [ ] =company-quickhelp= — =company-quickhelp-mode= never starts (line ~1321)
+- [ ] =editorconfig= — never enabled. Built in since Emacs 30: replace the block
+  with =(editorconfig-mode 1)= (line ~1284)
+- [ ] =company-terraform= — =company-terraform-init= never runs (line ~1581)
+- [ ] =flycheck-ocaml= — =flycheck-ocaml-setup= never runs (line ~1816)
+- [ ] =slime-company= — =slime-company-major-modes= never set (line ~1730)
+- [ ] =yasnippet= — =yas-global-mode= only starts if something else happens to
+  load yasnippet first (line ~1221)
+- [ ] =undo-tree= — loaded via =:defer 2= but =global-undo-tree-mode= is never
+  called, so the package does nothing (line ~941)
+
+** TODO =opam-switch-mode= hook typo
+Hooks =tuareg.mode= (dot instead of dash), so it never fires.
+
+Fix: =((tuareg-mode . opam-switch-mode))= (line ~1834)
+
+** TODO =ocp-indent= sets variables instead of calling the setup function
+The hooks set =ocp-setup-indent= and =ocp-indent-caml-mode-setup= as variables.
+=ocp-setup-indent= is a function (=ocp-indent.el:144=).
+
+Fix: =:hook ((tuareg-mode caml-mode) . ocp-setup-indent)= (line ~1828)
+
+** TODO =treesit-fold-toogle= does not exist
+=C-c f t= is bound to a misspelled command.
+
+Fix: =treesit-fold-toggle= (line ~1208)
+
+** TODO =uv-mode= never activates
+It hooks =python-mode=, but =treesit-enabled-modes t= sends Python files to
+=python-ts-mode=, which does not run =python-mode-hook=.
+
+Fix: =:hook (python-base-mode . uv-mode-auto-activate-hook)= (line ~1518)
+
+** TODO =vterm= overrides =C-q= globally
+=:bind (("C-q" . vterm-send-next-key))= is a global binding, so =quoted-insert=
+is lost in every buffer.
+
+Fix: =:bind (:map vterm-mode-map ("C-q" . vterm-send-next-key))= (line ~1112)
+
+** TODO =toggle-theme= stacks themes
+=load-theme= enables the new theme on top of the old one, so after a toggle
+both solarized variants are active.
+
+Fix: call =(mapc #'disable-theme custom-enabled-themes)= before =load-theme=
+(line ~226)
+
+** TODO =default-tab-width= no longer exists
+=(setq default-tab-width 4)= does nothing (variable is unbound in 31.1).
+
+Fix: =(setq-default tab-width 4)= (line ~274)
+
+** TODO =my-pretty-lambda= is wrong and unused
+='((lambda-string . 955))= quotes the symbol rather than using the argument.
+Nothing calls it, and the Elixir/Clojure variants are only referenced from
+commented-out code.
+
+Fix: delete all three functions (lines ~328–341)
+
+* Keybinding conflicts
+** TODO =C-c C-<key>= bindings are reserved for major modes
+- =C-c C-.= (=toggle-theme=) — explains the "Doesn't work under Cider" comment
+  (line ~235)
+- =C-c C-n= (=insert-line-above=) — shadowed by org's next-heading and others
+  (line ~531)
+
+Fix: move both to =C-c <letter>= bindings.
+
+** TODO Review org-roam's =C-M-i= override
+=C-M-i= is rebound to =completion-at-point= in =org-mode-map=, replacing org's
+own =pcomplete=. Confirm this is intended. (line ~717)
+
+* Duplicates and dead code
+** TODO Auto-save location set twice
+The =emacs-save/= block in /Backup directory/files/ is overwritten later by
+=no-littering='s =data/auto-save/=. Delete the first block (line ~546) and the
+=emacs-save/= directory.
+
+** TODO Load =no-littering= earlier
+It sits in /Tools/, after =savehist=, =save-place=, =dashboard=, =projectile=,
+etc. have already picked their file locations. Move it to right after
+/Packaging/. (line ~806)
+
+** TODO Remove duplicate declarations
+- [ ] =treemacs-projectile= declared twice (lines ~883 and ~917)
+- [ ] =show-paren-mode= called twice (line ~267 and inside flycheck's
+  =:config=); it is on by default anyway
+- [ ] =org-roam-v2-ack= set twice (lines ~671 and ~680); obsolete anyway
+
+** TODO Remove the eldoc block
+=global-eldoc-mode= is on by default and =turn-on-eldoc-mode= is obsolete.
+(line ~1261)
+
+** TODO Fix org-roam's autosync setup
+=:custom= contains a stray =(org-roam-db-autosync-mode)=, which sets that
+variable to =nil=. It only works because =(org-roam-setup)= runs later, and
+that function is obsolete.
+
+Fix: remove the =:custom= line and use =(org-roam-db-autosync-mode 1)= in
+=:config=. (lines ~685, ~729)
+
+** TODO Remove unused packages
+- [ ] =shut-up= (line ~934)
+- [ ] =pos-tip= as a direct declaration (line ~1060)
+- [ ] =clj-deps-new= — Clojure is commented out (line ~1702)
+- [ ] =buttercup= (line ~1467)
+
+** TODO Delete commented-out blocks
+Git keeps the history. Candidates: Clojure, LaTeX, Lua, Scheme, PowerShell,
+Graphviz, Mermaid, gptel, aidermacs, emacsql, pgmacs, monky, web-mode,
+column-enforce-mode, python-pytest, company-jedi, pyvenv.
+
+** TODO =shell-horizontal= creates global variables
+It =setq='s =current=, =window= and =height=. Bind them with =let= instead.
+(line ~366)
+
+* Worth considering
+** TODO Stop hiding obsolete warnings
+=byte-compile-warnings '(not obsolete)= in =early-init.el= hides warnings that
+would have flagged several items above. Turn it off once and read the output.
+
+** TODO Use =use-short-answers=
+Replace =(fset 'yes-or-no-p 'y-or-n-p)= with =(setopt use-short-answers t)=.
+(line ~322)
+
+** TODO Avoid running flymake and flycheck together
+In Python and Zig buffers, eglot runs flymake. Once flycheck is actually on,
+both will run. Pick one, or add =flycheck-eglot=.
+
+** TODO Consolidate on one icon set
+doom-modeline uses nerd-icons; the dashboard uses all-the-icons. Set
+=dashboard-icon-type 'nerd-icons= and drop =all-the-icons=.
+
+** TODO Revisit the vertico melpa-stable pin
+The pin was for a November 2024 bug. Vertico, consult, marginalia, orderless
+and embark are all on GNU ELPA now. (line ~972)
+
+** TODO Replace =smooth-scrolling= with =pixel-scroll-precision-mode=
+Built in since Emacs 29. (line ~412)
+
+** TODO Startup speed
+Measure with =esup= first.
+- [ ] Raise =gc-cons-threshold= to =most-positive-fixnum= in =early-init.el=
+  and lower it again in =emacs-startup-hook=
+- [ ] Set =exec-path-from-shell-arguments '("-l")= to skip the slow
+  interactive-shell startup
+
+** TODO Remove no-op setup
+- [ ] =use-package org :defer 2= — =init.el= already =require='s org
+- [ ] =:ensure t= on =which-key= — built in since Emacs 30
