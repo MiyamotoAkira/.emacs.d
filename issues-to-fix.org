@@ -69,16 +69,64 @@ loads these. Use =:defer nil=, or move the mode call to =:hook= / =:init=.
 - [ ] =undo-tree= — loaded via =:defer 2= but =global-undo-tree-mode= is never
   called, so the package does nothing (line ~941)
 
-** TODO =opam-switch-mode= hook typo
+** DONE =opam-switch-mode= hook typo
+CLOSED: [2026-10-15]
 Hooks =tuareg.mode= (dot instead of dash), so it never fires.
 
 Fix: =((tuareg-mode . opam-switch-mode))= (line ~1834)
 
-** TODO =ocp-indent= sets variables instead of calling the setup function
+- [X] Fixed in =README.org= (2026-10-15). Took effect once the OCaml
+  grammars were installed (see the combobulate entry below).
+
+** DONE =ocp-indent= sets variables instead of calling the setup function
+CLOSED: [2026-10-15]
 The hooks set =ocp-setup-indent= and =ocp-indent-caml-mode-setup= as variables.
 =ocp-setup-indent= is a function (=ocp-indent.el:144=).
 
-Fix: =:hook ((tuareg-mode caml-mode) . ocp-setup-indent)= (line ~1828)
+- [X] Fixed in =README.org= (2026-10-15): =(tuareg-mode . ocp-setup-indent)=
+  and =(caml-mode . ocp-indent-caml-mode-setup)=. The latter calls
+  =ocp-setup-indent= and also undoes caml-mode's TAB rebinding.
+
+Verified in batch after installing the OCaml grammars: =.ml= buffers
+(=tuareg-mode=) and =.mli= buffers (=tuareg-interface-mode=) both have
+=opam-switch-mode=, =merlin-mode= and =indent-line-function= =
+=ocp-indent-line=. The test failed before the fix.
+
+** TODO combobulate aborts every tuareg-mode hook
+Found while testing the two fixes above (2026-10-15). Combobulate is hooked
+on =prog-mode=. In a tuareg buffer it calls
+=(treesit-parser-create 'ocaml)=, which signals =treesit-load-language-error=
+because no OCaml grammar is installed. =prog-mode-hook= runs before
+=tuareg-mode-hook=, so the error stops all the tuareg hooks: Merlin,
+merlin-eldoc, ocp-indent and opam-switch-mode are all off in OCaml buffers.
+Emacs reports it as a "File mode specification error".
+
+Verified: with =combobulate-mode= removed from =prog-mode-hook=, a =.ml=
+buffer gets =opam-switch-mode=, =ocp-indent-line= and =merlin-mode=.
+
+The same can happen in any non-tree-sitter mode for a language combobulate
+knows but has no grammar for.
+
+Fix options:
+- Only enable combobulate when the buffer already has a tree-sitter parser,
+  i.e. in =*-ts-mode= buffers.
+- Hook combobulate on the specific =*-ts-mode= hooks instead of =prog-mode=.
+- Install the OCaml grammar (doesn't fix other languages).
+
+- [X] Short-term workaround (2026-10-15): installed both OCaml grammars
+  (=ocaml= and =ocaml-interface= from =tree-sitter/tree-sitter-ocaml=, default
+  branch) into =data/treesit/=, by hand with
+  =treesit-install-language-grammar=. OCaml buffers no longer error.
+- [X] Recipes added to =README.org= (2026-10-15), pinned to release v0.26.0
+  (commit =e3c9cf368f68bffd2f81188229aefa7b434eda65=), with
+  =:source-dir= =grammars/ocaml/src= and =grammars/interface/src=. They share
+  one register-and-install loop with the =make= recipe (/Treesit/ section).
+  Test (hand-installed grammars moved aside, as on a new machine): failed
+  before, passes after. Loading the config builds both grammars into
+  =data/treesit/=; later loads don't rebuild. Startup 1.33s.
+- [ ] Still open: combobulate breaks any non-tree-sitter mode for a language
+  it knows but has no grammar for. The first two fix options address that in
+  general.
 
 ** TODO =treesit-fold-toogle= does not exist
 =C-c f t= is bound to a misspelled command.

@@ -1167,11 +1167,21 @@ Remember the development tools need to be installed (build-essentials for debian
                    (js2-mode . typescript-ts-mode)))
   (add-to-list 'major-mode-remap-alist mapping))
 
-;; `make' has no built-in ts-mode, so nothing registers a recipe or triggers
-;; its install; supply both ourselves.
-(add-to-list 'treesit-language-source-alist
-             '(make "https://github.com/alemuller/tree-sitter-make"))
-(treesit-ensure-installed 'make)
+;; These languages have no built-in ts-mode, so nothing registers a recipe or
+;; triggers their install; supply both ourselves.
+;; OCaml: combobulate parses tuareg buffers with `ocaml' (.ml) and
+;; `ocaml-interface' (.mli), and errors out of every tuareg-mode hook if the
+;; grammar is missing.  Pinned to the v0.26.0 release.
+(dolist (recipe
+         '((make "https://github.com/alemuller/tree-sitter-make")
+           (ocaml "https://github.com/tree-sitter/tree-sitter-ocaml"
+                  :commit "e3c9cf368f68bffd2f81188229aefa7b434eda65"
+                  :source-dir "grammars/ocaml/src")
+           (ocaml-interface "https://github.com/tree-sitter/tree-sitter-ocaml"
+                            :commit "e3c9cf368f68bffd2f81188229aefa7b434eda65"
+                            :source-dir "grammars/interface/src")))
+  (add-to-list 'treesit-language-source-alist recipe)
+  (treesit-ensure-installed (car recipe)))
 #+END_SRC
 
 Our =auto-mode-alist= sends =.js= to =typescript-ts-mode=, but other entry
@@ -1816,10 +1826,10 @@ You will need to download opam and Merlin
   :hook ((tuareg-mode caml-mode) . merlin-eldoc-setup))
 
 (use-package ocp-indent
-  :hook ((tuareg-mode . (lambda () (setq ocp-setup-indent t)))
-         (caml-mode . (lambda () (setq ocp-indent-caml-mode-setup t)))))
+  :hook ((tuareg-mode . ocp-setup-indent)
+         (caml-mode . ocp-indent-caml-mode-setup)))
 
 (use-package opam-switch-mode
   :hook
-  ((tuareg.mode . opam-switch-mode)))
+  ((tuareg-mode . opam-switch-mode)))
 #+END_SRC
