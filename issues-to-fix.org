@@ -157,12 +157,18 @@ Fix: call =(mapc #'disable-theme custom-enabled-themes)= before =load-theme=
 
 Fix: =(setq-default tab-width 4)= (line ~274)
 
-** TODO =my-pretty-lambda= is wrong and unused
+** DONE =my-pretty-lambda= is wrong and unused
+CLOSED: [2026-10-15]
 ='((lambda-string . 955))= quotes the symbol rather than using the argument.
 Nothing calls it, and the Elixir/Clojure variants are only referenced from
 commented-out code.
 
 Fix: delete all three functions (lines ~328–341)
+
+- [X] Deleted all three functions and the reference in the commented-out
+  =clojure-mode= block (2026-10-15). Kept =global-prettify-symbols-mode= and
+  reworded the section prose. Test failed before (all three defined) and
+  passes after (none defined, prettify-symbols still on).
 
 * Keybinding conflicts
 ** TODO =C-c C-<key>= bindings are reserved for major modes

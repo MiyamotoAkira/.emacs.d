@@ -320,23 +320,8 @@ All questions are y or n, for consistency
 #+END_SRC
 
 *** Prettify symbols
-We use the lambda character λ as a ligature.
+Show symbols such as =lambda= as λ, in the modes that define them (e.g. the Lisp modes).
 #+BEGIN_SRC emacs-lisp
-(defun my-pretty-lambda (lambda-string)
-  "Make some word or string show as pretty Unicode symbols.  LAMBDA-STRING is the way that the language declares lambda functions."
-  (setq prettify-symbols-alist
-        '((lambda-string . 955))))
-
-(defun my-pretty-lambda-elixir ()
-  "Make some word or string show as pretty Unicode symbols."
-  (setq prettify-symbols-alist
-        '(("fn" . 955))))
-
-(defun my-pretty-lambda-clojure ()
-  "Make some word or string show as pretty Unicode symbols."
-  (setq prettify-symbols-alist
-        '(("fn" . 955))))
-
 (global-prettify-symbols-mode 1)
 #+END_SRC
 
@@ -1640,7 +1625,6 @@ In config we remove some of the completions from lsp-mode, to use the cider setu
 ;;                      (define-clojure-indent (fact 1))
 ;;                      (define-clojure-indent (facts 1))))
 ;;    (clojure-mode . cider-mode)
-;;    (clojure-mode . my-pretty-lambda-clojure)
 ;;    (clojure-mode . column-enforce-mode)
 ;;    (clojure-mode . flycheck-mode)))
 
