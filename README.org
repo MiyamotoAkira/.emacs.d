@@ -28,7 +28,7 @@
     - [[#nerd-icons][nerd-icons]]
     - [[#mode-line][Mode line]]
     - [[#ace-window][ace-window]]
-    - [[#smooth-scrolling][smooth-scrolling]]
+    - [[#scrolling][Scrolling]]
     - [[#page-break-lines][page-break-lines]]
     - [[#dashboard][Dashboard]]
     - [[#which-key][which-key]]
@@ -390,14 +390,13 @@ quickly move between windows using M-o number
     :bind (("M-o" . ace-window)))
 #+END_SRC
 
-*** smooth-scrolling
-Line by line, instead of half-screen at a time.
+*** Scrolling
+Line by line, instead of half-screen at a time, keeping 5 lines of context
+above and below the cursor. Built in: a =scroll-conservatively= above 100 means
+"scroll just enough to keep point visible, never recenter".
 #+BEGIN_SRC emacs-lisp
-(use-package smooth-scrolling
-  :defer 2
-  :config
-  (smooth-scrolling-mode 1)
-  (setq smooth-scroll-margin 5))
+(setq-default scroll-margin 5)
+(setq scroll-conservatively 101)
 #+END_SRC
 
 *** page-break-lines

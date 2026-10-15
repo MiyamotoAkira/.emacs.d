@@ -351,8 +351,22 @@ had no visible effect.
 The pin was for a November 2024 bug. Vertico, consult, marginalia, orderless
 and embark are all on GNU ELPA now. (line ~972)
 
-** TODO Replace =smooth-scrolling= with =pixel-scroll-precision-mode=
+** DONE Replace =smooth-scrolling= with =pixel-scroll-precision-mode=
+CLOSED: [2026-10-15]
 Built in since Emacs 29. (line ~412)
+
+Correction: =pixel-scroll-precision-mode= is the wrong replacement. It only
+smooths mouse and touchpad scrolling. =smooth-scrolling= controls keyboard
+movement: it scrolls line by line near the window edge with a 5-line margin.
+
+- [X] Replaced with the built-in equivalent (2026-10-15):
+  =(setq-default scroll-margin 5)= and =(setq scroll-conservatively 101)=.
+  The section is renamed /Scrolling/ (TOC updated), and the
+  =smooth-scrolling-20161002.1949= package is uninstalled. Test failed before
+  (margin 0, conservatively 0, package installed) and passes after (5, 101,
+  not installed). Startup 1.23s.
+- Not done: =pixel-scroll-precision-mode= for smooth mouse/touchpad
+  scrolling. That's a separate, optional addition.
 
 ** WONTFIX Startup speed
 CLOSED: [2026-10-15]
