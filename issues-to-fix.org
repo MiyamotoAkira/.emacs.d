@@ -276,13 +276,18 @@ CLOSED: [2026-10-15]
   is on, and eldoc is still active in Emacs Lisp buffers and IELM.
   Startup 1.38s.
 
-** TODO Fix org-roam's autosync setup
+** DONE Fix org-roam's autosync setup
+CLOSED: [2026-10-15]
 =:custom= contains a stray =(org-roam-db-autosync-mode)=, which sets that
 variable to =nil=. It only works because =(org-roam-setup)= runs later, and
 that function is obsolete.
 
 Fix: remove the =:custom= line and use =(org-roam-db-autosync-mode 1)= in
 =:config=. (lines ~685, ~729)
+
+- [X] Fixed (2026-10-15) as described. Test (against a scratch database, so
+  the real =data/org/org-roam.db= is untouched) failed before (both lines
+  present) and passes after. Autosync is on once org-roam loads.
 
 ** TODO Remove unused packages
 - [ ] =shut-up= (line ~934)

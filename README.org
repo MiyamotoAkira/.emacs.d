@@ -654,7 +654,6 @@ This is the main setup of org roam
     (org-roam-directory (file-truename "~/org/slip-box"))
     (org-roam-dailies-directory "journal/")
     (org-roam-complete-everywhere t)
-    (org-roam-db-autosync-mode)
     (org-roam-capture-templates
      '(("d" "default" plain "%?"
         :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
@@ -698,7 +697,7 @@ This is the main setup of org roam
     ("C-c z d" . org-roam-dailies-map)
     :config
     (require 'org-roam-dailies)
-    (org-roam-setup))
+    (org-roam-db-autosync-mode 1))
 #+END_SRC
 
 
