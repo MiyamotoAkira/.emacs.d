@@ -356,19 +356,24 @@ Favour vertical split over horizontal split
 (setq split-height-threshold nil)
 (setq split-width-threshold 120)
 
-(defun shell-horizontal ()
-  "This function is to display the shell on a horizontal split, whcih is usually more adequate."
-  (interactive)
-  (let ((split-width-threshold nil)
-        (split-height-threshold 0))
-    (progn
-      (shell)
-      (setq current (selected-window))
-      (setq window (get-buffer-window "*shell*"))
-      (select-window window)
-      (setq height (window-height window))
-      (shrink-window (- height 10))
-      (select-window current))))
+(defun shell-horizontal (prefix)
+  "Open the shell in a 10-line window at the bottom of the frame, full width.
+PREFIX picks the layout and whether to ask for the shell buffer name:
+  no prefix    full frame width
+  C-u          below the selected window, as wide as it
+  C-u C-u      full frame width, ask for the buffer name
+  C-u C-u C-u  below the selected window, ask for the buffer name
+`shell' asks for the selected window itself, so the overriding action is
+what puts it below instead."
+  (interactive "P")
+  (let ((display-buffer-overriding-action
+         `(,(if (member prefix '((4) (64)))
+                #'display-buffer-below-selected
+              #'display-buffer-at-bottom)
+           (window-height . 10)))
+        ;; `shell' prompts for the buffer name when called with a prefix.
+        (current-prefix-arg (member prefix '((16) (64)))))
+    (call-interactively #'shell)))
 #+END_SRC
 
 *** nerd-icons

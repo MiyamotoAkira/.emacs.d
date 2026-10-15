@@ -300,9 +300,43 @@ Git keeps the history. Candidates: Clojure, LaTeX, Lua, Scheme, PowerShell,
 Graphviz, Mermaid, gptel, aidermacs, emacsql, pgmacs, monky, web-mode,
 column-enforce-mode, python-pytest, company-jedi, pyvenv.
 
-** TODO =shell-horizontal= creates global variables
+** DONE =shell-horizontal= creates global variables
+CLOSED: [2026-10-15]
 It =setq='s =current=, =window= and =height=. Bind them with =let= instead.
 (line ~366)
+
+Found while testing (2026-10-15): the function was broken in Emacs 31, not
+just leaky. =shell= always displays in the selected window
+(=display-buffer--same-window-action=, =shell.el= line 957), so the
+=split-*-threshold= bindings had no effect. The shell replaced the current
+window, and the resize then failed with "Cannot resize the root window of a
+frame" (one window), or shrank the current window to 10 lines (several).
+
+- [X] Rewritten (2026-10-15): it binds =display-buffer-overriding-action= to
+  =(display-buffer-below-selected (window-height . 10))= around =(shell)=. No
+  global variables and no manual resizing. Test failed before (the error) and
+  passes after: no leaked globals, shell below the original window, 10 lines
+  tall, and selected. With a side-by-side split, the shell opens under the
+  selected window and the other window is untouched.
+- [X] Changed on request (2026-10-15): without a prefix the shell now spans
+  the full frame width at the bottom (=display-buffer-at-bottom=). With
+  =C-u= it opens below the selected window only, as wide as it
+  (=display-buffer-below-selected=, the previous behaviour). Test (side-by-side
+  split) failed before (no prefix gave 40 of 80 columns) and passes after:
+  80 columns at the bottom without a prefix, 40 under the left window with
+  =C-u=. Both are 10 lines tall and selected. =C-u= doesn't make =shell=
+  prompt for a buffer name.
+- [X] Added buffer-name prompts on request (2026-10-15):
+  | Prefix        | Layout                       | Buffer name |
+  |---------------+------------------------------+-------------|
+  | none          | full frame width, at bottom  | =*shell*=   |
+  | =C-u=         | below the selected window    | =*shell*=   |
+  | =C-u C-u=     | full frame width, at bottom  | asks        |
+  | =C-u C-u C-u= | below the selected window    | asks        |
+  The prompt is =shell='s own (=call-interactively= with a prefix), so its
+  default name and remote-directory question still apply. Test (read-buffer
+  stubbed) failed for =C-u C-u= and =C-u C-u C-u= before, and passes for all
+  four after.
 
 * Worth considering
 ** TODO Stop hiding obsolete warnings
