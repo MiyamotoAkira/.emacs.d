@@ -164,6 +164,15 @@ Measure with =esup= first.
 - [ ] Set =exec-path-from-shell-arguments '("-l")= to skip the slow
   interactive-shell startup
 
-** TODO Remove no-op setup
-- [ ] =use-package org :defer 2= — =init.el= already =require='s org
-- [ ] =:ensure t= on =which-key= — built in since Emacs 30
+** DONE Remove no-op setup
+CLOSED: [2026-10-15]
+- [X] =use-package org :defer 2= — =init.el= already =require='s org.
+  Removed =:defer 2=; =:config= still runs at once, because org is already
+  loaded when the block is evaluated.
+- [X] =:ensure t= on =which-key= — built in since Emacs 30.
+  Set =:ensure nil= so it is never fetched from ELPA, and noted why in the prose.
+
+Verified by tangling =README.org= and loading the full config in batch:
+=org-directory= = ="~/org"=, =org-agenda-files= = =("~/org/agendas/")=,
+=which-key-mode= = =t=, loaded from the built-in
+=/usr/local/share/emacs/31.1/lisp/which-key.elc=.

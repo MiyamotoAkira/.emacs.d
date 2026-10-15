@@ -447,9 +447,10 @@ This dashboard appears whenever we open emacs.
 
 
 *** which-key
-This will show options for a prefix chord in the minibuffer
+This will show options for a prefix chord in the minibuffer. Built in since Emacs 30, hence =:ensure nil=.
 #+BEGIN_SRC emacs-lisp
 (use-package which-key
+  :ensure nil
   :defer nil
   :diminish
   :config
@@ -603,7 +604,6 @@ So this block only configures Org, hence =:ensure nil=.
 #+BEGIN_SRC emacs-lisp
   (use-package org
     :ensure nil
-    :defer 2
     :config
     (setq org-startup-truncated nil)
     (setq org-directory "~/org")
