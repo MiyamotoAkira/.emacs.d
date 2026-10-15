@@ -186,9 +186,27 @@ Replace =(fset 'yes-or-no-p 'y-or-n-p)= with =(setopt use-short-answers t)=.
 In Python and Zig buffers, eglot runs flymake. Once flycheck is actually on,
 both will run. Pick one, or add =flycheck-eglot=.
 
-** TODO Consolidate on one icon set
+** DONE Consolidate on one icon set
+CLOSED: [2026-10-15]
 doom-modeline uses nerd-icons; the dashboard uses all-the-icons. Set
 =dashboard-icon-type 'nerd-icons= and drop =all-the-icons=.
+
+Done:
+- Replaced the /all-the-icons/ section in =README.org= with a /nerd-icons/
+  section (=(use-package nerd-icons)=). The font-install note moved there from
+  /Mode line/. Also removed the commented-out =all-the-icons-dired= block and
+  updated the TOC entry.
+- =dashboard-icon-type= is now ='nerd-icons=.
+- Deleted the installed =all-the-icons-20250527.927= package. Nothing
+  depended on it, and its fonts were never installed.
+
+Verified in batch: =dashboard-icon-type= is =nerd-icons=, =all-the-icons= is
+not in =package-alist=, the dashboard renders without errors, and startup
+still makes no archive refresh (1.40s).
+
+Finding: the dashboard never showed icons. =dashboard-set-heading-icons= and
+=dashboard-set-file-icons= both default to =nil=, so =dashboard-icon-type=
+had no visible effect. To get icons, set both to =t=.
 
 ** TODO Revisit the vertico melpa-stable pin
 The pin was for a November 2024 bug. Vertico, consult, marginalia, orderless

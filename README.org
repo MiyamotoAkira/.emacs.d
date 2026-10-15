@@ -25,7 +25,7 @@
     - [[#end-of-line-spaces][End of line spaces]]
     - [[#saveplace][saveplace]]
     - [[#splitting-of-buffers][Splitting of buffers]]
-    - [[#all-the-icons][all-the-icons]]
+    - [[#nerd-icons][nerd-icons]]
     - [[#mode-line][Mode line]]
     - [[#ace-window][ace-window]]
     - [[#smooth-scrolling][smooth-scrolling]]
@@ -375,22 +375,13 @@ Favour vertical split over horizontal split
       (select-window current))))
 #+END_SRC
 
-*** all-the-icons
-Lots of icons to work with emacs
+*** nerd-icons
+The one icon set used across the config (mode line, dashboard). Run
+=M-x nerd-icons-install-fonts= once on a new machine if glyphs look wrong.
 #+BEGIN_SRC emacs-lisp
-  (use-package all-the-icons
-    :defer 2)
-
-
-  ;; (use-package all-the-icons-dired
-  ;;   :after (dired-sidebar all-the-icons)
-  ;;   :hook
-  ;;   (dired-mode-hook . all-the-icons-dired-mode))
+  (use-package nerd-icons)
 #+END_SRC
 *** Mode line
-doom-modeline replaces the abandoned spaceline-all-the-icons, which spammed
-"Invalid face attribute :family nil" on every redisplay. Icons come from
-nerd-icons — run =M-x nerd-icons-install-fonts= once if glyphs look wrong.
 #+BEGIN_SRC emacs-lisp
   (use-package doom-modeline
     :ensure t
@@ -433,7 +424,7 @@ This dashboard appears whenever we open emacs.
   (setq dashboard-banner-logo-title "May the Force be with you")
   (setq dashboard-startup-banner 'logo)
   (setq dashboard-center-content t)
-  (setq dashboard-icon-type 'all-the-icons)
+  (setq dashboard-icon-type 'nerd-icons)
   (setq dashboard-projects-backend 'projectile)
   (setq dashboard-projects-switch-function 'projectile-persp-switch-project)
   (setq dashboard-items '((recents . 5)
