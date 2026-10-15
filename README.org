@@ -5,6 +5,7 @@
 * Table of Contents                                                     :TOC_3:
 - [[#emacs][Emacs]]
 - [[#packaging][Packaging]]
+    - [[#trash-files][Trash files]]
 - [[#look-and-feel][Look and Feel]]
     - [[#upcase-region][upcase-region]]
     - [[#font-size-modifications][Font size modifications]]
@@ -59,7 +60,6 @@
   - [[#general][General]]
     - [[#magit][magit]]
     - [[#project-handling][Project handling]]
-    - [[#trash-files][Trash files]]
     - [[#emacsql][emacsql]]
     - [[#pgmacs][pgmacs]]
     - [[#monky][monky]]
@@ -174,6 +174,26 @@ We used to have a refresh of the archive contents here, but =use-package= refres
   :defer nil
   :config (auto-compile-on-load-mode))
 
+#+END_SRC
+
+*** Trash files
+We want to limit the amount and location of files created by emacs.
+This loads before every other package, so each one picks up its no-littering
+file location before it reads or writes anything.
+
+Auto-save files go to =data/auto-save/=, out of the project directories, so they
+don't cause issues with language tooling.
+#+BEGIN_SRC emacs-lisp
+  (setq no-littering-etc-directory
+        (expand-file-name "config/" user-emacs-directory))
+  (setq no-littering-var-directory
+        (expand-file-name "data/" user-emacs-directory))
+
+  (use-package no-littering
+    :defer nil
+    :config
+    (setq auto-save-file-name-transforms
+       `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
 #+END_SRC
 
 * Look and Feel
@@ -516,15 +536,8 @@ We put all backup files on a single place
       `(("." . ,(expand-file-name "backups" user-emacs-directory))))
 #+END_SRC
 
-We move auto-save files out into a specific directory.
-This is so it doesn't cause issue with language tooling
-#+BEGIN_SRC emacs-lisp
-(let ((auto-save-dir (locate-user-emacs-file "emacs-save")))
-  (setq auto-save-file-name-transforms
-        `((".*" ,(expand-file-name "\\2" auto-save-dir) t)))
-  (unless (file-exists-p auto-save-dir)
-    (make-directory auto-save-dir)))
-#+END_SRC
+Auto-save files are moved out of the project directories by =no-littering= (see
+/Trash files/ under /Packaging/).
 
 Make sure that tramp uses it as well
 #+BEGIN_SRC emacs-lisp
@@ -773,21 +786,6 @@ can have separate set of buffers for each project. And each project can work ind
 
 (use-package persp-projectile
   :bind ("C-c M-p P" . projectile-persp-switch-project))
-#+END_SRC
-
-*** Trash files
-We want to limit the amount and location of files created by emacs.
-#+BEGIN_SRC emacs-lisp
-  (setq no-littering-etc-directory
-        (expand-file-name "config/" user-emacs-directory))
-  (setq no-littering-var-directory
-        (expand-file-name "data/" user-emacs-directory))
-
-  (use-package no-littering
-    :defer nil
-    :config
-    (setq auto-save-file-name-transforms
-       `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
 #+END_SRC
 
 *** emacsql

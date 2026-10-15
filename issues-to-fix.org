@@ -212,15 +212,38 @@ Fix: move both to =C-c <letter>= bindings.
 own =pcomplete=. Confirm this is intended. (line ~717)
 
 * Duplicates and dead code
-** TODO Auto-save location set twice
+** DONE Auto-save location set twice
+CLOSED: [2026-10-15]
 The =emacs-save/= block in /Backup directory/files/ is overwritten later by
 =no-littering='s =data/auto-save/=. Delete the first block (line ~546) and the
 =emacs-save/= directory.
 
-** TODO Load =no-littering= earlier
+- [X] Deleted the block and the empty =emacs-save/= directory (2026-10-15).
+  Its reason ("so it doesn't cause issue with language tooling") moved to the
+  no-littering section, and /Backup directory/files/ now points there.
+
+** DONE Load =no-littering= earlier
+CLOSED: [2026-10-15]
 It sits in /Tools/, after =savehist=, =save-place=, =dashboard=, =projectile=,
 etc. have already picked their file locations. Move it to right after
 /Packaging/. (line ~806)
+
+- [X] Moved /Trash files/ to the end of /Packaging/ (2026-10-15), and
+  updated the TOC and =CLAUDE.md=.
+
+Test for both: records which state-keeping modes are enabled before
+=no-littering= loads, and checks the auto-save location and that
+=emacs-save/= isn't recreated. Before: =persp-mode=, =save-place-mode=,
+=winner-mode= and =global-auto-revert-mode= were enabled first, and
+=emacs-save/= was recreated. After: none, and no =emacs-save/=. Startup 1.37s.
+
+No files were actually in the wrong place: =save-place-mode= only reads its
+file when a file is first opened, by which time the path already points into
+=data/=. The move removes that dependence on timing.
+
+Found along the way: =~/.emacs.d/org-roam.db= (last modified 2026-01-05) is
+a stale copy. org-roam uses =data/org/org-roam.db= (last modified
+2026-02-01), via no-littering. Not deleted — check, then remove by hand.
 
 ** TODO Remove duplicate declarations
 - [ ] =treemacs-projectile= declared twice (lines ~883 and ~917)
