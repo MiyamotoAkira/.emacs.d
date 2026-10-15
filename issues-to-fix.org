@@ -245,11 +245,25 @@ Found along the way: =~/.emacs.d/org-roam.db= (last modified 2026-01-05) is
 a stale copy. org-roam uses =data/org/org-roam.db= (last modified
 2026-02-01), via no-littering. Not deleted — check, then remove by hand.
 
-** TODO Remove duplicate declarations
-- [ ] =treemacs-projectile= declared twice (lines ~883 and ~917)
-- [ ] =show-paren-mode= called twice (line ~267 and inside flycheck's
+** DONE Remove duplicate declarations
+CLOSED: [2026-10-15]
+- [X] =treemacs-projectile= declared twice (lines ~883 and ~917)
+- [X] =show-paren-mode= called twice (line ~267 and inside flycheck's
   =:config=); it is on by default anyway
-- [ ] =org-roam-v2-ack= set twice (lines ~671 and ~680); obsolete anyway
+- [X] =org-roam-v2-ack= set twice (lines ~671 and ~680); obsolete anyway
+
+Done (2026-10-15):
+- Kept the first =treemacs-projectile= section and removed the second, plus
+  its TOC entry.
+- Removed both =show-paren-mode= calls, including the /Parens/ section and its
+  TOC entry; the mode is on by default in Emacs 31. The TOC link for
+  /Parens!!!!/ changed from =#parens-1= to =#parens=.
+- Removed both =org-roam-v2-ack= settings and the now-empty =:init= in the
+  org-roam block. The installed org-roam no longer references the variable.
+
+Test failed before (2 of each in =README.org=) and passes after (1, 0, 0).
+Paren matching is still on, =org-roam-v2-ack= is not set, and
+=treemacs-projectile= loads. Startup 1.36s.
 
 ** TODO Remove the eldoc block
 =global-eldoc-mode= is on by default and =turn-on-eldoc-mode= is obsolete.

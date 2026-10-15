@@ -13,7 +13,6 @@
     - [[#highlight-lines][Highlight Lines]]
     - [[#beacon][Beacon]]
     - [[#line-numbers][Line numbers]]
-    - [[#parens][Parens]]
     - [[#tabs][Tabs]]
     - [[#title-bar][Title bar]]
     - [[#bell][Bell]]
@@ -69,7 +68,6 @@
     - [[#treemacs-icons-dired][treemacs-icons-dired]]
     - [[#treemacs-magit][treemacs-magit]]
     - [[#treemacs-perspective][treemacs-perspective]]
-    - [[#treemacs-projectile-1][treemacs-projectile]]
     - [[#html][html]]
     - [[#shut-up][shut-up]]
     - [[#undo-tree][undo-tree]]
@@ -117,7 +115,7 @@
     - [[#clojure][Clojure]]
     - [[#mermaid][Mermaid]]
     - [[#common-lisp][Common Lisp]]
-    - [[#parens-1][Parens!!!!]]
+    - [[#parens][Parens!!!!]]
     - [[#latex][Latex]]
     - [[#scheme][Scheme]]
     - [[#lua][Lua]]
@@ -276,12 +274,6 @@ We avoid displaying numbers on eshell
 #+BEGIN_SRC emacs-lisp
 (dolist (mode '(eshell-mode-hook))
         (add-hook mode (lambda () (display-line-numbers-mode 0))))
-#+END_SRC
-
-*** Parens
-by default highlight the matching paren
-#+BEGIN_SRC emacs-lisp
-(show-paren-mode)
 #+END_SRC
 
 *** Tabs
@@ -654,18 +646,11 @@ Allows for the download of images into org buffers
 
 ** Org Roam section
 
-First, we acknowledge we are in version 2 of org roam. So it doesn't show a warning
-#+BEGIN_SRC emacs-lisp
-  (setq org-roam-v2-ack t)
-#+END_SRC
-
 *** org-roam
 This is the main setup of org roam
 #+BEGIN_SRC emacs-lisp
   (use-package org-roam
     :after org
-    :init
-    (setq org-roam-v2-ack t)
     :custom
     (org-roam-directory (file-truename "~/org/slip-box"))
     (org-roam-dailies-directory "journal/")
@@ -884,13 +869,6 @@ Allows interaction of treemacs with perspective
   :config (treemacs-set-scope-type 'Perspectives))
 #+END_SRC
 
-*** treemacs-projectile
-Allows interaction of treemacs with projectile
-#+BEGIN_SRC emacs-lisp
-(use-package treemacs-projectile
-  :after (treemacs projectile)
-  :ensure t)
-#+END_SRC
 
 *** html
 Adding some keybindings for the hmtl mode map, mostly so they don't mess up other tools
@@ -1229,7 +1207,6 @@ Syntax checker
 (use-package flycheck
 :after (flycheck-pos-tip-mode)
 :config
-(show-paren-mode 1)
 (flycheck-pos-tip-mode)
 (setq-default flycheck-disabled-checkers
               (append flycheck-disabled-checkers
