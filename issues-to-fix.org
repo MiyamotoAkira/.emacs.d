@@ -381,9 +381,19 @@ had no visible effect.
   after: with icon display forced on in batch, the dashboard renders 10
   nerd-icons glyphs.
 
-** TODO Revisit the vertico melpa-stable pin
+** DONE Revisit the vertico melpa-stable pin
+CLOSED: [2026-10-15]
 The pin was for a November 2024 bug. Vertico, consult, marginalia, orderless
 and embark are all on GNU ELPA now. (line ~972)
+
+- [X] Removed the pin and its comment (2026-10-15). It still worked
+  (melpa-stable has vertico 2.15), but kept vertico on releases while
+  consult, marginalia, orderless and embark track MELPA snapshots. Test
+  failed before (pinned; only melpa-stable visible) and passes after (no pin;
+  melpa, melpa-stable and gnu visible). Startup 1.23s.
+- [ ] Vertico is still the installed 2.15. Run =M-x package-upgrade RET
+  vertico= to move it to the MELPA snapshot (20260913.1525 at the time of
+  writing).
 
 ** DONE Replace =smooth-scrolling= with =pixel-scroll-precision-mode=
 CLOSED: [2026-10-15]
