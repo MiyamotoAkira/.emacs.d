@@ -128,10 +128,16 @@ Fix options:
   it knows but has no grammar for. The first two fix options address that in
   general.
 
-** TODO =treesit-fold-toogle= does not exist
+** DONE =treesit-fold-toogle= does not exist
+CLOSED: [2026-10-15]
 =C-c f t= is bound to a misspelled command.
 
 Fix: =treesit-fold-toggle= (line ~1208)
+
+- [X] Fixed (2026-10-15). Test failed before (=C-c f t= =
+  =treesit-fold-toogle=) and passes after. Loading =treesit-fold= gives
+  =treesit-fold-toggle= a real definition. The misspelled name was a
+  =:bind= autoload placeholder, so the key only errored when pressed.
 
 ** TODO =uv-mode= never activates
 It hooks =python-mode=, but =treesit-enabled-modes t= sends Python files to

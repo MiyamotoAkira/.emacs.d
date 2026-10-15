@@ -1190,7 +1190,7 @@ This package allows for the folding of lines on code, with knowledge gained from
          ("C-c f o r" . treesit-fold-open-recursively)
          ("C-c f c c" . treesit-fold-close)
          ("C-c f c a" . treesit-fold-close-all)
-         ("C-c f t" . treesit-fold-toogle))
+         ("C-c f t" . treesit-fold-toggle))
   :custom
   (global-treesit-fold-mode t)
   (global-treesit-fold-indicators-mode t)
