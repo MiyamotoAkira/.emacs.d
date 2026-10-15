@@ -265,9 +265,16 @@ Test failed before (2 of each in =README.org=) and passes after (1, 0, 0).
 Paren matching is still on, =org-roam-v2-ack= is not set, and
 =treemacs-projectile= loads. Startup 1.36s.
 
-** TODO Remove the eldoc block
+** DONE Remove the eldoc block
+CLOSED: [2026-10-15]
 =global-eldoc-mode= is on by default and =turn-on-eldoc-mode= is obsolete.
 (line ~1261)
+
+- [X] Removed the block and its TOC entry (2026-10-15). No ELPA copy of eldoc
+  was installed, so there was nothing to uninstall. Test failed before (6
+  eldoc block lines in =README.org=) and passes after (0). =global-eldoc-mode=
+  is on, and eldoc is still active in Emacs Lisp buffers and IELM.
+  Startup 1.38s.
 
 ** TODO Fix org-roam's autosync setup
 =:custom= contains a stray =(org-roam-db-autosync-mode)=, which sets that

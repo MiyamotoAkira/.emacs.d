@@ -96,7 +96,6 @@
     - [[#treesit-fold][Treesit-fold]]
     - [[#yasnippet][Yasnippet]]
     - [[#flycheck][Flycheck]]
-    - [[#eldoc][eldoc]]
     - [[#tagedit][tagedit]]
     - [[#editorconfig][EditorConfig]]
     - [[#aggressive-indent][aggressive-indent]]
@@ -1214,18 +1213,6 @@ Syntax checker
 (flycheck-add-mode 'javascript-eslint 'web-mode)
 :hook
 ((after-init . global-flycheck-mode)))
-#+END_SRC
-
-*** eldoc
-#+BEGIN_SRC emacs-lisp
-(use-package eldoc
-  :diminish
-  :hook
-  (prog-mode . turn-on-eldoc-mode)
-  (cider-repl-mode . turn-on-eldoc-mode)
-  (emacs-lisp-mode . turn-on-eldoc-mode)
-  (lisp-interaction-mode . turn-on-eldoc-mode)
-  (ielm-mode . turn-on-eldoc-mode))
 #+END_SRC
 
 *** tagedit
