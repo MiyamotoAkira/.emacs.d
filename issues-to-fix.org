@@ -6,6 +6,46 @@ Review of =README.org=, =init.el= and =early-init.el= on Emacs 31.1.
 Line numbers refer to =README.org= at commit =3dfd4a4= unless stated otherwise.
 
 * Bugs
+** DONE Package archives are re-downloaded on every startup
+CLOSED: [2026-10-15]
+Found by timing each =README.org= section (2026-10-15). /Packaging/ took
+*7.6–9.7s* of a 9–11s batch load; every other section was under 0.4s.
+Measured on its own: refresh *1.9s* (network-dependent), reading the cached
+archives *0.006s*.
+
+*Real cause: the ELPA Org install in =init.el= never succeeds.*
+=init.el= checks =(assq 'org package-alist)=, finds nothing, refreshes the
+archives and calls =(package-install 'org)=. That answers "‘org’ is already
+installed" because the built-in Org (9.8.7) counts as installed, so ELPA Org
+(9.8.10 on GNU) is never installed. The check fails again on the next start,
+so every startup downloads the archives. There is no =elpa/org-*= directory;
+Org is loaded from =/usr/local/share/emacs/31.1/lisp/org/=.
+
+The timing script didn't run =init.el='s install step, so the refresh showed
+up under /Packaging/ instead. My first diagnosis (that commit =3dfd4a4= caused
+it by removing =package-initialize=) was wrong: =init.el= runs before
+=README.org=, so its refresh already happened before that commit.
+
+- [X] Deleted the redundant refresh block in /Packaging/ (2026-10-15). After
+  =init.el='s refresh the archives are always loaded, so it never fired. Dead
+  code, no speedup: the config still refreshes once and loads in 3.3–3.6s
+  (was 3.34s).
+- [X] Fixed the Org step in =init.el= (2026-10-15). It now refreshes the
+  archives and passes the archive's =package-desc= to =package-install=.
+  With the symbol ='org=, =package-install= treats the active built-in Org as
+  installed; with =package-install-upgrade-built-in= bound to =t= it refuses
+  as well (=package.el= line 2130 in 31.1). Given the descriptor for an
+  uninstalled version, it installs it.
+
+  Result: ELPA Org 9.8.10 installed in =elpa/org-9.8.10/= and loaded from
+  there, no "Org version mismatch" warning. Later startups don't refresh:
+  batch load *3.3–3.6s → 1.4s*.
+
+Other sections in the batch timing (GUI-only work such as fonts and posframes
+isn't included): /OS/ (=exec-path-from-shell=) 0.33–0.39s, /Main Org Section/
+0.19s, /Mode line/, /Vertico/, /org-roam/, /Python/ and =require org= about
+0.13–0.15s each; everything else under 0.05s.
+
 ** TODO Flycheck never turns on
 =:after (flycheck-pos-tip-mode)= names a mode, not a library; the library is
 =flycheck-pos-tip=. The block (including =global-flycheck-mode=) is wrapped in
@@ -157,12 +197,24 @@ and embark are all on GNU ELPA now. (line ~972)
 ** TODO Replace =smooth-scrolling= with =pixel-scroll-precision-mode=
 Built in since Emacs 29. (line ~412)
 
-** TODO Startup speed
-Measure with =esup= first.
-- [ ] Raise =gc-cons-threshold= to =most-positive-fixnum= in =early-init.el=
-  and lower it again in =emacs-startup-hook=
-- [ ] Set =exec-path-from-shell-arguments '("-l")= to skip the slow
-  interactive-shell startup
+** WONTFIX Startup speed
+CLOSED: [2026-10-15]
+Measured on 2026-10-15 (batch load of =init.el=, 3 runs): *3.3–3.5s* total,
+*6 GCs costing 0.09s*. =zsh -ilc= takes *0.37s*, =zsh -lc= takes *0.03s*.
+
+- [-] Raise =gc-cons-threshold= during startup — WONTFIX: GC costs 0.09s of
+  3.3s (under 3%), so it isn't worth the extra code.
+- [-] =exec-path-from-shell-arguments '("-l")= — WONTFIX as written: it would
+  save ~0.34s, but the login shell's =PATH= is missing
+  =~/.opam/default/bin= and =~/.nvm/versions/node/v22.21.1/bin=. Both are set
+  in =~/.zshrc=, which only interactive shells read. That would break Merlin
+  (opam) and the TypeScript LSP (node).
+  Possible follow-up: move the opam and nvm =PATH= setup into =~/.zprofile=
+  (outside this repo), then switch to =-l=.
+
+Almost all of the 3.3s is outside GC and the shell call. Timing each section
+found the real cause: see /Package archives are re-downloaded on every
+startup/ under Bugs.
 
 ** DONE Remove no-op setup
 CLOSED: [2026-10-15]

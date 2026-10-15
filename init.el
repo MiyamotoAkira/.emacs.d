@@ -33,11 +33,13 @@
 ;; Org must come from ELPA before `org-babel-load-file' pulls in the built-in
 ;; version -- otherwise a later Org install is byte-compiled against the older
 ;; built-in Org and every startup warns "Org version mismatch".
+;; Install from the archive's package-desc: given the symbol `org',
+;; `package-install' counts the built-in Org as already installed and does
+;; nothing -- and with `package-install-upgrade-built-in' set it refuses too.
 (require 'package)
 (unless (assq 'org package-alist)
-  (unless package-archive-contents (package-refresh-contents))
-  (let ((package-install-upgrade-built-in t))
-    (package-install 'org)))
+  (package-refresh-contents)
+  (package-install (cadr (assq 'org package-archive-contents))))
 
 (require 'org)
 (org-babel-load-file (expand-file-name "README.org" user-emacs-directory))

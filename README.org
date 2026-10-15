@@ -155,11 +155,8 @@ We force the upgrading of packages built into emacs
 (setq package-install-upgrade-built-in t)
 #+END_SRC
 
-This refreshes the packages unless we have them already
+We used to have a refresh of the archive contents here, but =use-package= refreshes them itself when =:ensure= has to install a missing package, so startup never hits the network.
 #+BEGIN_SRC emacs-lisp
-(unless package-archive-contents
-  (package-refresh-contents))
-
 ;; By default we ensure everything
 (custom-set-variables '(use-package-always-ensure t))
 
