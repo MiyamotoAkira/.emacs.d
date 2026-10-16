@@ -46,13 +46,18 @@ isn't included): /OS/ (=exec-path-from-shell=) 0.33–0.39s, /Main Org Section/
 0.19s, /Mode line/, /Vertico/, /org-roam/, /Python/ and =require org= about
 0.13–0.15s each; everything else under 0.05s.
 
-** TODO Flycheck never turns on
+** DONE Flycheck never turns on
+CLOSED: [2026-10-16]
 =:after (flycheck-pos-tip-mode)= names a mode, not a library; the library is
 =flycheck-pos-tip=. The block (including =global-flycheck-mode=) is wrapped in
 =(eval-after-load 'flycheck-pos-tip-mode ...)=, which never fires (confirmed by
 macroexpansion).
 
 Fix: =:after flycheck-pos-tip=, or drop =:after= entirely. (Line ~1247)
+
+- [X] Dropped =:after= (2026-10-16). Global Flycheck is on, and Flycheck runs
+  in Emacs Lisp, OCaml, Org, Python and Markdown buffers. Done together with
+  /Avoid running flymake and flycheck together/ below; the test is there.
 
 ** TODO =:config= blocks that never run because of =use-package-always-defer=
 With =always-defer t=, =:config= only runs once the package loads, and nothing
@@ -352,9 +357,34 @@ Replace =(fset 'yes-or-no-p 'y-or-n-p)= with =(setopt use-short-answers t)=.
   =yes-or-no-p= redefined as =y-or-n-p=) and passes after (=t=, original
   =yes-or-no-p= restored).
 
-** TODO Avoid running flymake and flycheck together
+** DONE Avoid running flymake and flycheck together
+CLOSED: [2026-10-16]
 In Python and Zig buffers, eglot runs flymake. Once flycheck is actually on,
 both will run. Pick one, or add =flycheck-eglot=.
+
+- [X] Added =flycheck-eglot= (2026-10-16): =(use-package flycheck-eglot
+  :after (flycheck eglot) :demand t :config (global-flycheck-eglot-mode 1))=.
+  =:demand t= is needed: without it, =use-package-always-defer= never loads
+  flycheck-eglot, so its =:config= never runs (same trap as the open
+  /:config blocks/ entry). =flycheck-eglot-exclusive= (default =t=) makes the
+  language server the only checker in Eglot buffers.
+
+Test: real Eglot session on a Python file with an unused import and an
+undefined name. The server was =pylsp= + =pyflakes= from a scratch venv,
+because the =pylsp= in =beeware-tutorial= has no linting plugins and reports
+nothing. Before: global Flycheck off, Flymake on, no Flycheck errors. After:
+global Flycheck on; in the Python buffer Flycheck is on, Flymake off, and both
+pyflakes diagnostics come only from =eglot-check=. A baseline run without
+flycheck-eglot confirmed the server reports the same two diagnostics.
+
+Smoke test: =.el=, =.ml=, =.org=, =.py=, =.md= all open with Flycheck on, the
+OCaml hooks still work, startup 1.19s, no archive refresh. The =.ts= file
+stopped at lsp-mode's "Select action:" project-root prompt, which batch can't
+answer (the file wasn't in a project). Unrelated to this change.
+
+Note: no Python language server is on =PATH=. =pet= finds one per project, so
+Eglot only reports in projects whose virtualenv has =python-lsp-server= (with
+plugins such as pyflakes) or another server.
 
 ** DONE Consolidate on one icon set
 CLOSED: [2026-10-15]

@@ -1199,20 +1199,32 @@ This package allows for the folding of lines on code, with knowledge gained from
 #+END_SRC
 
 *** Flycheck
-Syntax checker
+Syntax checker, on in every buffer.
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck-pos-tip)
 
 (use-package flycheck
-:after (flycheck-pos-tip-mode)
-:config
-(flycheck-pos-tip-mode)
-(setq-default flycheck-disabled-checkers
-              (append flycheck-disabled-checkers
-                      '(javascript-jshint)))
-(flycheck-add-mode 'javascript-eslint 'web-mode)
-:hook
-((after-init . global-flycheck-mode)))
+  :config
+  (flycheck-pos-tip-mode)
+  (setq-default flycheck-disabled-checkers
+                (append flycheck-disabled-checkers
+                        '(javascript-jshint)))
+  (flycheck-add-mode 'javascript-eslint 'web-mode)
+  :hook
+  ((after-init . global-flycheck-mode)))
+#+END_SRC
+
+Eglot reports diagnostics through Flymake. flycheck-eglot hands them to Flycheck
+instead, so every buffer uses Flycheck. In Eglot buffers the language server is
+the only checker (=flycheck-eglot-exclusive=), so there are no duplicate markers.
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck-eglot
+  :after (flycheck eglot)
+  ;; Without :demand, `use-package-always-defer' waits for something to load
+  ;; flycheck-eglot itself, which never happens, so :config would never run.
+  :demand t
+  :config
+  (global-flycheck-eglot-mode 1))
 #+END_SRC
 
 *** tagedit
