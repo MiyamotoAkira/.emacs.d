@@ -1074,11 +1074,21 @@ Pomodoro library to be used within Emacs
 
 *** Combobulate
 This package uses tree-sitter for structured editing
+
+It is only enabled in buffers that already have a tree-sitter parser. In other
+modes it would create one for any language it knows (e.g. OCaml for tuareg), and
+when that grammar is missing the error aborts the rest of the mode's hooks.
+Tree-sitter modes create their parser before their mode hooks run.
 #+BEGIN_SRC emacs-lisp
+(defun jgg/combobulate-if-tree-sitter ()
+  "Enable `combobulate-mode' when the buffer has a tree-sitter parser."
+  (when (treesit-parser-list)
+    (combobulate-mode)))
+
 (use-package combobulate
   :custom
   (combobulate-key-prefix "C-c o")
-  :hook ((prog-mode . combobulate-mode))
+  :hook ((prog-mode . jgg/combobulate-if-tree-sitter))
   :vc (:url "https://github.com/mickeynp/combobulate"
        :branch "main"))
 #+END_SRC

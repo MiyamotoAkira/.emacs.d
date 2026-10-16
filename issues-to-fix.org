@@ -121,7 +121,8 @@ Verified in batch after installing the OCaml grammars: =.ml= buffers
 =opam-switch-mode=, =merlin-mode= and =indent-line-function= =
 =ocp-indent-line=. The test failed before the fix.
 
-** TODO combobulate aborts every tuareg-mode hook
+** DONE combobulate aborts every tuareg-mode hook
+CLOSED: [2026-10-16]
 Found while testing the two fixes above (2026-10-15). Combobulate is hooked
 on =prog-mode=. In a tuareg buffer it calls
 =(treesit-parser-create 'ocaml)=, which signals =treesit-load-language-error=
@@ -153,9 +154,26 @@ Fix options:
   Test (hand-installed grammars moved aside, as on a new machine): failed
   before, passes after. Loading the config builds both grammars into
   =data/treesit/=; later loads don't rebuild. Startup 1.33s.
-- [ ] Still open: combobulate breaks any non-tree-sitter mode for a language
-  it knows but has no grammar for. The first two fix options address that in
-  general.
+- [X] General fix (2026-10-16), option 1: combobulate is hooked through
+  =jgg/combobulate-if-tree-sitter=, which only enables =combobulate-mode=
+  when the buffer already has a tree-sitter parser. Tree-sitter modes create
+  their parser before their mode hooks run, so they still get it; other modes
+  are left alone.
+
+  Test: OCaml grammars hidden (empty =treesit-extra-load-path= for the
+  session). Before: "File mode specification error" and the tuareg hooks
+  aborted (=opam-switch-mode= off). After: no error, =opam-switch-mode= on, no
+  combobulate in tuareg. Python (=python-ts-mode=) still gets
+  =combobulate-python-minor-mode=; Emacs Lisp gets none. Smoke test unchanged,
+  startup 1.24s.
+
+  Note for testing: =combobulate-mode= only dispatches; the active mode is
+  per language (e.g. =combobulate-python-minor-mode=), and
+  =combobulate-mode= itself stays =nil=.
+
+  The OCaml grammar recipes in /Treesit/ are no longer needed for this bug
+  (tuareg buffers have no parser, so combobulate never activates there). Kept
+  as harmless; remove if you want fewer grammar builds.
 
 ** DONE =treesit-fold-toogle= does not exist
 CLOSED: [2026-10-15]
