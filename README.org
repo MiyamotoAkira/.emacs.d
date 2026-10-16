@@ -1186,11 +1186,9 @@ This package allows for the folding of lines on code, with knowledge gained from
   ;;             ("n" . yas-new-snippet)
   ;;             ("s" . yas-insert-snippet)
   ;;             ("v" . yas-visit-snippet-file))
-  :config
-  ;; (evil-leader/set-key-for-mode 'emacs-lisp-mode "b" 'byte-compile-file)
-  ;; (define-prefix-command 'yas-minor-mode-map)
-  ;; (define-key tools-map (kbd "y") 'yas-minor-mode-map)
-  (yas-global-mode 1))
+  ;; A :config here would never run: `use-package-always-defer' leaves
+  ;; yasnippet unloaded until something needs it.
+  :hook (after-init . yas-global-mode))
 
 (use-package yasnippet-snippets)
 
@@ -1239,11 +1237,9 @@ This packages add paredit functionality to html mode
 #+END_SRC
 
 *** EditorConfig
+Apply a project's =.editorconfig= settings
 #+BEGIN_SRC emacs-lisp
-(use-package editorconfig
-  :diminish
-  :config
-  (editorconfig-mode 1))
+(editorconfig-mode 1)
 #+END_SRC
 
 *** aggressive-indent
@@ -1276,10 +1272,6 @@ Basic setup for company
 	 ("M->". company-select-last))
   :hook
   ((after-init . global-company-mode)))
-
-(use-package company-quickhelp
-  :config
-  (company-quickhelp-mode 1))
 #+END_SRC
 
 This is a company front-end with icons
@@ -1771,10 +1763,10 @@ You will need to download opam and Merlin
   (setq merlin-command 'opam)
   (setq merlin-error-after-save nil))
 
+;; Registers the `ocaml-merlin' Flycheck checker. Run from the mode hooks so it
+;; only loads with OCaml; global Flycheck switches on after the mode hooks.
 (use-package flycheck-ocaml
-  :ensure t
-  :config
-  (flycheck-ocaml-setup))
+  :hook ((tuareg-mode caml-mode) . flycheck-ocaml-setup))
 
 (use-package dune)
 

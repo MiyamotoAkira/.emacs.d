@@ -63,16 +63,40 @@ Fix: =:after flycheck-pos-tip=, or drop =:after= entirely. (Line ~1247)
 With =always-defer t=, =:config= only runs once the package loads, and nothing
 loads these. Use =:defer nil=, or move the mode call to =:hook= / =:init=.
 
-- [ ] =company-quickhelp= — =company-quickhelp-mode= never starts (line ~1321)
-- [ ] =editorconfig= — never enabled. Built in since Emacs 30: replace the block
+- [X] =company-quickhelp= — =company-quickhelp-mode= never starts (line ~1321)
+  Removed (2026-10-16): block deleted, =company-quickhelp-20231026.1714=
+  uninstalled, =CLAUDE.md= updated. =company-box= already shows docs.
+- [X] =editorconfig= — never enabled. Built in since Emacs 30: replace the block
   with =(editorconfig-mode 1)= (line ~1284)
+  Fixed (2026-10-16) as described, with a line of prose.
 - [ ] =company-terraform= — =company-terraform-init= never runs (line ~1581)
-- [ ] =flycheck-ocaml= — =flycheck-ocaml-setup= never runs (line ~1816)
-- [ ] =slime-company= — =slime-company-major-modes= never set (line ~1730)
-- [ ] =yasnippet= — =yas-global-mode= only starts if something else happens to
+- [X] =flycheck-ocaml= — =flycheck-ocaml-setup= never runs (line ~1816)
+  Fixed (2026-10-16): =:hook ((tuareg-mode caml-mode) . flycheck-ocaml-setup)=,
+  so it only loads with OCaml. Global Flycheck switches on after the mode
+  hooks, so the checker is registered in time.
+  *Merlin isn't installed* in the opam switch (=default=, OCaml 5.4.0;
+  =opam list= shows only the compiler). The checker is registered, but it
+  (and =merlin-mode= completion and navigation) can't report anything until
+  =opam install merlin=.
+- [X] =slime-company= — =slime-company-major-modes= never set (line ~1730)
+  Correction (2026-10-16): this one does run. Opening a Lisp file starts
+  SLIME, whose =slime-setup= loads =slime-company=, and its =:config= sets the
+  modes to =(lisp-mode slime-repl-mode)= (default also includes
+  =clojure-mode= and =scheme-mode=). No change needed.
+- [X] =yasnippet= — =yas-global-mode= only starts if something else happens to
   load yasnippet first (line ~1221)
+  Fixed (2026-10-16): =:hook (after-init . yas-global-mode)= replaces the
+  =:config=. Removed the commented-out =evil-leader= / =tools-map= lines that
+  were under that =:config=; kept the commented =:bind= idea.
 - [ ] =undo-tree= — loaded via =:defer 2= but =global-undo-tree-mode= is never
   called, so the package does nothing (line ~941)
+
+Test (2026-10-16), failed before on all four and passes after: =editorconfig-mode=
+on and a scratch =.editorconfig= with =indent_size = 7= applied to a =.el=
+file; the =ocaml-merlin= checker registered and applicable in a tuareg buffer;
+=yas-global-mode= on and =def= expanding to =(defun= in an Emacs Lisp buffer;
+no =company-quickhelp= in =README.org= or =elpa/=. Smoke test unchanged
+(startup 1.18s, no refresh).
 
 ** DONE =opam-switch-mode= hook typo
 CLOSED: [2026-10-15]
